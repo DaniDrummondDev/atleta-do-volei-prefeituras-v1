@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atleta do Vôlei para Prefeituras</title>
+  <meta name="description" content="Organize campeonatos, conecte atletas e equipes, e leve mais esporte à população — em uma plataforma gratuita, pronta para a sua prefeitura usar." />
+
+  <link rel="icon" href="assets/images/icon.png" />
+  <!-- Fontes locais do projeto: preload dos dois pesos usados, para o texto
+       não repintar quando o CSS terminar de carregar. -->
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="assets/fonts/TT%20Firs%20Neue%20Trial%20Regular.woff2" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="assets/fonts/TT%20Firs%20Neue%20Trial%20DemiBold.woff2" />
+
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+
+  <!-- ============ HEADER ============ -->
+  <header class="site-header" data-header>
+    <div class="container header__inner">
+      <a class="header__brand" href="#top" aria-label="Atleta do Vôlei — início">
+        <img src="assets/images/logo_branca.png" alt="Atleta do Vôlei" />
+      </a>
+
+      <nav class="header__nav" aria-label="Navegação principal">
+        <a href="#beneficios">O que a prefeitura ganha</a>
+        <a href="#solucao">A solução</a>
+        <a href="#como-funciona">Como funciona</a>
+      </nav>
+
+      <a class="btn btn--primary header__cta" href="#contato">Fale com um especialista</a>
+
+      <button class="header__burger" type="button" aria-label="Abrir menu" aria-expanded="false" data-burger>
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ============ HERO ============ -->
+  <main id="top">
+    <section class="hero">
+      <!-- Tira de dois painéis de 100vh, um embaixo do outro.
+           A tira inteira sobe 100vh: a foto sai por cima enquanto o vídeo
+           entra por baixo. Os dois se movem juntos, sem fade. -->
+      <div class="hero__media" aria-hidden="true">
+        <div class="hero__media-inner">
+          <div class="hero__reel">
+
+            <!-- painel 1 -->
+            <div class="hero__panel">
+              <img class="hero__panel-img" src="assets/images/background.png" alt="" />
+              <div class="hero__panel-grad"></div>
+            </div>
+
+            <!-- painel 2 -->
+            <div class="hero__panel">
+              <video class="hero__panel-img"
+                     data-video
+                     src="assets/video/video.mp4"
+                     poster="assets/images/hero-court.png"
+                     muted
+                     playsinline
+                     preload="auto"></video>
+              <div class="hero__panel-veil"></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="container hero__content">
+        <p class="badge" data-reveal>
+          <img src="assets/images/icon.png" alt="" aria-hidden="true" />
+          Atleta do vôlei para prefeituras
+        </p>
+
+        <h1 class="hero__title" data-reveal data-reveal-delay="1">
+          O vôlei da sua cidade,<br />
+          organizado em <strong>um só lugar.</strong>
+        </h1>
+
+        <p class="hero__subtitle" data-reveal data-reveal-delay="2">
+          Organize campeonatos, conecte atletas e equipes, e leve mais
+          esporte à população — em uma plataforma gratuita, pronta para
+          a sua prefeitura usar.
+        </p>
+
+        <div data-reveal data-reveal-delay="3">
+          <a class="btn btn--primary btn--lg" href="#contato">Fale com um especialista</a>
+        </div>
+
+        <ul class="hero__stats" data-reveal data-reveal-delay="4">
+          <li><b data-count="340">0</b><span>atletas ativos</span></li>
+          <li><b data-count="10">0</b><span>equipes</span></li>
+          <li><b data-count="17">0</b><span>eventos já organizados</span></li>
+        </ul>
+      </div>
+
+      <!-- Palco de rolagem: controla a transição phone_01 -> phone_02 -->
+      <div class="showcase" data-showcase>
+        <div class="showcase__stage">
+          <figure class="phone phone--01" data-phone="1">
+            <img src="assets/images/phone_01.png" alt="Aplicativo Atleta do Vôlei em perspectiva, exibindo o placar de uma partida" />
+          </figure>
+          <figure class="phone phone--02" data-phone="2">
+            <img src="assets/images/phone_02.png" alt="Aplicativo Atleta do Vôlei visto de frente, com escalação em quadra" />
+          </figure>
+
+          <!-- Fase 3: texto que entra sobre o vídeo já revelado -->
+          <div class="bridge" data-bridge>
+            <p class="bridge__text">
+              <span class="bridge__line">Tudo isso pode estar conectado —</span>
+              <span class="bridge__line">e <strong>já existe</strong> uma plataforma pronta</span>
+              <span class="bridge__line">para isso.</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SEÇÃO 2 — APP / LOJAS ============ -->
+    <!-- data-reveal-scope: o texto e os botões só animam quando a seção
+         inteira estiver na tela (ver observeScope no main.js) -->
+    <section class="social" id="solucao" data-reveal-scope>
+
+      <div class="social__copy">
+        <h2 class="social__title">
+          <span class="social__title-strong" data-reveal>A prefeitura organiza.</span>
+          <span class="social__title-soft" data-reveal data-reveal-delay="1">A rede social movimenta.</span>
+        </h2>
+
+        <div class="social__stores" data-reveal="fade" data-reveal-delay="2">
+          <a class="social__store" href="#" aria-label="Baixar na Google Play">
+            <img src="assets/images/google_play.png" alt="Disponível no Google Play" />
+          </a>
+          <a class="social__store" href="#" aria-label="Baixar na App Store">
+            <img src="assets/images/app_store.png" alt="Disponível na App Store" />
+          </a>
+        </div>
+      </div>
+
+      <!-- data-parallax = amplitude do deslocamento, em px -->
+      <div class="social__art" data-parallax="40">
+        <img src="assets/images/section-02-phones.png"
+             alt="Telas do aplicativo Atleta do Vôlei: lista de eventos e página de torneio"
+             loading="lazy" />
+      </div>
+
+    </section>
+
+    <!-- ============ SEÇÃO 3 — RECURSOS (CARDS) ============
+         Diferente das demais: NÃO é 100vh. A altura é ditada pelos 4 cards.
+         data-enter="N" = entrada controlada pelo scroll (reversível), onde N
+         é a distância de entrada em frações de viewport. Como cada elemento
+         tem o próprio progresso, os cards cascateiam sozinhos. -->
+    <section class="features" id="como-funciona">
+      <div class="container">
+
+        <h2 class="features__title" data-enter="0.26">
+          <strong>Uma plataforma só</strong> para organizar e conectar
+          toda a comunidade do vôlei da sua cidade.
+        </h2>
+
+        <ul class="features__list">
+
+          <li class="card" data-enter="0.26">
+            <div class="card__media" aria-hidden="true">
+              <img class="card__photo" src="assets/images/card_01_image.png" alt="" data-parallax="-26" />
+            </div>
+            <img class="card__phone" data-parallax="38" src="assets/images/card_01_phone.png" alt="Tela de perfil de atleta no aplicativo" />
+            <div class="card__text">
+              <h3 class="card__title">Atletas</h3>
+              <p class="card__desc">Perfil, nível de jogo e<br />conexão com os atletas.</p>
+            </div>
+          </li>
+
+          <li class="card card--right" data-enter="0.26" data-enter-delay="0.10">
+            <div class="card__media" aria-hidden="true">
+              <img class="card__photo" src="assets/images/card_02_image.png" alt="" data-parallax="-26" />
+            </div>
+            <img class="card__phone" data-parallax="38" src="assets/images/card_02_phone.png" alt="Tela de equipes no aplicativo" />
+            <div class="card__text">
+              <h3 class="card__title">Equipes</h3>
+              <p class="card__desc">Formação, convites e<br />comunicação em grupo.</p>
+            </div>
+          </li>
+
+          <li class="card" data-enter="0.26" data-enter-delay="0.20">
+            <div class="card__media" aria-hidden="true">
+              <img class="card__photo" src="assets/images/card_03_image.png" alt="" data-parallax="-26" />
+            </div>
+            <img class="card__phone" data-parallax="38" src="assets/images/card_03_phone.png" alt="Tela de mapa de quadras no aplicativo" />
+            <div class="card__text">
+              <h3 class="card__title">Quadras</h3>
+              <p class="card__desc">Mapa, acesso e<br />avaliação dos espaços.</p>
+            </div>
+          </li>
+
+          <li class="card card--right" data-enter="0.26" data-enter-delay="0.30">
+            <div class="card__media" aria-hidden="true">
+              <img class="card__photo" src="assets/images/card_04_image.png" alt="" data-parallax="-26" />
+            </div>
+            <img class="card__phone" data-parallax="38" src="assets/images/card_04_phone.png" alt="Tela de eventos no aplicativo" />
+            <div class="card__text">
+              <h3 class="card__title">Eventos</h3>
+              <p class="card__desc">Divulgação, inscrição e<br />classificações.</p>
+            </div>
+          </li>
+
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <script src="assets/js/main.js" defer></script>
+</body>
+</html>

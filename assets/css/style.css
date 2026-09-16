@@ -1,0 +1,785 @@
+/* =========================================================
+   ATLETA DO VÔLEI — PREFEITURAS
+   Etapa 1: Header + Hero + Showcase (phone_01 -> phone_02)
+   ---------------------------------------------------------
+   Sumário:
+   1. Tokens & reset
+   2. Utilitários (container, botões, badge)
+   3. Header
+   4. Hero (background, título, stats)
+   5. Showcase — palco de scroll dos celulares
+   6. Animações de entrada (data-reveal)
+   7. Responsivo
+   8. Acessibilidade (prefers-reduced-motion)
+   ========================================================= */
+
+/* ---------- 0. Fontes do projeto ----------
+   TT Firs Neue Trial em dois pesos apenas:
+     Regular  (400) — texto normal
+     DemiBold (600) — tudo que for "bold"
+   Não existe Light/Bold no pacote, então pesos como 300 e 700 seriam
+   sintetizados pelo navegador (falso-negrito). Por isso o CSS inteiro usa
+   só 400 e 600 — ao criar novas regras, mantenha essa restrição. */
+@font-face {
+  font-family: "TT Firs Neue";
+  src: url("../fonts/TT Firs Neue Trial Regular.woff2") format("woff2"),
+       url("../fonts/TT Firs Neue Trial Regular.woff")  format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "TT Firs Neue";
+  src: url("../fonts/TT Firs Neue Trial DemiBold.woff2") format("woff2"),
+       url("../fonts/TT Firs Neue Trial DemiBold.woff")  format("woff");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ---------- 1. Tokens & reset ---------- */
+:root {
+  --brand:        #F26522;   /* laranja CTA */
+  --brand-dark:   #d9541a;
+  --navy:         #0B2545;   /* azul escuro do app */
+  --ink:          #101828;
+  --white:        #ffffff;
+  --muted:        rgba(255, 255, 255, .72);
+
+  --radius-pill:  999px;
+  --container:    1160px;
+  --header-h:     76px;
+
+  /* Largura de repouso do aparelho inteiro (phone_02).
+     Única fonte de tamanho dos dois celulares — o phone_01 deriva daqui.
+     945px => corpo do aparelho ~925px (tamanho original -10% -10%). */
+  --phone-w:      min(945px, 68vw);
+
+  --ease-out:     cubic-bezier(.22, 1, .36, 1);
+  --dur:          .6s;
+
+  /* Progresso de scroll do showcase (0 -> 1), escrito pelo JS */
+  --p: 0;
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: "TT Firs Neue", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-weight: 400;
+  color: var(--white);
+  background: #041021;   /* mesma base escura do hero: nada de branco vazando */
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+img { display: block; max-width: 100%; height: auto; }
+a   { text-decoration: none; color: inherit; }
+ul  { list-style: none; margin: 0; padding: 0; }
+
+/* ---------- 2. Utilitários ---------- */
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: 24px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 0;
+  cursor: pointer;
+  font: 600 14px/1 "TT Firs Neue", sans-serif;
+  padding: 13px 24px;
+  border-radius: var(--radius-pill);
+  transition: transform .25s var(--ease-out), box-shadow .25s var(--ease-out),
+              background-color .25s var(--ease-out);
+}
+
+.btn--primary {
+  background: var(--brand);
+  color: var(--white);
+  box-shadow: 0 8px 24px -8px rgba(242, 101, 34, .8);
+}
+.btn--primary:hover {
+  background: var(--brand-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px -10px rgba(242, 101, 34, .95);
+}
+.btn--primary:active { transform: translateY(0); }
+
+.btn--lg { padding: 16px 32px; font-size: 15px; }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 28px;
+  padding: 8px 18px 8px 10px;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(255, 255, 255, .22);
+  background: rgba(255, 255, 255, .08);
+  backdrop-filter: blur(8px);
+  color: var(--white);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.badge img { width: 20px; height: 20px; border-radius: 50%; }
+
+/* ---------- 3. Header ---------- */
+.site-header {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 50;
+  height: var(--header-h);
+  display: flex;
+  align-items: center;
+  /* Sempre transparente e sem transição de estado: o header não reage ao
+     scroll. A legibilidade vem do gradiente escuro de .hero__panel-grad. */
+  background: transparent;
+}
+
+.header__inner {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.header__brand img { width: 150px; }
+
+.header__nav {
+  margin-left: auto;
+  display: flex;
+  gap: 32px;
+  font-size: 14px;
+  color: var(--muted);
+}
+.header__nav a { position: relative; transition: color .25s var(--ease-out); }
+.header__nav a::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: -6px;
+  width: 100%; height: 2px;
+  background: var(--brand);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .3s var(--ease-out);
+}
+.header__nav a:hover { color: var(--white); }
+.header__nav a:hover::after { transform: scaleX(1); }
+
+.header__burger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: 0;
+  padding: 8px;
+  cursor: pointer;
+}
+.header__burger span {
+  width: 24px; height: 2px;
+  background: var(--white);
+  border-radius: 2px;
+  transition: transform .3s var(--ease-out), opacity .3s var(--ease-out);
+}
+
+/* ---------- 4. Hero ---------- */
+.hero { position: relative; }
+
+/* O fundo cobre TODA a seção hero (texto + palco dos celulares).
+   A camada interna é sticky: acompanha a viewport durante toda a rolagem
+   do hero, então nunca aparece emenda nem faixa branca. */
+.hero__media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  /* sem overflow aqui: overflow criaria um scrollport e quebraria o sticky interno */
+}
+.hero__media-inner {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;   /* recorta a foto enquanto ela sobe para fora da tela */
+}
+
+/* ----- a tira: 2 painéis de 100vh empilhados -----
+   Sobe 100vh (= -50% da própria altura) ao longo de --reel: 0 no instante
+   em que o celular começa a entrar na tela, 1 onde o vídeo assume o scrub.
+   NÃO usa --p de propósito: --p só começa a contar depois que o palco gruda
+   no topo, ou seja, tarde demais. Quem calcula --reel é o main.js — para
+   antecipar ou atrasar mais, mexa em REEL_LEAD lá. */
+.hero__reel {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 200vh;
+  transform: translate3d(0, calc(var(--reel, 0) * -50%), 0);
+  will-change: transform;
+}
+
+.hero__panel {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+}
+.hero__panel-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 35%;
+  background: #041021;   /* evita flash antes do primeiro frame decodificar */
+}
+
+/* painel 1: escurece o topo (legibilidade do menu) e aprofunda conforme desce */
+.hero__panel-grad {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg,
+      rgba(4, 16, 33, .74) 0%,
+      rgba(4, 16, 33, .34) 38%,
+      rgba(4, 16, 33, .62) 78%,
+      rgba(4, 16, 33, .86) 100%);
+}
+
+/* painel 2: véu preto a 40% sobre o vídeo */
+.hero__panel-veil {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, .4);
+}
+
+.hero__content {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding-top: calc(var(--header-h) + 40px);
+  padding-bottom: 80px;
+  color: var(--white);
+}
+
+.hero__title {
+  margin: 0 0 20px;
+  font-size: clamp(34px, 5.2vw, 62px);
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: -.02em;
+  text-shadow: 0 2px 30px rgba(0, 0, 0, .35);
+}
+.hero__title strong { font-weight: 600; }
+
+.hero__subtitle {
+  margin: 0 0 34px;
+  max-width: 560px;
+  font-size: clamp(15px, 1.4vw, 17px);
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+.hero__stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 56px;
+}
+.hero__stats li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(255, 255, 255, .2);
+  background: rgba(255, 255, 255, .08);
+  backdrop-filter: blur(8px);
+  font-size: 11px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.hero__stats b {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--white);
+}
+
+/* ---------- 5. Showcase (palco de scroll) ---------- */
+/* A seção é alta (200vh) e o palco fica "sticky" dentro dela:
+   a rolagem dessa altura extra vira o progresso --p da animação. */
+/* phone_01 = close cortado (base do aparelho em perspectiva)
+   phone_02 = aparelho inteiro
+   A rolagem faz um "dolly-out": afasta do close até o aparelho completo.
+   Fundo transparente — a foto do hero continua atrás. */
+/* Linha do tempo de --p dentro do palco:
+   .00 → .23   phone_01 recua e entrega a cena ao phone_02
+   .23 → .40   phone_02 em repouso
+   .40 → .55   phone_02 em fade-out  ── termina exatamente em .55
+   (--reel)    .hero__reel sobe 100vh: painel-foto sai, painel-vídeo entra.
+               Começa antes de --p, junto com a entrada do celular, e
+               termina em .55. Ver REEL_LEAD no main.js.
+   .44 → .63   texto do .bridge entra escalonado
+   .55 → 1.0   VÍDEO roda (só começa quando o celular já sumiu)
+   Os marcos .55 aparecem em .hero__photo (CSS) e VIDEO_IN (main.js).  */
+.showcase {
+  position: relative;
+  z-index: 2;
+  height: 460vh;
+  background: transparent;
+}
+
+.showcase__stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;            /* recorta só o excedente do close, nunca o phone_02 */
+}
+
+.phone {
+  grid-area: 1 / 1;            /* os dois ocupam exatamente o mesmo ponto */
+  margin: 0;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  transform-origin: 50% 62%;   /* ancorado na base do aparelho: o zoom fica coerente */
+}
+.phone img {
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 50px 70px rgba(0, 0, 0, .55));
+}
+
+/* Close: entra em cena grande e recua até casar com o phone_02.
+   A largura é 1.3x a do phone_02 porque o corpo do aparelho ocupa só ~76%
+   da largura do PNG recortado, contra ~98% no PNG inteiro. Esse fator é o
+   que faz os dois aparelhos terem o MESMO tamanho aparente no crossfade. */
+.phone--01 {
+  width: calc(var(--phone-w) * 1.29);
+  /* 1.08 -> 1.00 em p = .30 (ponto do crossfade). O pico de 1.08 ainda fica
+     abaixo do tamanho original, então o conjunto todo diminuiu. */
+  transform: scale(calc(1.08 - min(var(--p), .30) * .2667));
+  opacity: clamp(0, calc(1 - (var(--p) - .20) * 5.4), 1);
+}
+
+/* Aparelho inteiro: assume a cena no mesmo tamanho aparente do close
+   (escala ~1.035 em p = .30) e assenta em 1.0 a partir de p = .40. */
+.phone--02 {
+  width: var(--phone-w);
+  /* 1.05 -> 1.00; em p = .30 vale 1.0125, praticamente igual ao phone_01 */
+  transform: scale(calc(1.05 - min(var(--p), .40) * .125));
+  /* min() = interseção das duas rampas: entrada (.23) e saída (.55) */
+  opacity: clamp(0, min(
+      calc((var(--p) - .23) * 5.4),
+      calc((.55 - var(--p)) * 6.3)
+    ), 1);
+}
+
+/* ----- Fase 3: texto sobre o vídeo já revelado -----
+   O bloco não tem mais fundo próprio: vídeo e véu vivem em .hero__media.
+   Só as linhas de texto animam. */
+.bridge {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+/* fica clicável/selecionável só quando já está visível */
+.bridge.is-active { pointer-events: auto; }
+
+.bridge__text {
+  grid-area: 1 / 1;
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  padding-inline: 24px;
+  text-align: center;
+  color: var(--white);
+  font-size: clamp(24px, 3.4vw, 42px);
+  font-weight: 400;
+  line-height: 1.32;
+  letter-spacing: -.01em;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, .45);
+}
+.bridge__text strong { font-weight: 600; }
+
+.bridge__line {
+  display: block;
+  will-change: transform, opacity;
+}
+/* cada linha entra escalonada, empurrada pelo próprio --p */
+.bridge__line:nth-child(1) {
+  opacity: clamp(0, calc((var(--p) - .44) * 10.5), 1);
+  transform: translate3d(0, calc((1 - clamp(0, calc((var(--p) - .44) * 10.5), 1)) * 28px), 0);
+}
+.bridge__line:nth-child(2) {
+  opacity: clamp(0, calc((var(--p) - .47) * 10.5), 1);
+  transform: translate3d(0, calc((1 - clamp(0, calc((var(--p) - .47) * 10.5), 1)) * 28px), 0);
+}
+.bridge__line:nth-child(3) {
+  opacity: clamp(0, calc((var(--p) - .50) * 10.5), 1);
+  transform: translate3d(0, calc((1 - clamp(0, calc((var(--p) - .50) * 10.5), 1)) * 28px), 0);
+}
+
+/* ---------- 5b. Seção 2 — app / lojas ----------
+   Fundo claro: é a primeira seção que inverte o esquema de cor, então ela
+   redefine cor de texto localmente em vez de depender do body. */
+/* Todas as medidas vêm do mock (825 x 509, onde 509 = 100vh) e estão
+   ancoradas na ALTURA da seção, não na largura. Como a seção é 100vh, é a
+   altura que define a escala do conjunto; ancorar na largura faria o texto
+   encolher e a arte descer em telas mais largas.
+   Os tokens abaixo são os únicos pontos de calibragem da seção. */
+.social {
+  --copy-x:     6.9%;    /* margem esquerda do texto        (57/825)  */
+  --copy-y:     4.3%;    /* topo do título                  (22/509)  */
+  --title-size: 4.32vh;  /* corpo do título                 (22/509)  */
+  --store-h:    4.5vh;   /* altura dos badges               (23/509)  */
+  --art-top:    30%;     /* topo da arte                    (143/509) */
+  --art-h:      89vh;    /* altura da arte                  (454/509) */
+  --art-bleed:  -5vw;    /* o quanto sangra além da direita (125/825) */
+
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;             /* padrão do projeto: toda section ocupa 1 tela */
+  background: var(--white);
+  color: var(--ink);
+  overflow: hidden;              /* a arte sangra para fora e é recortada aqui */
+}
+
+.social__copy {
+  position: absolute;
+  left: var(--copy-x);
+  top: var(--copy-y);
+  z-index: 1;                    /* texto sempre acima da arte */
+}
+
+.social__title {
+  margin: 0;
+  font-size: var(--title-size);
+  line-height: 1.27;             /* baselines a 28px no mock, com fonte de 22 */
+  letter-spacing: -.02em;
+  white-space: nowrap;           /* cada linha é uma linha só, como no mock */
+}
+.social__title span { display: block; }
+.social__title-strong { font-weight: 600; color: var(--ink); }
+.social__title-soft   { font-weight: 400; color: #9AA1AC; }
+
+.social__stores {
+  display: flex;
+  gap: .8vh;
+  margin-top: 7.5vh;             /* título termina em 78, badges começam em 116 */
+}
+.social__store img {
+  height: var(--store-h);
+  width: auto;
+  transition: transform .25s var(--ease-out), opacity .25s var(--ease-out);
+}
+.social__store:hover img { transform: translateY(-2px); opacity: .88; }
+
+/* Arte: altura fixa em vh e sangria pela direita, para o enquadramento do
+   mock se manter em qualquer proporção de tela.
+   --py é a amplitude do parallax, escrita pelo JS (ver [data-parallax]). */
+.social__art {
+  position: absolute;
+  top: var(--art-top);
+  right: calc(var(--art-bleed) * -1);
+  width: auto;
+  z-index: 0;
+  transform: translate3d(0, var(--py, 0px), 0);
+  will-change: transform;
+}
+/* O wiggle vive no <img>, NÃO no .social__art: o pai já usa transform para o
+   parallax e uma animação no mesmo elemento sobrescreveria o outro efeito.
+   Separando em dois níveis, os dois transforms convivem e se somam. */
+.social__art img {
+  height: var(--art-h);
+  width: auto;
+  max-width: none;               /* precisa vencer o `img { max-width:100% }` global */
+  transform-origin: 60% 50%;     /* pivô perto do centro do grupo de celulares */
+  animation: wiggle 7s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Balanço sutil e contínuo. Amplitudes propositalmente pequenas: em uma
+   imagem deste tamanho, 1deg já é um deslocamento grande nas bordas. */
+@keyframes wiggle {
+  0%   { transform: rotate(0deg)     translate3d(0, 0,     0); }
+  25%  { transform: rotate(.55deg)   translate3d(0, -8px,  0); }
+  50%  { transform: rotate(0deg)     translate3d(0, -12px, 0); }
+  75%  { transform: rotate(-.55deg)  translate3d(0, -6px,  0); }
+  100% { transform: rotate(0deg)     translate3d(0, 0,     0); }
+}
+
+/* ---------- 5c. Seção 3 — recursos (cards) ----------
+   Única seção que NÃO é 100vh: a altura vem dos 4 cards.
+   Proporções tiradas do mock (artboard 623px, card 540 x 172). */
+.features {
+  /* Proporções medidas no card de referência (827 x 361). */
+  --card-pad:     clamp(10px, 1.55vw, 22px);  /* recuo da foto        (18/827) */
+  --card-photo:   38.3%;  /* largura da foto               (317/827) */
+  --card-phone:   27.2%;  /* largura do celular            (225/827) */
+  --card-phone-x: 27.2%;  /* deslocamento do celular       (225/827) */
+  --card-phone-y: 22%;    /* topo do celular — afastado do topo do card */
+  --card-text-x:  58.9%;  /* início do texto, card ímpar   (487/827) */
+  --card-radius:  clamp(14px, 1.9vw, 26px);   /* raio do card         (24/827) */
+  --photo-radius: clamp(10px, 1.5vw, 20px);   /* raio da foto         (20/827) */
+
+  position: relative;
+  z-index: 2;
+  background: #F4F4F6;
+  color: var(--ink);
+  padding: clamp(64px, 8vw, 120px) 0 clamp(72px, 9vw, 140px);
+}
+
+.features__title {
+  margin: 0 auto clamp(28px, 3.5vw, 52px);
+  max-width: 24ch;
+  text-align: center;
+  font-size: clamp(22px, 2.6vw, 38px);
+  font-weight: 400;
+  line-height: 1.34;
+  letter-spacing: -.01em;
+  color: #9AA1AC;
+}
+.features__title strong { font-weight: 600; color: var(--ink); }
+
+.features__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;                        /* sem espaço: os cards se sobrepõem */
+}
+
+/* Cada card sobe sobre a base do anterior.
+   A sobreposição é 23% da ALTURA do card, mas margin-% resolve contra a
+   LARGURA — por isso 23 / 2.386 (a proporção do card) = 9.6%. */
+.card + .card { margin-top: -9.6%; }
+
+/* Quem fica por cima:
+   os cards são position:relative com z-index auto, então a ordem de pintura
+   segue o DOM — o último naturalmente cobre o anterior. Nenhum z-index é
+   necessário; se algum dia precisar inverter, é aqui que se mexe. */
+
+/* ----- o card ----- */
+.card {
+  position: relative;
+  /* Mesma proporção do cards_bg.png (1656/694): assim o PNG é aplicado sem
+     esticar, e os cantos arredondados dele não deformam. */
+  aspect-ratio: 1656 / 694;
+  overflow: hidden;              /* recorta o celular que estoura por baixo */
+  border-radius: var(--card-radius);
+  /* cards_bg.png é o fundo comum a todos (retângulo branco arredondado) */
+  background: url("../images/cards_bg.png") center / 100% 100% no-repeat;
+}
+
+/* Janela da foto: recuada das bordas do card e com raio próprio.
+   É ela que recorta — a imagem dentro é maior e se move (parallax). */
+.card__media {
+  position: absolute;
+  top: var(--card-pad);
+  bottom: var(--card-pad);
+  left: var(--card-pad);
+  width: var(--card-photo);
+  overflow: hidden;
+  border-radius: var(--photo-radius);
+}
+
+/* A imagem é 124% da altura da janela e fica centrada (-12% no topo).
+   Essa folga de 12% para cada lado é o curso do parallax: a amplitude em
+   data-parallax precisa caber nela, senão a borda da foto aparece. */
+.card__photo {
+  position: absolute;
+  top: -12%;
+  left: 0;
+  width: 100%;
+  height: 124%;
+  object-fit: cover;
+  transform: translate3d(0, var(--py, 0px), 0);
+  will-change: transform;
+}
+
+/* celular sobreposto à divisa entre foto e texto; sai pela base do card.
+   Aqui o elemento inteiro se move: ele flutua sobre o card, sem recorte. */
+.card__phone {
+  position: absolute;
+  top: var(--card-phone-y);
+  left: var(--card-phone-x);
+  width: var(--card-phone);
+  height: auto;
+  z-index: 1;
+  transform: translate3d(0, var(--py, 0px), 0);
+  will-change: transform;
+}
+
+.card__text {
+  position: absolute;
+  top: 50%;
+  left: var(--card-text-x);
+  transform: translateY(-50%);
+  z-index: 2;
+}
+.card__title {
+  margin: 0 0 .55em;
+  font-size: clamp(20px, 2.6vw, 34px);
+  font-weight: 600;
+  letter-spacing: -.01em;
+}
+.card__desc {
+  margin: 0;
+  font-size: clamp(14px, 1.65vw, 22px);
+  font-weight: 400;
+  line-height: 1.45;
+  color: #6B7280;
+}
+
+/* ----- variante espelhada (cards 2 e 4) ----- */
+.card--right .card__media { left: auto; right: var(--card-pad); }
+.card--right .card__phone { left: auto; right: var(--card-phone-x); }
+.card--right .card__text  { left: 8%; }       /* 43/540 no mock */
+
+/* ---------- 6. Animações de entrada ---------- */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity .8s var(--ease-out), transform .8s var(--ease-out);
+  transition-delay: calc(var(--reveal-delay, 0) * 110ms);
+}
+[data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+/* variante só-fade, sem deslocamento (usada nos botões das lojas) */
+[data-reveal="fade"] { transform: none; }
+
+/* Entrada dirigida pelo scroll (--e vem do main.js).
+   Sem `transition`: o valor é interpolado pela própria rolagem, e uma
+   transição por cima criaria atraso e faria a animação "escorregar". */
+[data-enter] {
+  opacity: var(--e, 0);
+  transform: translate3d(0, calc((1 - var(--e, 0)) * var(--enter-y, 44px)), 0);
+  will-change: transform, opacity;
+}
+/* Os cards sobem de mais longe: o deslocamento maior é o que dá a leitura
+   de um card deslizando POR CIMA do anterior até encaixar. */
+.card { --enter-y: 110px; }
+
+/* ---------- 7. Responsivo ---------- */
+@media (max-width: 900px) {
+  .header__nav,
+  .header__cta { display: none; }
+  .header__burger { display: flex; }
+  .header__brand img { width: 128px; }
+
+  .showcase { height: 400vh; }
+  .bridge__text { font-size: clamp(20px, 5.4vw, 30px); }
+  /* basta ajustar o token: as duas larguras continuam proporcionais */
+  :root { --phone-w: 83vw; }
+
+  /* seção 2 empilha: texto em cima, arte embaixo sangrando só pela direita.
+     Sai do posicionamento absoluto porque o layout do mock (texto e arte
+     lado a lado na mesma tela) não cabe em telas estreitas. */
+  .social {
+    min-height: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 72px 0 0;
+  }
+  .social__copy {
+    position: relative;
+    left: auto;
+    top: auto;
+    padding-inline: 24px;
+  }
+  .social__title { font-size: clamp(24px, 6.4vw, 34px); white-space: normal; }
+  .social__stores { margin-top: 24px; gap: 10px; }
+  .social__store img { height: 38px; }
+  .social__art {
+    position: relative;
+    top: auto;
+    right: auto;
+    margin: 40px -12% 0 0;
+    align-self: flex-end;
+  }
+  .social__art img { height: auto; width: 112vw; }
+
+  /* cards viram retrato: foto em cima, texto embaixo, celular sobreposto */
+  .features {
+    --card-photo: 100%;
+    --card-phone: 46%;
+    --card-phone-x: 27%;
+    --card-phone-y: 14%;
+  }
+  /* retrato: a sobreposição de 9.6% da largura viraria quase nada frente à
+     altura do card, então volta a ser lista com espaçamento normal */
+  .features__list { gap: 14px; }
+  .card + .card { margin-top: 0; }
+  .card { aspect-ratio: 300 / 380; --enter-y: 60px; }
+  .card__media {
+    top: var(--card-pad);
+    bottom: auto;
+    left: var(--card-pad);
+    right: var(--card-pad);
+    width: auto;
+    height: 48%;
+  }
+  .card--right .card__media { left: var(--card-pad); right: var(--card-pad); }
+  .card__text,
+  .card--right .card__text {
+    top: auto;
+    bottom: 7%;
+    left: 8%;
+    right: 8%;
+    transform: none;
+  }
+  .card--right .card__phone { left: var(--card-phone-x); right: auto; }
+}
+
+@media (max-width: 560px) {
+  .hero__stats { gap: 8px; }
+  .hero__stats li { padding: 8px 14px; font-size: 10px; }
+  .badge { font-size: 10px; letter-spacing: .1em; }
+}
+
+/* ---------- 8. Acessibilidade ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+  [data-reveal] { opacity: 1; transform: none; }
+
+  /* sem palco de scroll: os dois celulares empilhados verticalmente */
+  .showcase { height: auto; padding: 60px 0; }
+  .showcase__stage { position: static; height: auto; display: block; overflow: visible; }
+  .phone { transform: none !important; opacity: 1 !important; margin: 0 auto 40px; width: 92vw; }
+
+  /* a tira não rola: fica só o primeiro painel (a foto) */
+  .hero__reel { transform: none !important; }
+  .bridge { position: relative; inset: auto; pointer-events: auto; min-height: 60vh; }
+  .bridge__line { opacity: 1 !important; transform: none !important; }
+  .social__art { transform: none !important; }
+  .social__art img { animation: none !important; transform: none !important; }
+  [data-enter] { opacity: 1 !important; transform: none !important; }
+  .card__photo,
+  .card__phone { transform: none !important; }
+}
