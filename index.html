@@ -41,7 +41,7 @@
 
   <!-- ============ HERO ============ -->
   <main id="top">
-    <section class="hero">
+    <section class="hero" data-anime="hero">
       <!-- Tira de dois painéis de 100vh, um embaixo do outro.
            A tira inteira sobe 100vh: a foto sai por cima enquanto o vídeo
            entra por baixo. Os dois se movem juntos, sem fade. -->
@@ -124,7 +124,11 @@
     <!-- ============ SEÇÃO 2 — APP / LOJAS ============ -->
     <!-- data-reveal-scope: o texto e os botões só animam quando a seção
          inteira estiver na tela (ver observeScope no main.js) -->
-    <section class="social" id="solucao" data-reveal-scope>
+    <!-- data-snap: esta é a única seção de exatamente uma tela, então é a
+         única que encaixa na rolagem. As demais são mais altas que 100vh de
+         propósito — a altura extra é o curso das animações — e por isso são
+         contínuas. Ver a seção 1b do style.css. -->
+    <section class="social" id="solucao" data-snap data-anime="social" data-reveal-scope>
 
       <div class="social__copy">
         <h2 class="social__title">
@@ -156,7 +160,7 @@
          data-enter="N" = entrada controlada pelo scroll (reversível), onde N
          é a distância de entrada em frações de viewport. Como cada elemento
          tem o próprio progresso, os cards cascateiam sozinhos. -->
-    <section class="features" id="como-funciona">
+    <section class="features" id="como-funciona" data-anime="features">
       <div class="container">
 
         <h2 class="features__title" data-enter="0.26">
@@ -214,7 +218,28 @@
       </div>
     </section>
 
-    <!-- ============ SEÇÃO 4 — O QUE A PREFEITURA GANHA ============
+    <!-- ============ PALCO DUPLO — SEÇÕES 4 e 5 ============
+         As duas seções dividem UM ÚNICO palco fixado. A passagem da 4 para a 5
+         não é mais rolagem vertical: é um DESLIZE HORIZONTAL do trilho de
+         dentro, comandado pelo mesmo scroll.
+
+         Três peças, e a divisão de trabalho entre elas é o que mantém isto
+         legível:
+           .duo          — altura extra; é ela que dá o curso de rolagem
+           .duo__sticky  — a moldura fixada de 100vh (o que a pessoa vê)
+           .duo__rail    — o trilho de 200% que desliza; contém os 2 painéis
+
+         A RÉGUA FICA FORA DO TRILHO, filha direta do sticky. É isso, e só
+         isso, que faz dela uma barra parada: se estivesse dentro de um painel,
+         viajaria junto no deslize. Ela é única para as duas seções e o seu
+         preenchimento atravessa as duas de ponta a ponta.
+
+         Quem rege os três atos é assets/js/anim/duo.js. -->
+    <section class="duo" data-anime="duo">
+     <div class="duo__sticky">
+      <div class="duo__rail">
+
+       <!-- ============ SEÇÃO 4 — O QUE A PREFEITURA GANHA ============
          Animações (todas via [data-reveal], ver main.js -> reveal()):
            · badge e as duas linhas do título sobem de baixo para cima;
            · os cards entram da direita e dão um pequeno bounce ao parar
@@ -222,9 +247,13 @@
          O escalonamento vem de data-reveal-delay (multiplica o atraso).
          NÃO usa data-reveal-scope: o escopo exige a seção 98% visível e
          esta seção passa de 100vh no mobile — a animação nunca dispararia. -->
-    <section class="gains" id="beneficios" data-timeline data-timeline-steps="3">
-     <div class="gains__sticky">
-      <div class="container gains__inner">
+       <!-- data-anime: é por este atributo que assets/js/anim/section-04.js
+         encontra a seção. Cada módulo de anim/ procura o seu pelo nome.
+         Não há mais sticky nem altura extra aqui: quem fixa é o .duo__sticky
+         acima, e quem dá o curso de rolagem é a altura do .duo. -->
+       <div class="duo__panel">
+        <section class="gains" id="beneficios" data-anime="gains" data-timeline-steps="3">
+         <div class="container gains__inner">
 
         <p class="badge badge--light gains__eyebrow" data-reveal>
           <span class="badge__dash" aria-hidden="true"></span>
@@ -270,29 +299,415 @@
 
         </ul>
 
-        <!-- Linha do tempo da seção.
-             O track é UMA linha contínua de ponta a ponta; o trecho laranja
-             (.timeline__fill) cresce com o scroll, de 1/3 até 100%.
-             Quem escreve o progresso é createTimelines() no main.js:
-               · --t (0 -> 1) na <section data-timeline>
-               · .is-current no [data-step] do índice atual — o mesmo índice
-                 acende o filete laranja no topo do card correspondente. -->
-        <div class="timeline">
-          <div class="timeline__track" aria-hidden="true">
-            <span class="timeline__fill"></span>
-          </div>
-          <ol class="timeline__labels">
-            <li class="timeline__label" data-step="0">O que a prefeitura ganha?</li>
-            <li class="timeline__label" data-step="1">A transformação</li>
-            <li class="timeline__label" data-step="2">Não é mais um sistema</li>
-          </ol>
+        <!-- A régua que ficava aqui subiu para o palco duplo, lá embaixo:
+             agora é uma só para as duas seções. -->
+
+         </div>
+        </section>
+       </div>
+
+       <!-- ============ SEÇÃO 5 — A TRANSFORMAÇÃO ============
+         Segundo painel do palco duplo: não fixa por conta própria, entra
+         deslizando pela direita quando o trilho anda.
+         TODA a animação é uma coreografia única, em sequência, raspada pelo
+         scroll — ver assets/js/anim/section-05.js, que monta a partitura.
+         Nada aqui anima sozinho.
+
+         Os ângulos vêm no HTML (--ang) porque são DADOS de cada item, não
+         estilo: mudar a ordem ou a quantidade dos rótulos é mexer aqui, sem
+         tocar no CSS. Os raios e proporções ficam nos tokens do .trans. -->
+       <div class="duo__panel">
+        <section class="trans" id="transformacao" data-anime="trans">
+         <div class="trans__inner">
+
+        <div class="trans__texto">
+          <p class="badge badge--light trans__eyebrow">
+            <span class="badge__dash" aria-hidden="true"></span>
+            A transformação
+          </p>
+
+          <h2 class="trans__title">
+            <span class="trans__line">De informações</span>
+            <span class="trans__line">espalhadas</span>
+            <span class="trans__line">para um</span>
+            <span class="trans__line trans__line--strong">esporte</span>
+            <span class="trans__line trans__line--strong">conectado.</span>
+          </h2>
         </div>
 
+        <!-- Palco circular. Tudo aqui dentro se posiciona a partir do MESMO
+             centro, em ângulo e raio, para os anéis fecharem sozinhos. -->
+        <div class="trans__stage">
+
+          <!-- COMPARADOR ANTES / DEPOIS.
+               Era uma foto só, com o antes e o depois já montados lado a lado.
+               Agora são DUAS fotos inteiras, empilhadas, e o que a pessoa vê de
+               cada uma depende de onde o corte está.
+
+               A de baixo (antes) é desenhada inteira, sempre. A de cima
+               (depois) é recortada a partir do corte: à esquerda dele some e
+               deixa a de baixo aparecer.
+
+               Quem manda na posição é UM token só, --split (0 a 100), no
+               .trans__stage. Três coisas o leem — o recorte desta imagem, a
+               linha do corte e a posição da seta —, e é isso que as mantém
+               grudadas sem nenhum cálculo repetido.
+               Quem escreve o token é assets/js/anim/compare.js.
+
+               .trans__foto continua sendo o elemento que a coreografia anima
+               (opacidade e escala): virou <div>, mas o seletor é o mesmo. -->
+          <div class="trans__foto" data-comparador>
+            <img class="trans__foto-img" src="assets/images/section_06_image_01_center.png"
+                 alt="Antes: os dados do esporte da cidade espalhados numa planilha"
+                 loading="lazy" draggable="false" />
+            <img class="trans__foto-img trans__foto-img--depois" src="assets/images/section_06_image_02_center.png"
+                 alt="Depois: uma atleta em quadra, com o esporte da cidade reunido num só lugar"
+                 loading="lazy" draggable="false" />
+            <span class="trans__corte" aria-hidden="true"></span>
+          </div>
+
+          <p class="trans__antes"><span>ANTES</span></p>
+
+          <!-- A seta é a alça do comparador, e continua sendo o que pulsa.
+               Três níveis, cada um com um transform só, porque eles se
+               anulariam no mesmo elemento:
+                 <span>  entrada da coreografia (opacity + scale, via Anime.js)
+                 <img>   o pulso contínuo (CSS)
+               E a POSIÇÃO não usa transform nenhum: é `left`, calculado do
+               --split. Era a única forma de arrastar sem brigar com os dois
+               de cima — a regra está no topo deste bloco no style.css.
+
+               role="slider" e não <button>: é exatamente o que este controle
+               é, e dá de graça as setas do teclado para quem não arrasta. -->
+          <span class="trans__seta"
+                role="slider"
+                tabindex="0"
+                aria-label="Comparar antes e depois"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-valuenow="50">
+            <img src="assets/images/section_5_elem_center.png" alt="" />
+          </span>
+
+          <img class="trans__logo" src="assets/images/section_5_logo.png"
+               alt="Atleta do Vôlei — rede social esportiva" loading="lazy" />
+
+          <img class="trans__arco trans__arco--in"  src="assets/images/section_5_line_in.png"  alt="" aria-hidden="true" loading="lazy" />
+          <img class="trans__arco trans__arco--out" src="assets/images/section_5_line_out.png" alt="" aria-hidden="true" loading="lazy" />
+
+          <!-- ANTES: as fontes espalhadas, à esquerda.
+
+               O <i> em volta do texto NÃO é decoração: o <span> é a pílula
+               inteira, de largura fixa, com o texto centralizado por grid. O
+               risco tem de ter a largura da PALAVRA, e o <i> é a única caixa
+               que a mede — o ::after dele é o traço.
+
+               Tinha de ser uma tag SEM ser <span>: a coreografia da seção 5
+               anima `.trans__pill span`, e um segundo <span> aqui dentro
+               entraria na conta e seria animado junto, sem querer. -->
+          <ul class="trans__pills">
+            <li class="trans__pill" style="--ang:  36deg"><span><i>Whatsapp</i></span></li>
+            <li class="trans__pill" style="--ang:  18deg"><span><i>Planilhas</i></span></li>
+            <li class="trans__pill" style="--ang:   0deg"><span><i>Rede sociais</i></span></li>
+            <li class="trans__pill" style="--ang: -18deg"><span><i>PDF</i></span></li>
+            <li class="trans__pill" style="--ang: -36deg"><span><i>Grupos</i></span></li>
+          </ul>
+
+          <!-- DEPOIS: o que passa a existir, à direita -->
+          <ul class="trans__spots">
+            <li class="trans__spot" style="--ang: -60.00deg"><span class="trans__spot-c"><i></i><b>Atletas</b></span></li>
+            <li class="trans__spot" style="--ang: -46.67deg"><span class="trans__spot-c"><i></i><b>Equipes</b></span></li>
+            <li class="trans__spot" style="--ang: -33.33deg"><span class="trans__spot-c"><i></i><b>Eventos</b></span></li>
+            <li class="trans__spot" style="--ang: -20.00deg"><span class="trans__spot-c"><i></i><b>Quadras</b></span></li>
+            <li class="trans__spot" style="--ang: -6.67deg"><span class="trans__spot-c"><i></i><b>Gestão</b></span></li>
+            <li class="trans__spot" style="--ang: 6.67deg"><span class="trans__spot-c"><i></i><b>Campeonatos</b></span></li>
+            <li class="trans__spot" style="--ang: 20.00deg"><span class="trans__spot-c"><i></i><b>Comunidade</b></span></li>
+            <li class="trans__spot" style="--ang: 33.33deg"><span class="trans__spot-c"><i></i><b>Escolas</b></span></li>
+            <li class="trans__spot" style="--ang: 46.67deg"><span class="trans__spot-c"><i></i><b>Rede social</b></span></li>
+            <li class="trans__spot" style="--ang: 60.00deg"><span class="trans__spot-c"><i></i><b>Anúncios</b></span></li>
+          </ul>
+
+        </div>
+
+         </div>
+        </section>
+       </div>
+
+      </div><!-- /.duo__rail -->
+
+      <!-- ===== A RÉGUA UNIFICADA =====
+           Uma só para as duas seções, e IRMÃ do trilho, não filha: por isso
+           não desliza com ele. O que ela mostra é o progresso do palco
+           INTEIRO — 0% no começo da seção 4, 100% no fim da seção 5 —, e o
+           rótulo em destaque troca no momento do deslize.
+           Quem escreve --t e .is-current é assets/js/anim/duo.js.
+
+           Eram três rótulos; "Não é mais um sistema" saiu por pedido do
+           cliente, e a grade abaixo virou de duas colunas no CSS. -->
+      <div class="timeline duo__timeline">
+        <div class="timeline__track" aria-hidden="true">
+          <span class="timeline__fill"></span>
+        </div>
+        <ol class="timeline__labels">
+          <li class="timeline__label" data-cap="0">O que a prefeitura ganha?</li>
+          <li class="timeline__label" data-cap="1">A transformação</li>
+        </ol>
       </div>
-     </div>
+
+     </div><!-- /.duo__sticky -->
+    </section>
+
+    <!-- ============ SEÇÃO 7 — BENEFÍCIOS (CARROSSEL) ============
+         Vem DEPOIS do palco duplo e não faz parte dele: quando a rolagem
+         horizontal termina, a página volta a descer e chega aqui.
+
+         O QUE A PESSOA VÊ é sempre UMA TELA — o .bene__sticky. A seção é mais
+         alta (uma tela por slide) porque essa altura extra é o curso de
+         rolagem do carrossel: é o scroll que troca os slides, não um timer
+         nem um botão.
+
+         O ENCAIXE (scroll snap) fica nos DEGRAUS, não na seção. A regra do
+         projeto (seção 1b do style.css) é que só encaixa quem tem no máximo
+         uma tela, e o tests/snap.spec.js confere isso em todo [data-snap].
+         Uma seção de 500vh com data-snap reprovaria — e estaria certo em
+         reprovar. Cada degrau tem exatamente 100vh, então o encaixe cai em
+         cima de cada slide, como pedido, sem quebrar a regra.
+
+         SEM ANIMAÇÃO DE ENTRADA, por pedido do cliente: nada aqui nasce
+         escondido esperando um gatilho. O que anima é só a TROCA de um slide
+         para o outro, e quem a comanda é assets/js/anim/bene.js.
+
+         DUAS RÉGUAS, DE PROPÓSITO:
+           · o painel preto e tudo dentro dele medem-se pelo PALCO (--u), que
+             é derivado da ALTURA da janela. É o que guarda as proporções da
+             referência — a foto, a logo e a legenda andam sempre juntas.
+           · a coluna da direita e o trilho medem-se pela JANELA.
+
+         A primeira versão media tudo pelo palco e o recortava para cobrir a
+         tela. Numa janela mais larga que 16:9 — o caso comum, porque a barra
+         do navegador come altura — o palco ficava mais ALTO que a janela e o
+         recorte comia a margem de cima da foto. O que parecia "falta de
+         padding" era padding cortado. Agora nada é recortado: o palco cabe
+         pela altura, e o que sobra de largura é branco, que já é a cor desse
+         lado. -->
+    <section class="bene" id="beneficios-lista" data-anime="bene">
+
+      <!-- Os degraus do encaixe. São só espaçadores: não têm conteúdo, não
+           recebem clique e o leitor de tela os ignora. Um por slide. -->
+      <div class="bene__steps" aria-hidden="true">
+        <div class="bene__step" data-snap></div>
+        <div class="bene__step" data-snap></div>
+        <div class="bene__step" data-snap></div>
+        <div class="bene__step" data-snap></div>
+        <div class="bene__step" data-snap></div>
+      </div>
+
+      <div class="bene__sticky">
+
+        <!-- ===== ESQUERDA: o painel preto =====
+             Mede-se pelo PALCO (--u), para guardar as proporções da
+             referência. A coluna da direita e o trilho, abaixo, medem-se pela
+             JANELA — a explicação está no style.css, no .bene__panel. -->
+        <div class="bene__panel">
+
+          <!-- As cinco fotos, empilhadas no mesmo lugar. Só a opacidade
+               muda — elas não se movem, e por isso ficam num grupo próprio,
+               separado dos textos (que descem e sobem). -->
+          <figure class="bene__card" data-slide="0">
+            <img src="assets/images/01.png" alt="Uma jogadora sorri em quadra de vôlei ao entardecer, com a bola em jogo ao fundo" loading="lazy" draggable="false" />
+          </figure>
+          <figure class="bene__card" data-slide="1">
+            <img src="assets/images/02.png" alt="Organizador acompanha a escalação de uma equipe pelo tablet, à beira da quadra" loading="lazy" draggable="false" />
+          </figure>
+          <figure class="bene__card" data-slide="2">
+            <img src="assets/images/03.png" alt="Celular exibindo a página de um torneio de praia, com a partida acontecendo ao fundo" loading="lazy" draggable="false" />
+          </figure>
+          <figure class="bene__card" data-slide="3">
+            <img src="assets/images/04.png" alt="Celular mostrando o perfil de uma equipe no aplicativo, durante um treino em quadra" loading="lazy" draggable="false" />
+          </figure>
+          <figure class="bene__card" data-slide="4">
+            <img src="assets/images/05.png" alt="Vista aérea de uma arena de vôlei de praia iluminada ao pôr do sol" loading="lazy" draggable="false" />
+          </figure>
+
+          <!-- A palavra deitada, atrás da foto -->
+          <span class="bene__word" data-slide="0">Participação</span>
+          <span class="bene__word" data-slide="1">Organização</span>
+          <span class="bene__word" data-slide="2">Comunicação</span>
+          <span class="bene__word" data-slide="3">Visibilidade</span>
+          <span class="bene__word" data-slide="4">Dados</span>
+
+          <!-- O logo é o mesmo em todos os slides, então fica FORA do grupo
+               que troca: não pisca junto com a legenda. -->
+          <img class="bene__logo" src="assets/images/section_07_logo.png" alt="" aria-hidden="true" />
+
+          <div class="bene__cap" data-slide="0">
+            <p class="bene__cap-t">Mais pessoas jogando</p>
+            <p class="bene__cap-d">Mais esporte acontecendo na sua cidade.</p>
+          </div>
+          <div class="bene__cap" data-slide="1">
+            <p class="bene__cap-t">Centralize a gestão esportiva.</p>
+            <p class="bene__cap-d">Equipes, eventos e informações em um só lugar.</p>
+          </div>
+          <div class="bene__cap" data-slide="2">
+            <p class="bene__cap-t">Aproxime a cidade do esporte.</p>
+            <p class="bene__cap-d">Divulgue ações, eventos e oportunidades para a comunidade.</p>
+          </div>
+          <div class="bene__cap" data-slide="3">
+            <p class="bene__cap-t">Dê visibilidade ao esporte local.</p>
+            <p class="bene__cap-d">Valorize atletas, projetos, equipes e iniciativas da cidade.</p>
+          </div>
+          <div class="bene__cap" data-slide="4">
+            <p class="bene__cap-t">Transforme dados em decisões.</p>
+            <p class="bene__cap-d">Entenda a comunidade esportiva e planeje melhor suas ações.</p>
+          </div>
+        </div>
+
+        <!-- ===== DIREITA: o texto ===== -->
+        <div class="bene__right">
+
+          <!-- Fixos: não trocam de slide -->
+          <p class="bene__eyebrow">
+            <span class="bene__dash" aria-hidden="true"></span>
+            Benefícios
+          </p>
+
+          <h2 class="bene__title">
+            <strong>Porque levar o Atleta do Vôlei</strong>
+            <span>para a sua cidade?</span>
+          </h2>
+
+          <span class="bene__rule" aria-hidden="true"></span>
+
+          <!-- Trocam: os cinco blocos, empilhados no mesmo lugar -->
+          <article class="bene__text" data-slide="0">
+            <p class="bene__num">01</p>
+            <p class="bene__kicker">Mais participação</p>
+            <p class="bene__desc">Facilite o acesso da população às atividades esportivas e recupere quem não joga mais.</p>
+          </article>
+          <article class="bene__text" data-slide="1">
+            <p class="bene__num">02</p>
+            <p class="bene__kicker">Mais organização</p>
+            <p class="bene__desc">Centralize informações, equipes e eventos.</p>
+          </article>
+          <article class="bene__text" data-slide="2">
+            <p class="bene__num">03</p>
+            <p class="bene__kicker">Mais comunicação</p>
+            <p class="bene__desc">Tenha um canal direto com atletas e comunidade, divulgando ações esportivas para quem realmente quer participar.</p>
+          </article>
+          <article class="bene__text" data-slide="3">
+            <p class="bene__num">04</p>
+            <p class="bene__kicker">Mais visibilidade</p>
+            <p class="bene__desc">Dê visibilidade a atletas, projetos, professores e iniciativas da cidade.</p>
+          </article>
+          <article class="bene__text" data-slide="4">
+            <p class="bene__num">05</p>
+            <p class="bene__kicker">Mais dados</p>
+            <p class="bene__desc">Conheça melhor a comunidade e suas necessidades.</p>
+          </article>
+        </div>
+
+        <!-- ===== O TRILHO DE ÍNDICE, à direita =====
+             O filete laranja é UM só e desliza; não há um por número. Assim
+             ele acompanha o scroll continuamente, em vez de pular de degrau
+             em degrau. -->
+        <ol class="bene__rail">
+          <span class="bene__rail-mark" aria-hidden="true"></span>
+          <li class="bene__rail-i" data-slide="0">01</li>
+          <li class="bene__rail-i" data-slide="1">02</li>
+          <li class="bene__rail-i" data-slide="2">03</li>
+          <li class="bene__rail-i" data-slide="3">04</li>
+          <li class="bene__rail-i" data-slide="4">05</li>
+        </ol>
+
+      </div>
     </section>
   </main>
 
+  <!-- ============ FOOTER ============
+       id="contato" NÃO é decoração: os dois botões "Fale com um especialista"
+       (no header e no hero) apontam para #contato desde a etapa 1, e até aqui
+       não havia destino nenhum — os dois cliques não saíam do lugar. O footer
+       é esse destino.
+
+       ANIMAÇÃO: os textos entram de baixo para cima, o logo só aparece, e
+       tudo escalonado da ESQUERDA para a DIREITA. A ordem do escalonamento é
+       a ordem do DOM — por isso as colunas estão escritas na ordem em que
+       aparecem na tela, e dentro de cada uma de cima para baixo. Mexer na
+       ordem daqui muda a ordem da animação. Quem rege é anim/footer.js. -->
+  <footer class="foot" id="contato" data-anime="foot">
+    <div class="container foot__inner">
+
+      <!-- coluna 1: marca -->
+      <div class="foot__col foot__col--marca">
+        <img class="foot__logo" src="assets/images/logo-white.png"
+             alt="Atleta do Vôlei — rede social esportiva" />
+        <p class="foot__desc">
+          A rede social feita para quem ama jogar vôlei — agora
+          conectando cidades inteiras.
+        </p>
+      </div>
+
+      <!-- coluna 2: navegação -->
+      <nav class="foot__col" aria-labelledby="foot-nav">
+        <h2 class="foot__head" id="foot-nav">Navegação</h2>
+        <ul class="foot__list">
+          <li><a class="foot__link" href="#beneficios">O que a prefeitura ganha</a></li>
+          <li><a class="foot__link" href="#solucao">A solução</a></li>
+          <li><a class="foot__link" href="#como-funciona">Como funciona</a></li>
+        </ul>
+      </nav>
+
+      <!-- coluna 3: contato -->
+      <div class="foot__col">
+        <h2 class="foot__head">Contato</h2>
+        <ul class="foot__list">
+          <li><a class="foot__link" href="mailto:contato@atletadovolei.com.br">contato@atletadovolei.com.br</a></li>
+          <li><a class="foot__link" href="https://atletadovolei.com.br" target="_blank" rel="noopener">atletadovolei.com.br</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="container foot__bottom">
+      <p class="foot__copy">© 2026 Atleta do Vôlei. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+
+  <!-- Anime.js 4.5.0 — bundle UMD, versão fixa, com verificação de integridade.
+       É ELE que anima a página inteira: sem ele, nada se move.
+
+       defer em todos: não bloqueiam o parse e executam NA ORDEM do documento,
+       então a biblioteca já existe quando os nossos rodam, e o main.js roda
+       antes dos módulos de anim/.
+
+       Se o CDN cair, ou se o arquivo não bater com o hash (o navegador então
+       RECUSA executá-lo), window.anime fica indefinido. Quem cobre esse caso
+       é a rede .sem-anime do main.js: o conteúdo aparece, só não anima. -->
+  <script src="https://cdn.jsdelivr.net/npm/animejs@4.5.0/dist/bundles/anime.umd.min.js"
+          integrity="sha384-InMmvD3VoYcY7hGjSC80aLb2bNNE4CzpX+Eq6FVDlmB0IKgDvmfPw4UY8L/M++iG"
+          crossorigin="anonymous" defer></script>
+
   <script src="assets/js/main.js" defer></script>
+  <script src="assets/js/anim/effects.js" defer></script>
+  <script src="assets/js/anim/hero.js" defer></script>
+  <script src="assets/js/anim/section-02.js" defer></script>
+  <!-- duo.js ANTES das duas seções, e a ordem importa: ele publica window.DUO,
+       que as duas consultam na hora de escolher o driver de scroll. Com defer,
+       a ordem de execução é a ordem das tags. -->
+  <script src="assets/js/anim/duo.js" defer></script>
+  <script src="assets/js/anim/section-04.js" defer></script>
+  <script src="assets/js/anim/section-05.js" defer></script>
+  <!-- O comparador é interação, não animação: não depende do window.anime e
+       funciona mesmo se o CDN cair. Vem por último porque lê o estado que os
+       outros deixaram (a classe .is-ativa na seta). -->
+  <script src="assets/js/anim/compare.js" defer></script>
+  <!-- Sorteia o respiro dos pontos do anel. Roda uma vez e acaba: a animação
+       em si é CSS. Também não depende do window.anime. -->
+  <script src="assets/js/anim/spots.js" defer></script>
+  <!-- Carrossel da seção 7. Também não depende do window.anime: a seção não
+       tem estado escondido, então sem ele ela fica parada no primeiro slide. -->
+  <script src="assets/js/anim/bene.js" defer></script>
+  <script src="assets/js/anim/footer.js" defer></script>
 </body>
 </html>

@@ -80,7 +80,48 @@ body {
 
 img { display: block; max-width: 100%; height: auto; }
 a   { text-decoration: none; color: inherit; }
-ul  { list-style: none; margin: 0; padding: 0; }
+/* ol junto de ul: a régua das seções 4 e 5 usa <ol> (a ordem dos capítulos
+   é informação, não decoração), e sem isto ela aparece NUMERADA na tela —
+   "1. O que a prefeitura ganha?". Só apareceu numa captura de tela. */
+ul, ol { list-style: none; margin: 0; padding: 0; }
+
+/* ---------- 1b. Encaixe de rolagem (scroll snap) ----------
+   A REGRA: só encaixa a seção que tem EXATAMENTE uma tela de altura.
+   Tudo que passa de 100vh é rolagem contínua, sem encaixe nenhum — nem no
+   meio, nem na chegada.
+
+   POR QUÊ: uma seção mais alta que a tela é mais alta de propósito. A altura
+   extra É o curso de rolagem de uma animação:
+
+     .hero      5.6 telas   curso de --p, --reel e do scrub do vídeo
+     .features  2.2 telas   curso de --e, a entrada dos 4 cards
+     .duo       6.2 telas   curso das seções 4 e 5 juntas: coreografia da 4,
+                            deslize horizontal e coreografia da 5
+
+   Nessas, não existe "posição certa" para encaixar: cada pixel de rolagem é
+   um quadro da animação. Encaixar seria escolher um quadro pela pessoa.
+
+   .social é a única de uma tela só: ali existe um enquadramento certo, e é
+   ali que o encaixe ajuda.
+
+   COMO SE MARCA: pelo atributo data-snap no HTML, não por lista de classes
+   aqui. Assim uma seção nova de 100vh ganha encaixe adicionando o atributo,
+   sem ninguém precisar lembrar de voltar neste arquivo. O tests/snap.spec.js
+   confere que todo [data-snap] realmente tem no máximo uma tela — se alguém
+   deixar o atributo numa seção que cresceu, o teste avisa.
+
+   `proximity` e não `mandatory`: com um único ponto de encaixe na página,
+   `mandatory` prenderia a rolagem nele.
+
+   SEM scroll-padding de propósito: o header é fixo mas transparente, e as
+   seções são desenhadas para encostar no topo da tela. */
+html {
+  scroll-snap-type: y proximity;
+}
+
+[data-snap] {
+  scroll-snap-align: start;
+}
 
 /* ---------- 2. Utilitários ---------- */
 .container {
@@ -144,9 +185,24 @@ ul  { list-style: none; margin: 0; padding: 0; }
   height: var(--header-h);
   display: flex;
   align-items: center;
-  /* Sempre transparente e sem transição de estado: o header não reage ao
-     scroll. A legibilidade vem do gradiente escuro de .hero__panel-grad. */
+  /* Transparente, sempre: a legibilidade vem do gradiente escuro de
+     .hero__panel-grad. E é por depender desse gradiente que o header não
+     sobrevive ao hero — ver .is-oculto logo abaixo. */
   background: transparent;
+  transition: opacity .32s var(--ease-out), transform .32s var(--ease-out);
+}
+
+/* O header existe SÓ sobre o hero. Fora dele a logo branca não tem fundo
+   escuro para se apoiar — e na seção 7 ela caía em cima do painel preto e
+   virava parte do desenho, que não é o que a referência mostra.
+
+   Quem põe e tira a classe é header(), no main.js, por IntersectionObserver
+   no .hero. pointer-events: none é o que impede um menu invisível de comer
+   os cliques de quem estiver rolando por baixo dele. */
+.site-header.is-oculto {
+  opacity: 0;
+  transform: translateY(-100%);
+  pointer-events: none;
 }
 
 .header__inner {
@@ -660,26 +716,95 @@ ul  { list-style: none; margin: 0; padding: 0; }
      card   264 x 300  -> aspect-ratio 22/25
      gap     14 / 941  -> ~1.5% da largura útil
    A régua de capítulos fecha a seção, como no mock. */
-/* A seção é MAIS ALTA que a viewport de propósito: o excedente (160vh) é o
-   curso de rolagem da timeline, com o conteúdo preso pelo sticky de dentro.
-   Mudar esta altura muda a VELOCIDADE do avanço do laranja — é o único
-   número a mexer para o laranja andar mais rápido ou mais devagar. */
-.gains {
+/* ---------- 5d-bis. O PALCO DUPLO (seções 4 + 5) ----------
+   As duas seções dividem uma moldura fixada só. A passagem entre elas é
+   horizontal.
+
+   OS TRÊS CURSOS SÃO A ÚNICA COISA A MEXER PARA MUDAR O RITMO. Estão aqui,
+   em vh, e o duo.js os LÊ deste CSS (getComputedStyle) em vez de repetir os
+   números. Uma fonte só: mexeu aqui, o JS acompanha sozinho.
+
+     --curso-4   quanto de rolagem a coreografia da seção 4 consome
+     --curso-pan quanto dura o deslize horizontal entre elas
+     --curso-5   quanto de rolagem a coreografia da seção 5 consome
+
+   A altura total é a soma. É ela que dá o curso; o sticky de dentro é o que
+   a pessoa vê parado enquanto isso acontece. */
+.duo {
+  --curso-4:   260;
+  --curso-pan:  40;
+  --curso-5:   320;
+
+  /* A FAIXA RESERVADA PARA A RÉGUA, no pé do palco.
+     É um token, e não um padding solto em cada seção, porque TRÊS coisas
+     precisam concordar sobre essa altura:
+       · o painel, que não pode deixar conteúdo passar por baixo da régua;
+       · a própria régua, que se ancora dentro dela;
+       · o palco da seção 5, cuja largura (--u) é calculada a partir da altura
+         disponível — sem descontar isto, o círculo seria recortado embaixo.
+     Mexeu aqui, as três acompanham. */
+  --rodape: clamp(64px, 10vh, 108px);
+
   position: relative;
   z-index: 2;
-  height: 260vh;
+  height: calc((var(--curso-4) + var(--curso-pan) + var(--curso-5)) * 1vh);
   background: var(--white);
   color: var(--ink);
 }
 
-.gains__sticky {
+/* A moldura. overflow: hidden é o que esconde o painel que ainda não chegou
+   (e o que já passou) — sem ele o trilho de 200% criaria rolagem lateral. */
+.duo__sticky {
   position: sticky;
   top: 0;
   height: 100vh;
+  overflow: hidden;
+}
+
+/* O trilho: dois painéis de 100vw lado a lado.
+   --pan vai de 0 (seção 4 na tela) a 1 (seção 5 na tela), escrito pelo
+   duo.js. -50% do trilho de 200% é exatamente uma tela. */
+.duo__rail {
+  display: flex;
+  width: 200%;
+  height: 100%;
+  transform: translate3d(calc(var(--pan, 0) * -50%), 0, 0);
+  will-change: transform;
+}
+
+.duo__panel {
+  width: 50%;
+  height: 100%;
+  flex: none;
   display: flex;
   align-items: center;
-  overflow: hidden;
-  padding: clamp(40px, 5vw, 76px) 0 clamp(24px, 2.6vw, 38px);
+  justify-content: center;
+  /* a faixa da régua: o conteúdo do painel para antes dela */
+  padding-bottom: var(--rodape);
+}
+
+/* A RÉGUA UNIFICADA — irmã do trilho, não filha. É essa posição no DOM que
+   a deixa parada enquanto os painéis deslizam por trás.
+   As margens laterais acompanham o .container para a barra nascer alinhada
+   com o conteúdo da seção 4. */
+.duo__timeline {
+  position: absolute;
+  left: max(24px, (100% - var(--container)) / 2);
+  right: max(24px, (100% - var(--container)) / 2);
+  bottom: calc(var(--rodape) * .30);   /* centrada na faixa reservada */
+  z-index: 5;
+  margin: 0;
+}
+
+/* ----- seção 4 como painel -----
+   Perdeu altura própria e sticky: quem fixa é o palco duplo. O que sobrou
+   aqui é só o que ela é por dentro. */
+.gains {
+  position: relative;
+  width: 100%;
+  background: var(--white);
+  color: var(--ink);
+  padding: clamp(40px, 5vw, 76px) 0;
 }
 
 .gains__inner {
@@ -803,21 +928,29 @@ ul  { list-style: none; margin: 0; padding: 0; }
   overflow: hidden;
 }
 
-/* Trecho percorrido. Começa cobrindo o primeiro terço (= embaixo do card 1)
-   e vai até 100% no fim do curso. --t vem do JS, na própria <section>.
-   33.333% + 66.667% * t  <=>  de 1/3 a 3/3. */
+/* Trecho percorrido. Começa em ZERO — a barra nasce toda cinza — e vai a
+   100% no fim do curso. --t vem do JS, na própria <section>.
+
+   A largura é o próprio --t, e isso deixou de ser só estética: a régua é
+   quem dá partida nos cards. Cada card entra quando o laranja alcança o
+   terço dele, então o que se vê na barra é literalmente o progresso da
+   sequência. Antes a barra começava em 33% e os cards entravam por conta
+   própria; as duas coisas não conversavam. */
 .timeline__fill {
   position: absolute;
   inset: 0 auto 0 0;
-  width: calc(33.333% + 66.667% * var(--t, 0));
+  width: calc(var(--t, 0) * 100%);
   border-radius: 2px;
   background: var(--brand);
 }
 
+/* Dois rótulos, um por seção — os capítulos do palco duplo. Eram três; o
+   terceiro ("Não é mais um sistema") saiu.
+   Com dois, a grade não espelha mais os cards: o primeiro ancora à esquerda,
+   o segundo à direita, e a régua entre eles cobre a distância. */
 .timeline__labels {
   display: grid;
-  /* mesma grade dos cards: cada rótulo cai sob o seu card */
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: clamp(10px, 1.5vw, 18px);
   margin-top: 10px;
 }
@@ -829,9 +962,982 @@ ul  { list-style: none; margin: 0; padding: 0; }
   color: #9AA1AC;
   transition: color .32s var(--ease-out);
 }
-.timeline__label:nth-child(2) { justify-self: center; text-align: center; }
-.timeline__label:nth-child(3) { justify-self: end;    text-align: right; }
+.timeline__label:nth-child(2) { justify-self: end; text-align: right; }
 .timeline__label.is-current { color: var(--ink); }
+
+/* ---------- 5e. Seção 5 — a transformação ----------
+   ESTA SEÇÃO NÃO USA O .container DO PROJETO, e a razão é o material de
+   origem: a referência é um PALCO 1000 x 563, e o pedido é que fique
+   exatamente igual. Num container de 1160px centrado, a mesma composição
+   muda de proporção a cada largura de tela — foi o que aconteceu na primeira
+   versão, com o círculo encolhido e a régua no meio da seção.
+
+   Então o palco é reconstruído aqui: mesma proporção 1000:563, e TODA medida
+   sai de --u, a largura dele. Assim a composição é a mesma em qualquer tela,
+   só maior ou menor.
+
+     posições  ->  left/top em %, que já são relativos ao palco
+     tamanhos  ->  calc(var(--u) * fração medida na referência)
+
+   As frações abaixo vêm da referência, em pixels do artboard de 1000:
+     margem lateral    68/1000  = 6.8%
+     badge             y  54    = 9.6% da altura
+     título            34px     = .034u
+     círculo           340px    = .34u,  centro em (58.5%, 46.2%)
+     régua             y 510    = 90.6% da altura                          */
+.trans {
+  /* Largura do palco. O segundo termo é o que impede a composição de estourar
+     a altura da tela: 1.52 de largura por altura disponível dá 1.52/1.776 =
+     86% dela, e o respiro vertical fecha o resto.
+
+     "ALTURA DISPONÍVEL" NÃO É MAIS 100vh: desde o palco duplo a régua ocupa
+     uma faixa no pé (--rodape), e o painel não vai até lá embaixo. Descontar
+     aqui é o que impede o círculo de ser recortado — sem isso a composição
+     estoura o painel e o overflow do palco corta a parte de baixo.
+     O fallback 0px cobre a seção usada fora do palco. */
+  --u: min(94vw, calc((100vh - var(--rodape, 0px)) * 1.52));
+
+  /* Diâmetro do círculo central. É o segundo token da seção: tudo o que é
+     circular (arcos, anéis, pílulas, pontos) deriva dele. */
+  --foto: calc(var(--u) * .34);
+
+  /* Raios dos anéis, em múltiplos do RAIO do círculo.
+
+     --r-spot é igual a --arco-out de propósito: na referência os pontos
+     laranja ficam EXATAMENTE SOBRE o arco externo, não entre os dois arcos.
+     Confere: ponto "Atletas" a 116px à direita e 194px acima do centro dá
+     raio 226 — e o arco externo tem raio 226. */
+  --r-pill:   1.12;
+  --r-spot:   1.311;
+
+  /* Proporções reais dos PNGs: 747/647 e 848/647. Como a altura de uma meia
+     circunferência é o diâmetro dela, estes números são o diâmetro do arco
+     em múltiplos do diâmetro da foto. */
+  --arco-in:  1.155;
+  --arco-out: 1.311;
+
+  /* Painel do palco duplo: sem altura própria e sem sticky. O curso da
+     coreografia agora é --curso-5 no .duo, e quem fixa é o .duo__sticky. */
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--white);
+  color: var(--ink);
+  padding: 3vh 0;
+}
+
+/* O PALCO. Tudo lá dentro se posiciona em % dele. */
+.trans__inner {
+  position: relative;
+  width: var(--u);
+  aspect-ratio: 1000 / 563;
+}
+
+/* ----- texto, à esquerda ----- */
+.trans__texto {
+  position: absolute;
+  left: 6.8%;
+  top: 9.6%;
+  z-index: 3;
+  width: 45%;
+}
+
+.trans__eyebrow {
+  margin: 0 0 calc(var(--u) * .035);
+  padding: calc(var(--u) * .007) calc(var(--u) * .016);
+  font-size: calc(var(--u) * .0105);
+}
+
+.trans__title {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  font-size: calc(var(--u) * .034);
+  line-height: 1.32;
+  letter-spacing: -.02em;
+  font-weight: 400;
+  color: #9AA1AC;
+}
+.trans__line--strong { font-weight: 600; color: var(--ink); }
+
+/* ----- o grupo circular -----
+   Quadrado, centrado no ponto que a referência marca. Ele não é animado, só
+   os filhos — então pode usar transform para se centrar. */
+.trans__stage {
+  /* --split é a posição do corte do comparador, de 0 a 100, e vive AQUI
+     porque três elementos precisam concordar sobre ela: o recorte da foto de
+     cima, a linha do corte e o `left` da seta. Um token, três leitores — e
+     nenhum número repetido entre eles.
+
+     50 é o estado inicial pedido: metade de cada imagem.
+     Quem escreve daí em diante é assets/js/anim/compare.js. */
+  --split: 50;
+
+  position: absolute;
+  left: 58.5%;
+  top: 46.2%;
+  width: var(--foto);
+  height: var(--foto);
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+/* ----- o comparador antes/depois -----
+   A camada das fotos. Virou <div> (era o próprio <img>), mas continua sendo
+   ELA que a coreografia anima — opacidade e escala. Por isso não pode ganhar
+   transform de posição aqui: inset: 0 já a encaixa no círculo. */
+.trans__foto {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.trans__foto-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* arrastar a alça não pode virar "arrastar a imagem" do navegador, que
+     cancelaria o gesto no meio e mostraria a miniatura fantasma */
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+/* A de cima é recortada A PARTIR do corte: some à esquerda dele e deixa a de
+   baixo (o "antes") aparecer. Empurrar o corte para a direita revela o antes
+   inteiro; para a esquerda, o depois inteiro. */
+.trans__foto-img--depois {
+  clip-path: inset(0 0 0 calc(var(--split) * 1%));
+}
+
+/* A linha do corte. Mora DENTRO da camada das fotos de propósito: o
+   overflow: hidden do círculo é o que a impede de aparecer fora dele. */
+.trans__corte {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--split) * 1%);
+  width: 2px;
+  margin-left: -1px;
+  background: rgba(255, 255, 255, .92);
+  box-shadow: 0 0 10px rgba(8, 12, 20, .45);
+  pointer-events: none;
+}
+
+/* ATENÇÃO, REGRA QUE VALE PARA TODO ESTE BLOCO:
+   quem o Anime.js anima NÃO pode usar transform para se posicionar.
+   A biblioteca reescreve o transform inteiro, e a centralização iria junto —
+   o elemento salta para o canto no primeiro frame. Então:
+     · posicionar com left/top (e margens negativas quando precisa centrar);
+     · ou pôr o transform de posição num PAI e animar o filho.
+   Cada caso abaixo diz qual dos dois usa. */
+
+/* "ANTES" sobre a metade esquerda da foto.
+   O <p> posiciona (com transform), o <span> de dentro é que anima. */
+.trans__antes {
+  position: absolute;
+  top: 50%;
+  left: 27%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  z-index: 3;
+  color: var(--white);
+  font-size: calc(var(--u) * .021);
+  letter-spacing: .04em;
+}
+.trans__antes span { display: block; }
+
+/* a seta central. Centrada por left/top, sem transform: o transform dela é
+   da animação de entrada (scale). 45.6% = 50% - 8.8%/2 */
+/* A SETA — alça do comparador.
+   A posição sai do --split e usa `left`, NUNCA transform: os dois níveis de
+   transform deste elemento já estão ocupados (o <span> pela entrada da
+   coreografia, o <img> pelo pulso), e um terceiro anularia um deles.
+
+   O -4.4% é metade da largura (8.8%): é o que põe o CENTRO da seta sobre o
+   corte, em vez da borda esquerda dela. Confere no estado inicial:
+   50% - 4.4% = 45.6%, que era o valor fixo de antes. */
+.trans__seta {
+  position: absolute;
+  top: 45.6%;
+  left: calc(var(--split) * 1% - 4.4%);
+  width: 8.8%;                   /* 57/647 */
+  z-index: 4;
+  touch-action: none;            /* o arrasto horizontal não vira rolagem */
+  /* Só pega o gesto depois de a coreografia trazer a seta para a tela.
+     Sem isto haveria uma alça invisível e arrastável sobre a foto. Quem
+     acende é .is-ativa, posta pelo section-05.js (ou pelo próprio
+     compare.js, quando a coreografia não vai rodar). */
+  pointer-events: none;
+}
+.trans__seta.is-ativa { pointer-events: auto; cursor: ew-resize; }
+.trans__seta img { width: 100%; height: auto; }
+
+/* Área de toque maior que o desenho: a seta tem ~57px na referência, o que
+   encolhe junto com a tela. O ::before estende o alvo sem mexer no visual.
+
+   -60% (~2.2x, uns 125px na referência) é um meio-termo medido: alvo
+   confortável para o dedo sem virar uma zona morta grande no meio do
+   círculo — com touch-action: none, tudo o que este alvo cobre deixa de
+   rolar a página na vertical. */
+.trans__seta::before {
+  content: "";
+  position: absolute;
+  inset: -60%;
+  border-radius: 50%;
+}
+
+.trans__seta:focus-visible {
+  outline: 3px solid var(--brand);
+  outline-offset: 8px;
+  border-radius: 50%;
+}
+
+/* O pulso é um convite a interagir. Depois que a pessoa aceitou o convite ele
+   vira ruído, então .ja-usou o desliga para sempre — é uma classe separada de
+   .is-pulsando de propósito: cada uma responde a uma pergunta diferente
+   ("a seta já entrou?" e "a pessoa já usou?"), e o scroll continua livre para
+   ligar e desligar a primeira sem ressuscitar o pulso. */
+.trans__seta.ja-usou img { animation: none !important; }
+
+/* Os rótulos são legendas de UMA das fotos: "ANTES" pertence à planilha, o
+   logo pertence à quadra. Quando o corte esconde a foto, a legenda dela tem
+   de ir junto — senão sobra "ANTES" escrito sobre a atleta em quadra.
+
+   filter, e não opacity: a opacidade destes dois é da coreografia (o Anime.js
+   a reescreve a cada frame), e mexer nela aqui seria o segundo interpolador
+   brigando com o primeiro. filter ninguém mais usa, então é livre — e ainda
+   dá a transição de graça. */
+.trans__antes,
+.trans__logo { transition: filter .3s var(--ease-out); }
+.trans__stage.is-so-depois .trans__antes,
+.trans__stage.is-so-antes  .trans__logo { filter: opacity(0); }
+
+/* pulso contínuo da seta. Vive no <img> porque o <span> que o embrulha usa
+   transform para a entrada — dois transforms no mesmo elemento se anulam.
+   A classe entra pelo JS, quando a coreografia chega na seta. */
+.trans__seta.is-pulsando img { animation: seta-pulso 1.8s ease-in-out infinite; }
+
+@keyframes seta-pulso {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.14); }
+}
+
+/* o logo, sobre a metade direita. Também sem transform de posição: o dele é
+   da animação (scale).
+     left = 72% - 28.6%/2 = 57.7%
+     top  = 50% - 18.55%/2 = 40.7%   (18.55% = 28.6% * 120/185, o palco é quadrado) */
+.trans__logo {
+  position: absolute;
+  top: 40.7%;
+  left: 57.7%;
+  width: 28.6%;                  /* 185/647 */
+  height: auto;
+  z-index: 3;
+}
+
+/* os dois arcos: a borda reta deles é o diâmetro, então encostam no centro */
+.trans__arco {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: auto;
+  transform: translateY(-50%);
+  z-index: 0;
+}
+.trans__arco--in  { height: calc(var(--foto) * var(--arco-in)); }
+.trans__arco--out { height: calc(var(--foto) * var(--arco-out)); }
+
+/* ----- os dois anéis de itens -----
+   Cada item é um PONTO sem tamanho no centro do palco, girado até o seu
+   ângulo e empurrado pelo raio. O conteúdo desgira junto, para o texto sair
+   na horizontal. É a mesma mecânica nos dois anéis, só muda o sentido. */
+.trans__pills,
+.trans__spots { position: absolute; inset: 0; z-index: 2; }
+
+.trans__pill,
+.trans__spot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+}
+
+/* pílulas: para a ESQUERDA (raio negativo) */
+.trans__pill {
+  transform:
+    rotate(var(--ang))
+    translateX(calc(var(--foto) / 2 * var(--r-pill) * -1))
+    rotate(calc(var(--ang) * -1));
+}
+.trans__pill span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  width: calc(var(--foto) * .278);    /* 180/647 */
+  height: calc(var(--foto) * .0757);  /*  49/647 */
+  background: url("../images/section_5_elem_bg.png") center / 100% 100% no-repeat;
+  color: var(--white);
+  font-size: calc(var(--u) * .0092);
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* ----- o risco sobre a palavra -----
+   O <i> existe só para MEDIR a palavra. O <span> acima é a pílula inteira,
+   de largura fixa, e um traço do tamanho dele riscaria o vazio dos lados
+   também — "PDF" ganharia a mesma linha de "REDE SOCIAIS".
+
+   O traço é o ::after do <i>, e ser um PSEUDO-ELEMENTO não é detalhe: o
+   Anime.js anima a opacidade da pílula escrevendo style inline, e não existe
+   style inline para ::after. O risco fica fora do alcance da coreografia, que
+   é a única forma de os dois conviverem no mesmo elemento. */
+.trans__pill i {
+  position: relative;
+  font-style: normal;            /* <i> é caixa de medida aqui, não ênfase */
+}
+
+.trans__pill i::after {
+  content: "";
+  position: absolute;
+  /* passa um tico da palavra dos dois lados: é o que faz ler como risco, e
+     não como sublinhado que por acaso ficou no meio */
+  left: -.14em;
+  right: -.14em;
+  top: 50%;
+  height: max(1px, .085em);
+  background: currentColor;
+  border-radius: 1px;
+
+  /* Cresce da esquerda para a direita. Ao voltar, a mesma transição desenha
+     o caminho inverso — o traço se recolhe por onde veio, que é o que a
+     pessoa espera de um "desfazer". */
+  transform: translateY(-50%) scaleX(0);
+  transform-origin: left center;
+  transition: transform .34s var(--ease-out);
+  pointer-events: none;
+}
+
+/* Quem põe .is-riscado é o compare.js, a partir do mesmo --split que move o
+   corte: cada pílula tem o seu limiar (20%, 40%, 60%, 80%, 100%). */
+.trans__pill.is-riscado i::after { transform: translateY(-50%) scaleX(1); }
+
+/* pontos: para a DIREITA, sobre o arco externo, com o rótulo em seguida.
+   O ponto e o rótulo animam os DOIS (o ponto cresce, o rótulo vem da
+   esquerda), então nenhum dos dois pode usar transform para se posicionar.
+   Quem centra é o invólucro .trans__spot-c, que a animação não toca. */
+.trans__spot {
+  transform:
+    rotate(var(--ang))
+    translateX(calc(var(--foto) / 2 * var(--r-spot)))
+    rotate(calc(var(--ang) * -1));
+}
+.trans__spot-c {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * .009);
+}
+/* O <i> é a CAIXA do ponto: tamanho, lugar no raio, e a entrada da
+   coreografia (opacidade e escala, escritas pelo Anime.js).
+   Quem DESENHA o ponto é o ::after — ver o porquê logo abaixo. */
+.trans__spot i {
+  position: relative;                 /* âncora do ::after */
+  flex: none;
+  width: calc(var(--u) * .007);       /* 7/1000 na referência */
+  height: calc(var(--u) * .007);
+  margin-left: calc(var(--u) * -.0035);   /* o ponto fica CENTRADO no raio */
+}
+
+/* ----- o ponto, e o respiro dele -----
+   POR QUE O DESENHO DESCEU PARA UM PSEUDO-ELEMENTO:
+   a opacidade do <i> é da coreografia — o Anime.js a reescreve a cada frame,
+   raspada pelo scroll. Uma @keyframes de opacity no próprio <i> GANHARIA
+   desse style inline (animação CSS tem prioridade sobre inline) e os pontos
+   acenderiam antes de a coreografia chegar neles.
+
+   No ::after não há esse conflito: ele não recebe style inline nenhum, e a
+   opacidade dele MULTIPLICA a do pai. Então a coreografia continua mandando
+   em "o ponto já apareceu?" e o respiro manda em "o ponto está pulsando?",
+   sem as duas disputarem a mesma propriedade.
+
+   É a mesma saída do pulso da seta (que foi para o <img>), das legendas (que
+   foram para o filter) e do risco das pílulas (que foi para o ::after). */
+.trans__spot i::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--brand);
+
+  /* --ciclo e --atraso vêm do JS, sorteados a cada carregamento e escritos
+     no .trans__spot (o <li>), que os herda até aqui. Os valores de reserva
+     mantêm o ponto aceso e parado se o módulo não rodar. */
+  animation: spot-respirar var(--ciclo, 0s) linear var(--atraso, 0s) infinite;
+}
+
+/* O respiro: 100% -> 20% -> 100%, linear, e o resto do ciclo parado.
+   Os 20% de ida e volta são a FRAÇÃO do ciclo que o piscar ocupa: com um
+   ciclo de 8s dá cerca de 1.6s de animação e 6.4s de pausa. É essa pausa
+   longa que faz os dez pontos parecerem se revezar em vez de piscarem
+   juntos — mexer nela é mexer em quantos piscam ao mesmo tempo. */
+@keyframes spot-respirar {
+  0%        { opacity: 1; }
+  10%       { opacity: .2; }
+  20%, 100% { opacity: 1; }
+}
+.trans__spot b {
+  white-space: nowrap;
+  font-size: calc(var(--u) * .0145);
+  font-weight: 400;
+  color: var(--ink);
+}
+
+/* A régua que ficava aqui dentro saiu: virou .duo__timeline, uma só para as
+   duas seções, ancorada no palco fixado. Ver a seção 5d-bis. */
+
+/* ----- estados iniciais -----
+   Tudo o que a coreografia anima nasce escondido. Sem a biblioteca, a rede
+   .sem-anime (seção 6c) devolve tudo ao estado final.
+
+   CADA SELETOR AQUI TEM DE SER EXATAMENTE O ELEMENTO QUE A COREOGRAFIA
+   ANIMA — nem o pai, nem o filho. Esconder o PAI de um elemento animado o
+   deixa invisível para sempre: o filho acende a própria opacidade, mas
+   continua dentro de um pai em opacity 0. Foi o que aconteceu ao escrever
+   este bloco pela primeira vez, com .trans__antes (o <p>, que só posiciona)
+   e .trans__spot span (que virou o invólucro, não o rótulo). */
+.trans__eyebrow,
+.trans__line,
+.trans__antes span,
+.trans__foto,
+.trans__seta,
+.trans__logo,
+.trans__arco,
+.trans__pill span,
+.trans__spot i,
+.trans__spot b { opacity: 0; }
+
+/* ---------- 5f. Seção 7 — benefícios (carrossel) ----------
+   MESMA ESTRATÉGIA DA SEÇÃO 5, e pelo mesmo motivo: a referência é um quadro
+   1051 x 590 (16:9) e o pedido é que fique idêntico. Num layout que se
+   redistribui a cada largura, a composição muda de proporção em toda tela.
+
+   Então o palco é reconstruído aqui: mesma proporção 16:9, e TODA medida sai
+   de --u, a largura dele.
+
+     posições  ->  left/top em %, que já são relativos ao palco
+     tamanhos  ->  calc(var(--u) * fração medida na referência)
+
+   Frações medidas na referência (1051 x 590):
+     painel preto       388/1051 = 36.9%
+     foto: esquerda       8/1051 =  0.8%   topo 33/590 = 5.6%
+           largura      297/1051 = 28.25%  (a altura vem da proporção do PNG)
+     coluna da direita  473/1051 = 45%     topo 111/590 = 18.8%
+     trilho             945/1051 = 89.9%   topo 100/590 = 16.9%, altura 41.5%
+
+   POR QUE --u USA max() E NÃO min() (o contrário da seção 5):
+   lá o palco tinha de CABER na tela, com respiro em volta. Aqui ele tem de
+   COBRI-LA: o painel preto encosta na esquerda, no topo e no pé, e qualquer
+   sobra viraria uma tarja branca no meio do preto. Então o palco é o menor
+   16:9 que cobre a viewport, e o que passa é aparado pelo overflow. */
+.bene {
+  /* Um slide, um degrau, uma tela. Mudar aqui muda quanto se rola por slide;
+     a altura da seção e os degraus acompanham sozinhos. */
+  --slides: 5;
+
+  /* A LARGURA DO PALCO — a régua de tudo que é proporção nesta seção.
+
+     Sai da ALTURA da janela: 177.97vh é a largura de um 16:9 com 100vh de
+     altura (1051/590 = 1.7797). Assim o palco tem exatamente uma tela de
+     altura e NADA é recortado na vertical.
+
+     A primeira versão usava max(100vw, 177.97vh) para COBRIR a tela. Numa
+     janela mais larga que 16:9 — o caso comum, porque a barra do navegador
+     come altura: 1920x1080 dá ~1889x955, proporção 2.0 — o palco ficava mais
+     alto que a janela e o recorte centralizado comia 53px em cima, que é
+     quase toda a margem superior da foto. Parecia padding faltando; era
+     padding cortado.
+
+     O min() é a trava do outro lado: numa janela estreita e alta, 177.97vh
+     ficaria tão grande que o painel preto (36.9% disto) encostaria na coluna
+     da direita, que começa em 45% da janela. Com 112vw o painel fica em no
+     máximo 41% dela, sobrando um vão. Medido numa janela 4:3, que é o pior
+     caso: sem a trava o painel batia exatamente nos 45%, sem folga nenhuma.
+
+     Numa tela 16:9 os dois termos empatam e o min() não tem efeito. */
+  --u: min(177.97vh, 112vw);
+
+  /* O deslocamento do texto ao sair e ao entrar.
+     COMPRIMENTO, e não porcentagem: translateY(%) resolve contra a altura do
+     PRÓPRIO elemento, então 2% dariam um salto diferente para o parágrafo
+     grande e para o "01" — os blocos sairiam em velocidades diferentes. Em
+     unidade de palco, todos andam o mesmo tanto. */
+  --sobe: calc(var(--u) * .014);
+
+  position: relative;
+  z-index: 2;
+  height: calc(var(--slides) * 100vh);
+  background: var(--white);
+  color: var(--ink);
+}
+
+/* Os degraus do encaixe: espaçadores empilhados, um por slide, cada um com
+   exatamente uma tela. Ficam no fundo e não recebem clique. */
+.bene__steps {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.bene__step { height: 100vh; }
+
+.bene__sticky {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  height: 100vh;
+  overflow: hidden;      /* apara o que o palco passar da tela */
+  background: var(--white);
+}
+
+/* ----- o painel preto, à esquerda -----
+   Encostado na esquerda, sangrando do topo ao pé. A largura vem do PALCO
+   (--u), não da janela: é o que mantém a proporção entre o painel, a foto
+   dentro dele e a palavra deitada, exatamente como na referência.
+
+   Havia um .bene__stage envolvendo isto e a coluna da direita. Ele saiu: com
+   o palco medido pela altura, a coluna da direita precisa se medir pela
+   JANELA para não deixar uma faixa branca à direita numa tela larga. Duas
+   réguas diferentes não cabiam na mesma caixa. */
+.bene__panel {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: calc(var(--u) * .369);       /* 388/1051 */
+  background: #121212;
+
+  /* SEM overflow: hidden, e é de propósito: a palavra deitada encosta a base
+     das letras nesta borda, e a perna do "p" e a cedilha do "ç" passam dela.
+     Aparar aqui daria um corte reto no meio das letras.
+
+     Nada mais aqui dentro vaza: a foto termina em .2901u e o painel tem
+     .369u, e as duas medidas escalam juntas — a folga existe em qualquer
+     tamanho de tela. */
+}
+
+/* ----- as cinco fotos, empilhadas no mesmo lugar -----
+   SEM object-fit: cover. Os PNGs (556 x 946) já vêm com os cantos
+   arredondados e fundo transparente; recortar para preencher uma caixa de
+   outra proporção comeria justamente os cantos. Então a caixa TEM a proporção
+   do arquivo, e a imagem a preenche inteira.
+
+   As fotos só trocam de opacidade — nunca se movem. É por isso que estão num
+   grupo separado dos textos, que descem e sobem. */
+/* ATENÇÃO, ARMADILHA DESTE BLOCO INTEIRO:
+   tudo aqui dentro é filho do .bene__panel, que tem 36.9% da largura do
+   palco. Uma porcentagem horizontal aqui resolve contra o PAINEL, não contra
+   o palco — foi assim que a foto saiu com 10.4% do palco em vez de 28.25%,
+   quase três vezes menor, arrastando junto a logo e a legenda.
+
+   Por isso as medidas horizontais daqui para baixo são em --u, a largura do
+   palco, e não em %. A fração ao lado é a medida na referência de 1051px.
+   As verticais podiam ser em %, já que o painel tem a altura toda do palco,
+   mas ficam em --u também: uma régua só para o bloco todo é uma armadilha a
+   menos para quem vier depois. */
+.bene__card {
+  position: absolute;
+  left: calc(var(--u) * .0076);       /*   8/1051 */
+  top: calc(var(--u) * .0314);        /*  33/1051 */
+  width: calc(var(--u) * .2825);      /* 297/1051 */
+  aspect-ratio: 556 / 946;
+  margin: 0;
+  z-index: 2;
+
+  /* --on é escrito pelo bene.js: 1 no slide da vez, 0 nos outros, e os
+     valores intermediários durante a troca é que fazem o crossfade. */
+  opacity: var(--on, 0);
+}
+.bene__card img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* ----- a palavra deitada, no fundo do painel -----
+   rotate(90deg) e não writing-mode: o desenho tem as LETRAS deitadas junto
+   com a linha, que é o que a rotação faz; writing-mode vertical-rl manteria
+   cada letra em pé, empilhada. São dois efeitos diferentes.
+
+   transform-origin no canto: com a origem no centro, mudar o comprimento da
+   palavra ("Dados" contra "Comunicação") moveria o ponto de partida dela, e
+   as cinco não se alinhariam. */
+.bene__word {
+  position: absolute;
+
+  /* ANCORADA PELA BASE DAS LETRAS na divisão preto/branco (.369u), não pelo
+     meio da coluna. É outra régua, e vale entender a conta.
+
+     Com rotate(-90deg) o "para cima" das letras aponta para a ESQUERDA: o
+     corpo delas cresce painel adentro e as DESCIDAS (perna do p, cedilha do
+     ç) caem para a direita, por cima da divisão. Era o pedido.
+
+     A caixa da linha é centrada em `left` pelo translate(-50%) do transform, e
+     a base das letras fica a --descida à esquerda da borda direita dela:
+
+         centro          = .369u - --descida - --folga
+         base das letras = centro + metade da linha - --descida
+                         = .369u - --folga                            ✓
+
+     --descida SAI DAS MÉTRICAS DA FONTE, não do olho. Foi chutada em .25em na
+     primeira versão e as letras encostavam demais na divisão. Lidas do
+     arquivo (assets/fonts/TT Firs Neue Trial Regular.woff, tabelas head/hhea/
+     OS-2, unitsPerEm 1000):
+
+         ascent 0.950em   descent 0.340em   capHeight 0.700em
+
+     A soma dá 1.29em, bem acima do line-height: 1 desta regra, então o
+     meio-entrelinha é NEGATIVO — as letras transbordam a caixa da linha:
+
+         meio-entrelinha = (1 - 1.29) / 2      = -0.145em
+         base a partir do topo da caixa        =  0.805em
+         recuo do centro = base - metade       =  0.305em
+
+     Com .305em a base fica EXATAMENTE na divisão. Era o pedido inicial; só
+     que encostada demais ela se lê como letra cortada, porque o que passa da
+     divisão é desenhado em branco a 20% sobre branco e simplesmente some.
+
+     Daí o segundo número: --folga é o respiro, pedido depois de ver. Os dois
+     são separados de propósito — um é medida da fonte e não se mexe, o outro
+     é gosto e é o único a mexer. */
+  --descida: .305em;
+  --folga:   .06em;
+
+  left: calc(var(--u) * .369 - var(--descida) - var(--folga));
+  top: 50%;
+  z-index: 1;       /* atrás da foto (z-index 2), como na referência */
+
+  /* A ORDEM DESTE transform É O QUE O FAZ FUNCIONAR, e é fácil de quebrar:
+       translateY(--y)       o movimento do scroll, em espaço de TELA
+       translate(-50%,-50%)  centra o elemento no ponto (left, top)
+       rotate(90deg)         deita a palavra
+
+     A função mais à ESQUERDA é a última aplicada ao ponto, ou seja, a que
+     age no espaço do pai. Pôr o translateY depois do rotate — que foi a
+     primeira versão — o faria andar no espaço JÁ GIRADO: a palavra sairia
+     para o lado, não para baixo.
+
+     rotate e não writing-mode: o desenho tem as LETRAS deitadas junto com a
+     linha, que é o que a rotação faz. writing-mode: vertical-rl manteria
+     cada letra em pé, uma sobre a outra — é outro efeito.
+
+     -90deg E NÃO 90deg. Os dois deitam a palavra; o que muda é o SENTIDO de
+     leitura, e o desenho tem um só:
+       rotate( 90deg)  lê de cima para baixo, topos das letras à direita
+       rotate(-90deg)  lê de baixo para cima, topos das letras à esquerda
+     A referência é a segunda — em "Participação", o "ão" fica em CIMA.
+
+     Centrada, e não presa pelo topo: na referência "Dados" (5 letras) e
+     "Participação" (12) têm o MESMO centro vertical. */
+  transform: translateY(var(--y, 0px)) translate(-50%, -50%) rotate(-90deg);
+
+  font-size: calc(var(--u) * .059);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -.01em;
+  color: rgba(255, 255, 255, .2);
+  white-space: nowrap;
+  opacity: var(--on, 0);
+}
+
+/* ----- logo e legenda, SOBRE a área escura da foto ----- */
+/* O logo e a legenda descem JUNTOS: são um bloco só, e o vão entre eles é
+   parte do desenho. Os dois desceram .014u (uns 15px na referência) do que a
+   referência mostrava, a pedido do cliente — daí os valores não baterem mais
+   com as frações de origem, que ficam anotadas ao lado.
+   Para descer mais, os dois números caem juntos; para subir, sobem juntos. */
+.bene__logo {
+  position: absolute;
+  left: calc(var(--u) * .0362);       /*  38/1051 */
+  bottom: calc(var(--u) * .1118);     /* 132/1051 menos .014 */
+  width: calc(var(--u) * .0362);      /*  38/1051 */
+  z-index: 3;
+}
+
+.bene__cap {
+  position: absolute;
+  left: calc(var(--u) * .0362);       /*  38/1051 */
+  /* 267/1051: a legenda termina exatamente na borda direita da foto.
+     8 + 297 (foto) = 305; 38 (esta margem) + 267 = 305. */
+  width: calc(var(--u) * .2540);
+  bottom: calc(var(--u) * .0450);     /*  62/1051 menos .014 — ver o logo */
+  z-index: 3;
+  color: var(--white);
+
+  /* --y e --on vêm do bene.js. O texto sai descendo e o próximo sobe. */
+  transform: translateY(var(--y, 0px));
+  opacity: var(--on, 0);
+}
+.bene__cap-t {
+  margin: 0 0 .5em;
+  font-size: calc(var(--u) * .0124);
+  font-weight: 600;
+}
+.bene__cap-d {
+  margin: 0;
+  font-size: calc(var(--u) * .0105);
+  font-weight: 400;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, .72);
+}
+
+/* ----- a coluna da direita ----- */
+.bene__right {
+  position: absolute;
+  left: 45%;
+  right: 21%;        /* o título quebra em x=830/1051, como na referência */
+  top: 0;
+  bottom: 0;
+  z-index: 2;
+}
+
+.bene__eyebrow {
+  position: absolute;
+  top: 16.6%;
+  left: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * .0105);
+  font-size: calc(var(--u) * .0105);
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #8A8A8A;
+}
+.bene__dash {
+  width: calc(var(--u) * .0209);
+  height: 2px;
+  flex: none;
+  background: var(--brand);
+}
+
+.bene__title {
+  position: absolute;
+  top: 23.2%;
+  left: 0;
+  right: 0;
+  margin: 0;
+  font-size: calc(var(--u) * .0323);
+  line-height: 1.22;
+  letter-spacing: -.015em;
+}
+/* o trecho escuro e o cinza são um parágrafo só: os dois são inline para a
+   quebra de linha cair onde tiver de cair, como na referência */
+.bene__title strong { font-weight: 600; color: var(--ink); }
+.bene__title span   { font-weight: 400; color: #9AA1AC; }
+
+.bene__rule {
+  position: absolute;
+  top: 51.7%;
+  left: 0;
+  width: 20%;                         /* 210/1051 */
+  height: 1px;
+  background: #E6E8EC;
+}
+
+/* Os cinco blocos, empilhados no mesmo lugar. O topo é o do "01" na
+   referência (343/590). */
+.bene__text {
+  position: absolute;
+  top: 56.4%;
+  left: 0;
+  right: 0;
+
+  transform: translateY(var(--y, 0px));
+  opacity: var(--on, 0);
+}
+.bene__num {
+  margin: 0 0 .5em;
+  font-size: calc(var(--u) * .0209);
+  font-weight: 600;
+  color: var(--brand);
+}
+.bene__kicker {
+  margin: 0 0 1.5em;
+  font-size: calc(var(--u) * .0133);
+  font-weight: 400;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: #8A8A8A;
+}
+.bene__desc {
+  margin: 0;
+  max-width: 83%;    /* quebra em x=768/1051, um pouco antes do título */
+  font-size: calc(var(--u) * .0143);
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+/* ----- o trilho de índice -----
+   Cinco fatias iguais. O filete laranja é UM só e desliza continuamente com
+   o scroll; não há um por número, e não pula de degrau em degrau. */
+.bene__rail {
+  position: absolute;
+  left: 89.9%;
+  top: 16.9%;
+  height: 41.5%;
+  z-index: 2;
+
+  display: grid;
+  grid-template-rows: repeat(5, 1fr);
+  align-items: center;
+  border-left: 1px solid #E6E8EC;
+  padding-left: calc(var(--u) * .0143);
+}
+
+.bene__rail-mark {
+  position: absolute;
+  left: -1px;
+  top: 0;
+  width: 2px;
+  height: 20%;                        /* uma fatia */
+  background: var(--brand);
+  /* --f é o progresso em slides (0 a 4), escrito pelo bene.js. Multiplicar
+     por 100% de uma fatia dá a posição exata, sem tabela de posições. */
+  transform: translateY(calc(var(--f, 0) * 100%));
+}
+
+.bene__rail-i {
+  font-size: calc(var(--u) * .0124);
+  font-weight: 400;
+  letter-spacing: .04em;
+  color: #9AA1AC;
+  transition: color .3s var(--ease-out), font-weight .3s var(--ease-out);
+}
+.bene__rail-i.is-on { color: var(--brand); font-weight: 600; }
+
+/* ---------- 5g. Footer ----------
+   Medidas tiradas da referência, que é uma captura 1:1 numa janela de 1908px
+   com o conteúdo de 1167px centrado — praticamente o --container do projeto.
+   Por isso os valores aqui são px de verdade, e não frações de um palco: esta
+   seção é tipografia num container, como a seção 4, e não uma composição de
+   proporção fixa como a 5 e a 7.
+
+   Frações medidas, sobre o conteúdo de 1167px:
+     coluna "Navegação"   533/1167 = 45.7%
+     coluna "Contato"     835/1167 = 71.5%
+   As duas viram o grid abaixo: 45.7% para a marca, e o resto dividido no
+   ponto em que a terceira começa. */
+.foot {
+  position: relative;
+  z-index: 2;
+  padding-top: clamp(48px, 5vw, 72px);
+  background: #0A1B33;
+  color: var(--white);
+}
+
+.foot__inner {
+  display: grid;
+  grid-template-columns: 45.7% 25.8% 28.5%;
+  align-items: start;
+}
+
+/* ----- coluna 1: marca -----
+   O logo já traz "REDE SOCIAL ESPORTIVA" embutido, em branco. Foi conferido
+   decodificando o PNG: na faixa y 140-159 há pixels brancos de x 9 a 605, bem
+   além da bola, que acaba em x~190. Não acrescente um subtítulo em texto aqui
+   — ficaria duplicado. */
+.foot__logo {
+  width: clamp(140px, 14.4vw, 167px);   /* 167/1167 do conteúdo */
+  height: auto;
+}
+
+.foot__desc {
+  max-width: 340px;
+  margin: 28px 0 0;
+  font-size: clamp(13px, 1.1vw, 15px);
+  font-weight: 400;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, .76);
+}
+
+/* ----- colunas 2 e 3 ----- */
+.foot__head {
+  margin: 0 0 22px;
+  font-size: clamp(11px, .95vw, 13px);
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--white);
+}
+
+.foot__list {
+  display: flex;
+  flex-direction: column;
+  /* 8px: na referência as linhas ficam a 29px uma da outra, e 15px de corpo
+     com line-height 1.4 já ocupam 21. */
+  gap: 8px;
+}
+
+.foot__link {
+  font-size: clamp(13px, 1.1vw, 15px);
+  line-height: 1.4;
+  color: rgba(255, 255, 255, .76);
+  transition: color .25s var(--ease-out);
+}
+.foot__link:hover,
+.foot__link:focus-visible { color: var(--white); }
+
+/* ----- a faixa de baixo ----- */
+.foot__bottom {
+  margin-top: clamp(28px, 3.4vw, 40px);
+  padding-top: 26px;
+  padding-bottom: 30px;
+  border-top: 1px solid rgba(255, 255, 255, .12);
+  text-align: center;
+}
+
+.foot__copy {
+  margin: 0;
+  font-size: clamp(11px, .95vw, 13px);
+  color: rgba(255, 255, 255, .5);
+}
+
+/* ----- estados iniciais da animação -----
+   Tudo que anima nasce escondido, pelo mesmo motivo do resto do projeto: é o
+   que evita o flash de conteúdo enquanto o script do CDN não chegou. As duas
+   redes que devolvem isto ao estado final (.sem-anime e movimento reduzido)
+   estão nas seções 6c e 8, e os seletores TÊM de acompanhar esta lista.
+
+   O logo é o único que não se desloca — só aparece, como pedido. */
+.foot__logo,
+.foot__desc,
+.foot__head,
+.foot__list li,
+.foot__copy { opacity: 0; }
+
+.foot__desc,
+.foot__head,
+.foot__list li,
+.foot__copy { transform: translateY(24px); }
 
 /* ---------- 6. Animações de entrada ---------- */
 [data-reveal] {
@@ -919,6 +2025,94 @@ ul  { list-style: none; margin: 0; padding: 0; }
    de um card deslizando POR CIMA do anterior até encaixar. */
 .card { --enter-y: 110px; }
 
+/* ---------- 6b. Seções dirigidas pelo Anime.js (sprint 5) ----------
+   A classe .is-anime é posta por assets/js/anim/*.js, e SÓ quando a
+   biblioteca carregou de verdade. Enquanto ela não estiver lá, tudo acima
+   continua valendo e o main.js anima a seção como antes — é o fallback.
+
+   Por que desligar transition e animation: o Anime.js escreve style inline a
+   cada frame. A transition de [data-reveal] dispararia por cima de CADA
+   escrita, e o @keyframes elástico rodaria em paralelo — dois interpoladores
+   disputando a mesma propriedade. O estado INICIAL (opacity: 0) continua
+   vindo do CSS de propósito: é ele que evita o flash de conteúdo enquanto o
+   script do CDN não chegou.                                                */
+.is-anime [data-reveal] {
+  transition: none;
+  animation: none;
+}
+
+/* ---------- 6c. Sem a biblioteca: rede de segurança ----------
+   .sem-anime é posta no <html> pelo main.js quando window.anime não existe —
+   CDN fora do ar, SRI recusando o arquivo, rede bloqueada.
+
+   Sem isto, a página não ficaria "sem animação": ficaria EM BRANCO. Todo o
+   conteúdo animado nasce com opacity 0 de propósito (é o que evita o flash
+   enquanto o script não chega), e as seções 1 e 4 têm vários viewports de
+   altura só para servirem de curso de rolagem às animações.
+
+   Então aqui devolvemos tudo ao estado final: conteúdo visível, seções com
+   altura natural, nada fixado. É o mesmo destino do bloco de movimento
+   reduzido, logo abaixo, e os dois devem ser mantidos juntos.             */
+.sem-anime [data-reveal],
+.sem-anime [data-enter] {
+  opacity: 1 !important;
+  transform: none !important;
+  animation: none !important;
+  transition: none !important;
+}
+.sem-anime [data-parallax] { transform: none !important; }
+
+/* seção 1 — o palco de rolagem não tem o que animar: vira fluxo normal */
+.sem-anime .showcase { height: auto; padding: 60px 0; }
+.sem-anime .showcase__stage { position: static; height: auto; display: block; overflow: visible; }
+.sem-anime .phone { transform: none !important; opacity: 1 !important; margin: 0 auto 40px; width: 92vw; }
+.sem-anime .hero__reel { transform: none !important; }
+.sem-anime .bridge { position: relative; inset: auto; pointer-events: auto; min-height: 60vh; }
+.sem-anime .bridge__line { opacity: 1 !important; transform: none !important; }
+
+/* PALCO DUPLO desempilhado — sem --pan o trilho nunca deslizaria, e a seção 5
+   ficaria fora da tela para sempre. Solta o pin, empilha os dois painéis na
+   vertical e esconde a régua (que sem --t não mede nada).
+
+   ATENÇÃO, MANUTENÇÃO: este mesmo bloco aparece em três lugares, porque as
+   três situações desligam o palco pelo mesmo motivo e nenhuma delas pode
+   depender das outras — aqui (.sem-anime), no prefers-reduced-motion
+   (seção 8) e no @media (max-width: 720px). Mexeu num, mexa nos três. */
+.sem-anime .duo { height: auto; --rodape: 0px; }
+.sem-anime .duo__sticky { position: static; height: auto; overflow: visible; }
+.sem-anime .duo__rail { display: block; width: 100%; transform: none; }
+.sem-anime .duo__panel { width: 100%; height: auto; display: block; }
+.sem-anime .duo__timeline { display: none; }
+
+/* seção 4 — sem --t não há timeline a percorrer: acende tudo */
+.sem-anime .gain::after { opacity: 1; }
+.sem-anime .timeline__fill { width: 100%; }
+
+
+/* seção 5 — sem a biblioteca a coreografia não roda: mostra tudo parado.
+   SÓ opacidade: os transforms que sobraram no CSS são de POSIÇÃO (centrar a
+   seta, girar os anéis) e zerá-los jogaria tudo para o canto. Os deslocamentos
+   de entrada não vêm do CSS — quem os cria é o Anime.js, em tempo de execução
+   —, então sem a biblioteca eles simplesmente não existem. */
+.sem-anime .trans { padding: 72px 0; }
+.sem-anime .trans__eyebrow,
+.sem-anime .trans__line,
+.sem-anime .trans__antes span,
+.sem-anime .trans__foto,
+.sem-anime .trans__seta,
+.sem-anime .trans__logo,
+.sem-anime .trans__arco,
+.sem-anime .trans__pill span,
+.sem-anime .trans__spot i,
+.sem-anime .trans__spot b { opacity: 1 !important; }
+
+/* footer — a entrada é escalonada por JS; sem ele, tudo no lugar */
+.sem-anime .foot__logo,
+.sem-anime .foot__desc,
+.sem-anime .foot__head,
+.sem-anime .foot__list li,
+.sem-anime .foot__copy { opacity: 1 !important; transform: none !important; }
+
 /* ---------- 7. Responsivo ---------- */
 @media (max-width: 900px) {
   .header__nav,
@@ -992,21 +2186,89 @@ ul  { list-style: none; margin: 0; padding: 0; }
 }
 
 @media (max-width: 720px) {
+  /* PALCO DUPLO desempilhado (cópia 2 de 3 — ver o bloco em .sem-anime).
+     Num telefone o deslize horizontal não tem para onde ir: a seção 4 já não
+     cabe em 100vh com os três cards empilhados. Então o palco vira o que era
+     antes de tudo isto — duas seções, uma embaixo da outra, cada uma com a
+     sua própria rolagem. O duo.js pergunta ao CSS se o palco está fixado
+     (window.DUO.fixo()) e, quando não está, sai de cena: cada seção volta ao
+     gatilho próprio. */
+  .duo { height: auto; --rodape: 0px; }
+  .duo__sticky { position: static; height: auto; overflow: visible; }
+  .duo__rail { display: block; width: 100%; transform: none; }
+  .duo__panel { width: 100%; height: auto; display: block; }
+  .duo__timeline { display: none; }
+
   /* Seção 4: três colunas não cabem — vira coluna única com cards deitados.
-     Sem as colunas não há o que a timeline percorrer lado a lado, então o pin
-     é desligado (altura volta ao natural) e a régua some. Os filetes laranja
-     dependiam do índice da timeline: sem ela, acendem todos. */
-  .gains { height: auto; }
-  .gains__sticky {
-    position: static;
-    height: auto;
-    overflow: visible;
-    padding: clamp(48px, 9vw, 72px) 0;
-  }
+     Os filetes laranja dependiam do índice da timeline: sem ela, acendem todos. */
+  .gains { padding: clamp(48px, 9vw, 72px) 0; }
   .gains__list { grid-template-columns: 1fr; gap: 12px; }
   .gain { aspect-ratio: 16 / 10; }
   .gain::after { opacity: 1; }
-  .timeline { display: none; }
+
+  .trans { padding: clamp(48px, 9vw, 72px) 0; }
+
+  /* ----- Seção 7 no telefone -----
+     O desenho de origem é 16:9, com foto e texto lado a lado. Em retrato não
+     há "lado": o palco perde a proporção fixa e vira uma coluna — foto em
+     cima, texto embaixo —, mas o CARROSSEL CONTINUA. É de propósito: a troca
+     por rolagem é a seção, não um enfeite dela. O que sai é o que depende da
+     largura (a palavra deitada e o trilho de índice). */
+  /* Quem vira coluna é o próprio .bene__sticky: o .bene__stage que fazia esse
+     papel deixou de existir (ver o comentário no .bene__panel). */
+  .bene__sticky {
+    display: flex;
+    flex-direction: column;
+  }
+  .bene { --u: 100vw; --sobe: calc(var(--u) * .035); }
+
+  .bene__panel {
+    position: relative;
+    left: auto; top: auto; bottom: auto;
+    width: 100%;
+    height: 52%;
+    flex: none;
+  }
+  .bene__card {
+    left: 50%;
+    top: 4%;
+    width: auto;
+    height: 92%;
+    transform: translateX(-50%);
+  }
+  .bene__word,
+  .bene__rail { display: none; }
+
+  .bene__logo { left: auto; right: 6%; bottom: 8%; width: 9%; }
+  /* width: auto desfaz o calc(--u) da regra base, que brigaria com o par
+     left/right daqui */
+  .bene__cap  { left: 6%; right: 6%; width: auto; bottom: 5%; }
+  .bene__cap-t { font-size: calc(var(--u) * .038); }
+  .bene__cap-d { font-size: calc(var(--u) * .032); }
+
+  .bene__right {
+    position: relative;
+    left: auto; right: auto; top: auto; bottom: auto;
+    flex: 1;
+    padding: 6% 6% 0;
+  }
+  .bene__eyebrow { position: relative; top: auto; font-size: calc(var(--u) * .03); }
+  .bene__title {
+    position: relative;
+    top: auto;
+    margin: 4% 0 0;
+    font-size: calc(var(--u) * .062);
+  }
+  .bene__rule { display: none; }
+  .bene__text { top: auto; bottom: 6%; }
+  .bene__num    { font-size: calc(var(--u) * .045); }
+  .bene__kicker { font-size: calc(var(--u) * .032); margin-bottom: .8em; }
+  .bene__desc   { font-size: calc(var(--u) * .036); max-width: none; }
+
+  /* Footer: três colunas não cabem — vira uma, na mesma ordem em que estão
+     no DOM, que é a mesma ordem da animação. */
+  .foot__inner { grid-template-columns: 1fr; gap: 36px; }
+  .foot__desc { max-width: none; }
 }
 
 @media (max-width: 560px) {
@@ -1017,7 +2279,12 @@ ul  { list-style: none; margin: 0; padding: 0; }
 
 /* ---------- 8. Acessibilidade ---------- */
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
+  /* Sem encaixe: ele move a página por conta própria, depois que a pessoa já
+     parou de rolar. Para quem tem sensibilidade vestibular é exatamente o
+     tipo de movimento não solicitado que esta media query existe para
+     evitar — e sem `scroll-behavior: smooth` o encaixe ainda vira um salto
+     seco, que é pior. */
+  html { scroll-behavior: auto; scroll-snap-type: none; }
 
   *, *::before, *::after {
     animation-duration: .01ms !important;
@@ -1041,12 +2308,52 @@ ul  { list-style: none; margin: 0; padding: 0; }
   /* Seção 4: sem deslize nem elástico — os cards já nascem no lugar */
   [data-reveal="slide-right"] { opacity: 1; transform: none; animation: none !important; }
 
-  /* Sem pin: o JS de scroll está desligado, então --t nunca é escrito.
-     A seção vira estática, com a linha cheia e todos os filetes acesos. */
-  .gains { height: auto; }
-  .gains__sticky { position: static; height: auto; overflow: visible; padding: 72px 0; }
+  /* PALCO DUPLO desempilhado (cópia 3 de 3 — ver o bloco em .sem-anime).
+     Com movimento reduzido o JS de scroll está desligado, então --pan e --t
+     nunca são escritos: sem isto a seção 5 ficaria parada fora da tela. */
+  .duo { height: auto; --rodape: 0px; }
+  .duo__sticky { position: static; height: auto; overflow: visible; }
+  .duo__rail { display: block; width: 100%; transform: none; }
+  .duo__panel { width: 100%; height: auto; display: block; }
+  .duo__timeline { display: none; }
+
+  .gains { padding: 72px 0; }
   .gain::after { opacity: 1; }
   .timeline__fill { width: 100%; }
+
+  /* Seção 5: a coreografia não roda, e tudo nela nasce em opacity 0. Sem esta
+     regra a seção inteira ficaria invisível — mesma lista do bloco .sem-anime,
+     e pelo mesmo motivo (só opacidade: os transforms aqui são de POSIÇÃO). */
+  .trans { padding: 72px 0; }
+  .trans__eyebrow,
+  .trans__line,
+  .trans__antes span,
+  .trans__foto,
+  .trans__seta,
+  .trans__logo,
+  .trans__arco,
+  .trans__pill span,
+  .trans__spot i,
+  .trans__spot b { opacity: 1 !important; }
+
+  /* footer: a entrada não roda; o conteúdo já nasce no lugar */
+  .foot__logo,
+  .foot__desc,
+  .foot__head,
+  .foot__list li,
+  .foot__copy { opacity: 1 !important; transform: none !important; }
+
   .card__photo,
   .card__phone { transform: none !important; }
+
+  /* Seção 7: o carrossel CONTINUA — trocar de slide é o conteúdo da seção,
+     não um enfeite, e desligá-lo esconderia quatro quintos do texto. O que
+     sai é o MOVIMENTO: os blocos deixam de descer e subir e passam a só
+     aparecer e sumir. A opacidade continua vindo do bene.js.
+
+     A palavra deitada é a exceção: o transform dela não é movimento, é o
+     que a deita. `transform: none` a deixaria em pé, atravessada. */
+  .bene__cap,
+  .bene__text { transform: none !important; }
+  .bene__word { transform: translate(-50%, -50%) rotate(-90deg) !important; }
 }
