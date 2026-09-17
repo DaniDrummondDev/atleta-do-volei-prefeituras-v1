@@ -229,6 +229,58 @@
     };
   }
 
+  /* ------- 3d. Linhas do tempo presas ao scroll -------
+     [data-timeline] é uma seção MAIS ALTA que a viewport, com um filho
+     position:sticky. Enquanto ela atravessa a tela, o conteúdo fica parado e
+     o excedente de altura vira o "orçamento" de rolagem da timeline:
+
+       --t = 0  quando o topo da seção gruda no topo da viewport
+       --t = 1  quando a seção termina de passar
+
+     Além de --t, marcamos qual etapa está ativa: a seção é dividida em
+     data-timeline-steps fatias iguais e o [data-step] do índice atual recebe
+     .is-current. Esse índice serve a DOIS lugares ao mesmo tempo — o rótulo
+     da régua e o filete laranja no topo do card.                           */
+  function createTimelines() {
+    var scopes = document.querySelectorAll("[data-timeline]");
+    if (!scopes.length) return function () { };
+
+    var lines = [].map.call(scopes, function (el) {
+      return {
+        el: el,
+        steps: el.querySelectorAll("[data-step]"),
+        count: parseInt(el.dataset.timelineSteps, 10) || 1,
+        /* -1 = "ainda não pintei nenhuma". Guardar o último índice evita
+           mexer no DOM a cada frame: só escrevemos quando ele MUDA. */
+        current: -1
+      };
+    });
+
+    return function updateTimelines() {
+      var vh = window.innerHeight;
+
+      lines.forEach(function (line) {
+        var r = line.el.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > vh) return;   // fora da tela: não calcula
+
+        var range = line.el.offsetHeight - vh;    // altura excedente = curso
+        var t = range > 0 ? (-r.top) / range : 0;
+        t = Math.min(Math.max(t, 0), 1);
+
+        line.el.style.setProperty("--t", t.toFixed(4));
+
+        /* Fatias iguais: o último índice também cobre t === 1 exato. */
+        var i = Math.min(Math.floor(t * line.count), line.count - 1);
+        if (i === line.current) return;
+        line.current = i;
+
+        line.steps.forEach(function (step) {
+          step.classList.toggle("is-current", parseInt(step.dataset.step, 10) === i);
+        });
+      });
+    };
+  }
+
   /* ------- 3. Efeitos de scroll ------- */
   function scrollFx() {
     var showcase = document.querySelector("[data-showcase]");
@@ -236,6 +288,7 @@
     var scrub = createVideoScrubber();
     var parallax = createParallax();
     var enters = createEnters();
+    var timelines = createTimelines();
     var root = document.documentElement;
     var ticking = false;
 
@@ -247,6 +300,7 @@
       /* Rodam antes do guard do showcase: são independentes dele */
       parallax();
       enters();
+      timelines();
 
       /* 3a. Progresso 0 -> 1 do palco dos celulares.
          O palco "gruda" enquanto a seção percorre (altura - 100vh).

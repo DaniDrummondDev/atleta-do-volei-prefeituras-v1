@@ -654,6 +654,185 @@ ul  { list-style: none; margin: 0; padding: 0; }
 .card--right .card__phone { left: auto; right: var(--card-phone-x); }
 .card--right .card__text  { left: 8%; }       /* 43/540 no mock */
 
+/* ---------- 5d. Seção 4 — o que a prefeitura ganha ----------
+   Fundo claro, conteúdo alinhado à esquerda e três cards-foto com o texto
+   sobreposto no topo. Proporções tiradas do mock (artboard 941 x 529):
+     card   264 x 300  -> aspect-ratio 22/25
+     gap     14 / 941  -> ~1.5% da largura útil
+   A régua de capítulos fecha a seção, como no mock. */
+/* A seção é MAIS ALTA que a viewport de propósito: o excedente (160vh) é o
+   curso de rolagem da timeline, com o conteúdo preso pelo sticky de dentro.
+   Mudar esta altura muda a VELOCIDADE do avanço do laranja — é o único
+   número a mexer para o laranja andar mais rápido ou mais devagar. */
+.gains {
+  position: relative;
+  z-index: 2;
+  height: 260vh;
+  background: var(--white);
+  color: var(--ink);
+}
+
+.gains__sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding: clamp(40px, 5vw, 76px) 0 clamp(24px, 2.6vw, 38px);
+}
+
+.gains__inner {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* ----- badge claro (a variante escura vive em .badge, seção 2) ----- */
+.badge--light {
+  align-self: flex-start;
+  margin-bottom: clamp(18px, 2.2vw, 30px);
+  padding: 7px 18px;
+  border-color: rgba(16, 24, 40, .16);
+  background: transparent;
+  color: var(--ink);
+  font-size: clamp(10px, .95vw, 12px);
+}
+.badge__dash {
+  width: 14px;
+  height: 2px;
+  flex: none;
+  border-radius: 2px;
+  background: var(--brand);
+}
+
+/* ----- título de duas linhas ----- */
+.gains__title {
+  margin: 0 0 clamp(26px, 3.2vw, 46px);
+  font-size: clamp(32px, 4.6vw, 58px);
+  line-height: 1.08;
+  letter-spacing: -.02em;
+  /* as linhas são blocos para poderem animar (e subir) em tempos diferentes */
+  display: flex;
+  flex-direction: column;
+}
+.gains__line { display: block; }
+.gains__line--strong { font-weight: 600; color: var(--ink); }
+.gains__line--soft   { font-weight: 400; color: #9AA1AC; }
+
+/* ----- grade dos três cards ----- */
+.gains__list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(10px, 1.5vw, 18px);
+}
+
+.gain {
+  position: relative;
+  aspect-ratio: 22 / 25;
+  overflow: hidden;
+  border-radius: clamp(10px, 1.2vw, 16px);
+  background: #101828;           /* evita flash branco antes da foto carregar */
+}
+
+/* Filete laranja no topo do card: aceso SÓ no card da vez.
+   Quem liga/desliga é a classe .is-current, escrita por createTimelines()
+   no main.js a partir do mesmo índice que move o laranja da timeline. */
+.gain::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  z-index: 3;
+  background: var(--brand);
+  opacity: 0;
+  transition: opacity .32s var(--ease-out);
+}
+.gain.is-current::after { opacity: 1; }
+
+.gain__photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* véu escuro só no topo: é o que garante a leitura do texto sobre a foto */
+.gain__veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg,
+              rgba(8, 12, 20, .78) 0%,
+              rgba(8, 12, 20, .45) 34%,
+              rgba(8, 12, 20, 0)   62%);
+}
+
+.gain__text {
+  position: absolute;
+  top: clamp(14px, 1.9vw, 24px);
+  left: clamp(14px, 1.9vw, 24px);
+  right: clamp(14px, 1.9vw, 24px);
+  z-index: 2;
+  color: var(--white);
+}
+.gain__title {
+  margin: 0 0 .6em;
+  font-size: clamp(16px, 1.75vw, 23px);
+  font-weight: 400;              /* o mock usa peso normal, não negrito */
+  letter-spacing: -.01em;
+}
+.gain__desc {
+  margin: 0;
+  font-size: clamp(11px, 1.05vw, 14px);
+  font-weight: 400;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, .92);
+}
+
+/* ----- linha do tempo -----
+   O track é uma linha SÓ, contínua de ponta a ponta (por isso não pode ser
+   border-top dos rótulos: o gap da grade cortaria a linha em três). */
+.timeline { margin-top: clamp(18px, 2.4vw, 32px); }
+
+.timeline__track {
+  position: relative;
+  height: 2px;
+  border-radius: 2px;
+  background: #E6E8EC;            /* trecho ainda não percorrido */
+  overflow: hidden;
+}
+
+/* Trecho percorrido. Começa cobrindo o primeiro terço (= embaixo do card 1)
+   e vai até 100% no fim do curso. --t vem do JS, na própria <section>.
+   33.333% + 66.667% * t  <=>  de 1/3 a 3/3. */
+.timeline__fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc(33.333% + 66.667% * var(--t, 0));
+  border-radius: 2px;
+  background: var(--brand);
+}
+
+.timeline__labels {
+  display: grid;
+  /* mesma grade dos cards: cada rótulo cai sob o seu card */
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(10px, 1.5vw, 18px);
+  margin-top: 10px;
+}
+.timeline__label {
+  font-size: clamp(8px, .8vw, 10px);
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #9AA1AC;
+  transition: color .32s var(--ease-out);
+}
+.timeline__label:nth-child(2) { justify-self: center; text-align: center; }
+.timeline__label:nth-child(3) { justify-self: end;    text-align: right; }
+.timeline__label.is-current { color: var(--ink); }
+
 /* ---------- 6. Animações de entrada ---------- */
 [data-reveal] {
   opacity: 0;
@@ -667,6 +846,66 @@ ul  { list-style: none; margin: 0; padding: 0; }
 }
 /* variante só-fade, sem deslocamento (usada nos botões das lojas) */
 [data-reveal="fade"] { transform: none; }
+
+/* Seção 4 — badge e linhas do título sobem de mais longe que o padrão (24px).
+   A especificidade precisa de [data-reveal] junto do nome da classe para
+   ganhar de [data-reveal] acima; e do .is-visible qualificado para desfazer. */
+.gains__eyebrow[data-reveal],
+.gains__line[data-reveal] { transform: translateY(48px); }
+.gains__eyebrow[data-reveal].is-visible,
+.gains__line[data-reveal].is-visible { transform: none; }
+
+/* Seção 4 — cards: entram da direita e assentam com easing outElastic.
+   Por que keyframes e não cubic-bezier: outElastic ultrapassa o valor final
+   várias vezes, e uma curva de Bézier cúbica não consegue oscilar. A saída é
+   AMOSTRAR a função e escrever os quadros — é o que está abaixo.
+
+   Curva: easeOutElastic(a = 1, p = 0.3)
+     s    = p / 2π · asin(1/a) = 0.075
+     f(t) = a · 2^(−10t) · sin((t − s) · 2π/p) + 1
+   Deslocamento: x(t) = 90px · (1 − f(t)), amostrado a cada 4%.
+
+   Para REGERAR (ex.: trocar a amplitude de 90px ou os parâmetros a/p):
+     python3 -c "import math;a,p,X=1,.3,90;s=p/(2*math.pi)*math.asin(1/a);
+     f=lambda t: 0 if t==0 else 1 if t==1 else a*2**(-10*t)*math.sin((t-s)*2*math.pi/p)+1;
+     [print('%d%% { transform: translate3d(%.2fpx,0,0); }'%(i,X*(1-f(i/100)))) for i in range(0,101,4)]"
+
+   Depois de 72% a oscilação é sub-pixel (< 0.5px), então os quadros finais
+   foram omitidos: visualmente idênticos, arquivo menor. */
+[data-reveal="slide-right"] {
+  opacity: 0;
+  transform: translate3d(90px, 0, 0);
+  transition: none;
+}
+[data-reveal="slide-right"].is-visible {
+  /* linear: a curva JÁ está nos keyframes — um easing por cima a deformaria */
+  animation: slide-right-elastic 1.1s linear both;
+  animation-delay: calc(var(--reveal-delay, 0) * 130ms);
+  will-change: transform, opacity;
+}
+
+@keyframes slide-right-elastic {
+  0%   { opacity: 0; transform: translate3d(90.00px, 0, 0); }
+  4%   { transform: translate3d(45.64px, 0, 0); }
+  8%   { transform: translate3d(-5.40px, 0, 0); }   /* já passou do ponto */
+  12%  { transform: translate3d(-31.69px, 0, 0); }  /* pico do overshoot  */
+  16%  { transform: translate3d(-29.04px, 0, 0); }
+  20%  { transform: translate3d(-11.25px, 0, 0); }
+  24%  { opacity: 1; transform: translate3d(5.27px, 0, 0); }
+  28%  { transform: translate3d(11.81px, 0, 0); }
+  32%  { transform: translate3d(8.95px, 0, 0); }
+  36%  { transform: translate3d(2.29px, 0, 0); }
+  40%  { transform: translate3d(-2.81px, 0, 0); }
+  44%  { transform: translate3d(-4.17px, 0, 0); }
+  48%  { transform: translate3d(-2.61px, 0, 0); }
+  52%  { transform: translate3d(-0.26px, 0, 0); }
+  56%  { transform: translate3d(1.24px, 0, 0); }
+  60%  { transform: translate3d(1.41px, 0, 0); }
+  64%  { transform: translate3d(0.71px, 0, 0); }
+  68%  { transform: translate3d(-0.08px, 0, 0); }
+  72%  { transform: translate3d(-0.50px, 0, 0); }
+  100% { opacity: 1; transform: translate3d(0, 0, 0); }
+}
 
 /* Entrada dirigida pelo scroll (--e vem do main.js).
    Sem `transition`: o valor é interpolado pela própria rolagem, e uma
@@ -752,6 +991,24 @@ ul  { list-style: none; margin: 0; padding: 0; }
   .card--right .card__phone { left: var(--card-phone-x); right: auto; }
 }
 
+@media (max-width: 720px) {
+  /* Seção 4: três colunas não cabem — vira coluna única com cards deitados.
+     Sem as colunas não há o que a timeline percorrer lado a lado, então o pin
+     é desligado (altura volta ao natural) e a régua some. Os filetes laranja
+     dependiam do índice da timeline: sem ela, acendem todos. */
+  .gains { height: auto; }
+  .gains__sticky {
+    position: static;
+    height: auto;
+    overflow: visible;
+    padding: clamp(48px, 9vw, 72px) 0;
+  }
+  .gains__list { grid-template-columns: 1fr; gap: 12px; }
+  .gain { aspect-ratio: 16 / 10; }
+  .gain::after { opacity: 1; }
+  .timeline { display: none; }
+}
+
 @media (max-width: 560px) {
   .hero__stats { gap: 8px; }
   .hero__stats li { padding: 8px 14px; font-size: 10px; }
@@ -780,6 +1037,16 @@ ul  { list-style: none; margin: 0; padding: 0; }
   .social__art { transform: none !important; }
   .social__art img { animation: none !important; transform: none !important; }
   [data-enter] { opacity: 1 !important; transform: none !important; }
+
+  /* Seção 4: sem deslize nem elástico — os cards já nascem no lugar */
+  [data-reveal="slide-right"] { opacity: 1; transform: none; animation: none !important; }
+
+  /* Sem pin: o JS de scroll está desligado, então --t nunca é escrito.
+     A seção vira estática, com a linha cheia e todos os filetes acesos. */
+  .gains { height: auto; }
+  .gains__sticky { position: static; height: auto; overflow: visible; padding: 72px 0; }
+  .gain::after { opacity: 1; }
+  .timeline__fill { width: 100%; }
   .card__photo,
   .card__phone { transform: none !important; }
 }
