@@ -1,25 +1,3 @@
-/* =========================================================
-   ATLETA DO VÔLEI — PREFEITURAS
-   Etapa 1: Header + Hero + Showcase (phone_01 -> phone_02)
-   ---------------------------------------------------------
-   Sumário:
-   1. Tokens & reset
-   2. Utilitários (container, botões, badge)
-   3. Header
-   4. Hero (background, título, stats)
-   5. Showcase — palco de scroll dos celulares
-   6. Animações de entrada (data-reveal)
-   7. Responsivo
-   8. Acessibilidade (prefers-reduced-motion)
-   ========================================================= */
-
-/* ---------- 0. Fontes do projeto ----------
-   TT Firs Neue Trial em dois pesos apenas:
-     Regular  (400) — texto normal
-     DemiBold (600) — tudo que for "bold"
-   Não existe Light/Bold no pacote, então pesos como 300 e 700 seriam
-   sintetizados pelo navegador (falso-negrito). Por isso o CSS inteiro usa
-   só 400 e 600 — ao criar novas regras, mantenha essa restrição. */
 @font-face {
   font-family: "TT Firs Neue";
   src: url("../fonts/TT Firs Neue Trial Regular.woff2") format("woff2"),
@@ -80,42 +58,10 @@ body {
 
 img { display: block; max-width: 100%; height: auto; }
 a   { text-decoration: none; color: inherit; }
-/* ol junto de ul: a régua das seções 4 e 5 usa <ol> (a ordem dos capítulos
-   é informação, não decoração), e sem isto ela aparece NUMERADA na tela —
-   "1. O que a prefeitura ganha?". Só apareceu numa captura de tela. */
+
 ul, ol { list-style: none; margin: 0; padding: 0; }
 
-/* ---------- 1b. Encaixe de rolagem (scroll snap) ----------
-   A REGRA: só encaixa a seção que tem EXATAMENTE uma tela de altura.
-   Tudo que passa de 100vh é rolagem contínua, sem encaixe nenhum — nem no
-   meio, nem na chegada.
-
-   POR QUÊ: uma seção mais alta que a tela é mais alta de propósito. A altura
-   extra É o curso de rolagem de uma animação:
-
-     .hero      5.6 telas   curso de --p, --reel e do scrub do vídeo
-     .features  2.2 telas   curso de --e, a entrada dos 4 cards
-     .duo       6.2 telas   curso das seções 4 e 5 juntas: coreografia da 4,
-                            deslize horizontal e coreografia da 5
-
-   Nessas, não existe "posição certa" para encaixar: cada pixel de rolagem é
-   um quadro da animação. Encaixar seria escolher um quadro pela pessoa.
-
-   .social e .plat (seção 8) são as de uma tela só: ali existe um
-   enquadramento certo, e é ali que o encaixe ajuda. As duas são composições
-   fechadas — encaixar é mostrar a arte inteira, não um pedaço dela.
-
-   COMO SE MARCA: pelo atributo data-snap no HTML, não por lista de classes
-   aqui. Assim uma seção nova de 100vh ganha encaixe adicionando o atributo,
-   sem ninguém precisar lembrar de voltar neste arquivo. O tests/snap.spec.js
-   confere que todo [data-snap] realmente tem no máximo uma tela — se alguém
-   deixar o atributo numa seção que cresceu, o teste avisa.
-
-   `proximity` e não `mandatory`: com pouquíssimos pontos de encaixe numa
-   página longa, `mandatory` prenderia a rolagem neles.
-
-   SEM scroll-padding de propósito: o header é fixo mas transparente, e as
-   seções são desenhadas para encostar no topo da tela. */
+/* ---------- 1b. Encaixe de rolagem (scroll snap) ---------- */
 html {
   scroll-snap-type: y proximity;
 }
@@ -192,14 +138,6 @@ html {
   background: transparent;
   transition: opacity .32s var(--ease-out), transform .32s var(--ease-out);
 }
-
-/* O header existe SÓ sobre o hero. Fora dele a logo branca não tem fundo
-   escuro para se apoiar — e na seção 7 ela caía em cima do painel preto e
-   virava parte do desenho, que não é o que a referência mostra.
-
-   Quem põe e tira a classe é header(), no main.js, por IntersectionObserver
-   no .hero. pointer-events: none é o que impede um menu invisível de comer
-   os cliques de quem estiver rolando por baixo dele. */
 .site-header.is-oculto {
   opacity: 0;
   transform: translateY(-100%);
@@ -253,51 +191,21 @@ html {
 
 /* ---------- 4. Hero ---------- */
 .hero { position: relative; }
-
-/* O fundo cobre TODA a seção hero (texto + palco dos celulares).
-   A camada interna é sticky: acompanha a viewport durante toda a rolagem
-   do hero, então nunca aparece emenda nem faixa branca. */
 .hero__media {
   position: absolute;
   inset: 0;
   z-index: 0;
-  /* sem overflow aqui: overflow criaria um scrollport e quebraria o sticky interno */
 }
-/* POR QUE dvh, E NÃO vh, DAQUI PARA BAIXO
-   `vh` é a viewport GRANDE: no telefone ele mede a tela como se a barra do
-   navegador estivesse escondida, mesmo quando ela está visível. Com a barra
-   na tela, 100vh é MAIOR que o espaço real — mas todo o JS desta página mede
-   com window.innerHeight, que é a viewport DINÂMICA (o espaço de fato). Os
-   dois discordavam, e a diferença aparecia como uma faixa de fundo na base do
-   hero. `dvh` é a unidade que acompanha o innerHeight, então CSS e JS voltam
-   a falar da mesma tela.
-
-   A linha em `vh` ANTES de cada `dvh` não é sobra: é o valor que navegadores
-   sem suporte a dvh vão usar. Quem entende dvh sobrescreve a linha de cima.
-
-   O PREÇO: quando a barra do navegador se esconde durante a rolagem, a
-   viewport dinâmica muda e estas alturas mudam junto. Se isso aparecer como
-   um salto na coreografia num aparelho real, a alternativa é `lvh` (sempre a
-   maior: nunca sobra faixa, mas corta um pouco embaixo). */
 .hero__media-inner {
   position: sticky;
   top: 0;
   height: 100vh;
   height: 100dvh;
-  overflow: hidden;   /* recorta a foto enquanto ela sobe para fora da tela */
+  overflow: hidden;
 }
-
-/* ----- a tira: 2 painéis de 100vh empilhados -----
-   Sobe 100vh (= -50% da própria altura) ao longo de --reel: 0 no instante
-   em que o celular começa a entrar na tela, 1 onde o vídeo assume o scrub.
-   NÃO usa --p de propósito: --p só começa a contar depois que o palco gruda
-   no topo, ou seja, tarde demais. Quem calcula --reel é o main.js — para
-   antecipar ou atrasar mais, mexa em REEL_LEAD lá. */
 .hero__reel {
   position: absolute;
   inset: 0 0 auto 0;
-  /* dois painéis de uma tela cada — mesma unidade deles, senão o -50% do
-     transform deixaria de valer exatamente uma tela */
   height: 200vh;
   height: 200dvh;
   transform: translate3d(0, calc(var(--reel, 0) * -50%), 0);
@@ -316,7 +224,7 @@ html {
   height: 100%;
   object-fit: cover;
   object-position: center 35%;
-  background: #041021;   /* evita flash antes do primeiro frame decodificar */
+  background: #041021;
 }
 
 /* painel 1: escurece o topo (legibilidade do menu) e aprofunda conforme desce */
@@ -400,22 +308,6 @@ html {
 }
 
 /* ---------- 5. Showcase (palco de scroll) ---------- */
-/* A seção é alta (200vh) e o palco fica "sticky" dentro dela:
-   a rolagem dessa altura extra vira o progresso --p da animação. */
-/* phone_01 = close cortado (base do aparelho em perspectiva)
-   phone_02 = aparelho inteiro
-   A rolagem faz um "dolly-out": afasta do close até o aparelho completo.
-   Fundo transparente — a foto do hero continua atrás. */
-/* Linha do tempo de --p dentro do palco:
-   .00 → .23   phone_01 recua e entrega a cena ao phone_02
-   .23 → .40   phone_02 em repouso
-   .40 → .55   phone_02 em fade-out  ── termina exatamente em .55
-   (--reel)    .hero__reel sobe 100vh: painel-foto sai, painel-vídeo entra.
-               Começa antes de --p, junto com a entrada do celular, e
-               termina em .55. Ver REEL_LEAD no main.js.
-   .44 → .63   texto do .bridge entra escalonado
-   .55 → 1.0   VÍDEO roda (só começa quando o celular já sumiu)
-   Os marcos .55 aparecem em .hero__photo (CSS) e VIDEO_IN (main.js).  */
 .showcase {
   position: relative;
   z-index: 2;
@@ -426,21 +318,19 @@ html {
 .showcase__stage {
   position: sticky;
   top: 0;
-  /* mesma tela do hero (ver o comentário em .hero__media-inner): o palco
-     gruda em cima da foto e os dois precisam ter a mesma altura */
   height: 100vh;
   height: 100dvh;
   display: grid;
   place-items: center;
-  overflow: hidden;            /* recorta só o excedente do close, nunca o phone_02 */
+  overflow: hidden;
 }
 
 .phone {
-  grid-area: 1 / 1;            /* os dois ocupam exatamente o mesmo ponto */
+  grid-area: 1 / 1;
   margin: 0;
   will-change: transform, opacity;
   backface-visibility: hidden;
-  transform-origin: 50% 62%;   /* ancorado na base do aparelho: o zoom fica coerente */
+  transform-origin: 50% 62%;
 }
 .phone img {
   width: 100%;
@@ -448,34 +338,21 @@ html {
   filter: drop-shadow(0 50px 70px rgba(0, 0, 0, .55));
 }
 
-/* Close: entra em cena grande e recua até casar com o phone_02.
-   A largura é 1.3x a do phone_02 porque o corpo do aparelho ocupa só ~76%
-   da largura do PNG recortado, contra ~98% no PNG inteiro. Esse fator é o
-   que faz os dois aparelhos terem o MESMO tamanho aparente no crossfade. */
 .phone--01 {
   width: calc(var(--phone-w) * 1.29);
-  /* 1.08 -> 1.00 em p = .30 (ponto do crossfade). O pico de 1.08 ainda fica
-     abaixo do tamanho original, então o conjunto todo diminuiu. */
   transform: scale(calc(1.08 - min(var(--p), .30) * .2667));
   opacity: clamp(0, calc(1 - (var(--p) - .20) * 5.4), 1);
 }
-
-/* Aparelho inteiro: assume a cena no mesmo tamanho aparente do close
-   (escala ~1.035 em p = .30) e assenta em 1.0 a partir de p = .40. */
 .phone--02 {
   width: var(--phone-w);
-  /* 1.05 -> 1.00; em p = .30 vale 1.0125, praticamente igual ao phone_01 */
   transform: scale(calc(1.05 - min(var(--p), .40) * .125));
-  /* min() = interseção das duas rampas: entrada (.23) e saída (.55) */
   opacity: clamp(0, min(
       calc((var(--p) - .23) * 5.4),
       calc((.55 - var(--p)) * 6.3)
     ), 1);
 }
 
-/* ----- Fase 3: texto sobre o vídeo já revelado -----
-   O bloco não tem mais fundo próprio: vídeo e véu vivem em .hero__media.
-   Só as linhas de texto animam. */
+/* ----- Fase 3: texto sobre o vídeo já revelado ----- */
 .bridge {
   position: absolute;
   inset: 0;
@@ -484,7 +361,7 @@ html {
   place-items: center;
   pointer-events: none;
 }
-/* fica clicável/selecionável só quando já está visível */
+
 .bridge.is-active { pointer-events: auto; }
 
 .bridge__text {
@@ -507,7 +384,6 @@ html {
   display: block;
   will-change: transform, opacity;
 }
-/* cada linha entra escalonada, empurrada pelo próprio --p */
 .bridge__line:nth-child(1) {
   opacity: clamp(0, calc((var(--p) - .44) * 10.5), 1);
   transform: translate3d(0, calc((1 - clamp(0, calc((var(--p) - .44) * 10.5), 1)) * 28px), 0);
@@ -521,44 +397,37 @@ html {
   transform: translate3d(0, calc((1 - clamp(0, calc((var(--p) - .50) * 10.5), 1)) * 28px), 0);
 }
 
-/* ---------- 5b. Seção 2 — app / lojas ----------
-   Fundo claro: é a primeira seção que inverte o esquema de cor, então ela
-   redefine cor de texto localmente em vez de depender do body. */
-/* Todas as medidas vêm do mock (825 x 509, onde 509 = 100vh) e estão
-   ancoradas na ALTURA da seção, não na largura. Como a seção é 100vh, é a
-   altura que define a escala do conjunto; ancorar na largura faria o texto
-   encolher e a arte descer em telas mais largas.
-   Os tokens abaixo são os únicos pontos de calibragem da seção. */
+/* ---------- 5b. Seção 2 — app / lojas ---------- */
 .social {
-  --copy-x:     6.9%;    /* margem esquerda do texto        (57/825)  */
-  --copy-y:     4.3%;    /* topo do título                  (22/509)  */
-  --title-size: 4.32vh;  /* corpo do título                 (22/509)  */
-  --store-h:    4.5vh;   /* altura dos badges               (23/509)  */
-  --art-top:    30%;     /* topo da arte                    (143/509) */
-  --art-h:      89vh;    /* altura da arte                  (454/509) */
-  --art-bleed:  -5vw;    /* o quanto sangra além da direita (125/825) */
+  --copy-x:     6.9%;
+  --copy-y:     4.3%;
+  --title-size: 4.32vh;
+  --store-h:    4.5vh;
+  --art-top:    30%;
+  --art-h:      89vh;
+  --art-bleed:  -5vw;
 
   position: relative;
   z-index: 2;
-  min-height: 100vh;             /* padrão do projeto: toda section ocupa 1 tela */
+  min-height: 100vh;
   background: var(--white);
   color: var(--ink);
-  overflow: hidden;              /* a arte sangra para fora e é recortada aqui */
+  overflow: hidden;
 }
 
 .social__copy {
   position: absolute;
   left: var(--copy-x);
   top: var(--copy-y);
-  z-index: 1;                    /* texto sempre acima da arte */
+  z-index: 1;
 }
 
 .social__title {
   margin: 0;
   font-size: var(--title-size);
-  line-height: 1.27;             /* baselines a 28px no mock, com fonte de 22 */
+  line-height: 1.27;
   letter-spacing: -.02em;
-  white-space: nowrap;           /* cada linha é uma linha só, como no mock */
+  white-space: nowrap;
 }
 .social__title span { display: block; }
 .social__title-strong { font-weight: 600; color: var(--ink); }
@@ -567,7 +436,7 @@ html {
 .social__stores {
   display: flex;
   gap: .8vh;
-  margin-top: 7.5vh;             /* título termina em 78, badges começam em 116 */
+  margin-top: 7.5vh;
 }
 .social__store img {
   height: var(--store-h);
@@ -575,10 +444,6 @@ html {
   transition: transform .25s var(--ease-out), opacity .25s var(--ease-out);
 }
 .social__store:hover img { transform: translateY(-2px); opacity: .88; }
-
-/* Arte: altura fixa em vh e sangria pela direita, para o enquadramento do
-   mock se manter em qualquer proporção de tela.
-   --py é a amplitude do parallax, escrita pelo JS (ver [data-parallax]). */
 .social__art {
   position: absolute;
   top: var(--art-top);
@@ -588,20 +453,14 @@ html {
   transform: translate3d(0, var(--py, 0px), 0);
   will-change: transform;
 }
-/* O wiggle vive no <img>, NÃO no .social__art: o pai já usa transform para o
-   parallax e uma animação no mesmo elemento sobrescreveria o outro efeito.
-   Separando em dois níveis, os dois transforms convivem e se somam. */
 .social__art img {
   height: var(--art-h);
   width: auto;
-  max-width: none;               /* precisa vencer o `img { max-width:100% }` global */
-  transform-origin: 60% 50%;     /* pivô perto do centro do grupo de celulares */
+  max-width: none;
+  transform-origin: 60% 50%;
   animation: wiggle 7s ease-in-out infinite;
   will-change: transform;
 }
-
-/* Balanço sutil e contínuo. Amplitudes propositalmente pequenas: em uma
-   imagem deste tamanho, 1deg já é um deslocamento grande nas bordas. */
 @keyframes wiggle {
   0%   { transform: rotate(0deg)     translate3d(0, 0,     0); }
   25%  { transform: rotate(.55deg)   translate3d(0, -8px,  0); }
