@@ -4,11 +4,132 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- CSP. Três pontos fogem do 'self' puro e precisam continuar liberados:
+       1) script-src + https://cdn.jsdelivr.net -> o Anime.js do rodapé (linha ~1156).
+       2) script-src + os dois 'sha256-...' -> os blocos <script application/ld+json>
+          (linhas 45 e 84). Se editar UMA VÍRGULA desses JSONs, o hash muda e o
+          bloco é recusado: recalcule com
+          `python3 -c "import hashlib,base64,sys;print(base64.b64encode(hashlib.sha256(open(sys.argv[1],'rb').read()).digest()).decode())" arquivo`
+          sobre o conteúdo exato entre <script> e </script>.
+       3) style-src 'unsafe-inline' -> os atributos style="--ang: ..." das seções
+          trans__pill / trans__spot. style-src-elem 'self' mantém o bloqueio de
+          <style> inline nos navegadores que o suportam. -->
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; img-src 'self' data:; font-src 'self'; style-src 'self' 'unsafe-inline'; style-src-elem 'self'; script-src 'self' https://cdn.jsdelivr.net 'sha256-XY6704M0q7pywO7q2nATytaaTnta6GQb5n6h3DcBUtE=' 'sha256-VxRKlwarzQz5/JZstLidZ4nOw5g4I5bHB7weyjElRb4='; connect-src 'self'; upgrade-insecure-requests" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+
   <title>Atleta do Vôlei para Prefeituras</title>
   <meta name="description"
-    content="Organize campeonatos, conecte atletas e equipes, e leve mais esporte à população — em uma plataforma gratuita, pronta para a sua prefeitura usar." />
+    content="Atleta do Vôlei é a rede social do vôlei: encontre jogos, quadras e atletas do seu nível, monte equipes, participe de campeonatos e compartilhe seus momentos. Baixe o app grátis para Android e iPhone." />
+  <meta name="keywords"
+    content="vôlei, volei, rede social de vôlei, quadras de vôlei, vôlei de praia, atletas de vôlei, jogos de vôlei, campeonatos de vôlei, app de vôlei" />
+  <meta name="author" content="Atleta do Vôlei" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <link rel="canonical" href="https://atletadovolei.com.br/" />
+
+  <!-- Open Graph (WhatsApp / Instagram / Facebook) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Atleta do Vôlei" />
+  <meta property="og:url" content="https://atletadovolei.com.br/" />
+  <meta property="og:title" content="Atleta do Vôlei — A rede social do vôlei" />
+  <meta property="og:description"
+    content="Encontre jogos, quadras e atletas do seu nível. Monte equipes, jogue e compartilhe seus momentos. Baixe grátis o app Atleta do Vôlei para Android e iPhone." />
+  <meta property="og:image" content="https://atletadovolei.com.br/assets/img/og-cover.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Atleta do Vôlei — a rede social do vôlei" />
+  <meta property="og:locale" content="pt_BR" />
+  <meta name="theme-color" content="#0a1838" />
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Atleta do Vôlei — A rede social do vôlei" />
+  <meta name="twitter:description"
+    content="Encontre jogos, quadras e atletas do seu nível. Monte equipes, jogue e compartilhe seus momentos." />
+  <meta name="twitter:image" content="https://atletadovolei.com.br/assets/img/og-cover.jpg" />
 
   <link rel="icon" href="assets/images/icon.png" />
+  <link rel="apple-touch-icon" href="assets/img/icon.png">
+
+  <!-- Dados estruturados (Schema.org) — ajuda o Google a entender a marca e ligar aos perfis sociais -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://atletadovolei.com.br/#organization",
+        "name": "Atleta do Vôlei",
+        "url": "https://atletadovolei.com.br/",
+        "logo": "https://atletadovolei.com.br/assets/img/icon.png",
+        "description": "A rede social feita para quem ama jogar vôlei.",
+        "sameAs": [
+          "https://www.instagram.com/atletadovolei",
+          "https://www.tiktok.com/@atletadovolei",
+          "https://www.youtube.com/@AtletadoVoleiOficial",
+          "https://www.facebook.com/atletadovolei"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://atletadovolei.com.br/#website",
+        "url": "https://atletadovolei.com.br/",
+        "name": "Atleta do Vôlei",
+        "inLanguage": "pt-BR",
+        "publisher": { "@id": "https://atletadovolei.com.br/#organization" }
+      },
+      {
+        "@type": "MobileApplication",
+        "name": "Atleta do Vôlei",
+        "operatingSystem": "ANDROID, IOS",
+        "applicationCategory": "SportsApplication",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "BRL" },
+        "publisher": { "@id": "https://atletadovolei.com.br/#organization" }
+      }
+    ]
+  }
+  </script>
+
+  <!-- FAQ estruturada — espelha exatamente a FAQ visível (motores de resposta / IA) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "O Atleta do Vôlei é gratuito?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Sim. Você cria seu perfil, encontra jogos, equipes e quadras sem pagar nada. Existe também um plano Premium opcional com recursos avançados." }
+      },
+      {
+        "@type": "Question",
+        "name": "Serve para vôlei de quadra e de praia?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Sim. O app cobre os dois mundos — você filtra por tipo de piso (areia, grama, quadra) e encontra jogos do seu estilo." }
+      },
+      {
+        "@type": "Question",
+        "name": "Como o app encontra jogos perto de mim?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Pela sua cidade e localização, mostramos eventos, equipes e quadras próximas, sempre filtrando por nível para jogos mais justos." }
+      },
+      {
+        "@type": "Question",
+        "name": "Preciso já ter um time para usar?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Não. Você pode jogar avulso, entrar em equipes existentes ou criar a sua e convidar outros atletas." }
+      },
+      {
+        "@type": "Question",
+        "name": "Em quais aparelhos funciona?",
+        "acceptedAnswer": { "@type": "Answer", "text": "O Atleta do Vôlei está disponível para Android e iPhone. Baixe gratuitamente na loja do seu celular." }
+      },
+      {
+        "@type": "Question",
+        "name": "Como reportar um problema ou sugerir algo?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Use os canais de contato no rodapé. A comunidade é o coração do app e adoramos receber sugestões dos atletas." }
+      }
+    ]
+  }
+  </script>
+
   <!-- Fontes locais do projeto: preload dos dois pesos usados, para o texto
        não repintar quando o CSS terminar de carregar. -->
   <link rel="preload" as="font" type="font/woff2" crossorigin

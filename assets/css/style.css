@@ -23,6 +23,7 @@
   --ink:          #101828;
   --white:        #ffffff;
   --muted:        rgba(255, 255, 255, .72);
+  --risco:        #E5352B;   /* vermelho do traço que risca as pílulas */
 
   --radius-pill:  999px;
   --container:    1160px;
@@ -595,39 +596,12 @@ html {
 .card--right .card__phone { left: auto; right: var(--card-phone-x); }
 .card--right .card__text  { left: 8%; }       /* 43/540 no mock */
 
-/* ---------- 5d. Seção 4 — o que a prefeitura ganha ----------
-   Fundo claro, conteúdo alinhado à esquerda e três cards-foto com o texto
-   sobreposto no topo. Proporções tiradas do mock (artboard 941 x 529):
-     card   264 x 300  -> aspect-ratio 22/25
-     gap     14 / 941  -> ~1.5% da largura útil
-   A régua de capítulos fecha a seção, como no mock. */
-/* ---------- 5d-bis. O PALCO DUPLO (seções 4 + 5) ----------
-   As duas seções dividem uma moldura fixada só. A passagem entre elas é
-   horizontal.
-
-   OS TRÊS CURSOS SÃO A ÚNICA COISA A MEXER PARA MUDAR O RITMO. Estão aqui,
-   em vh, e o duo.js os LÊ deste CSS (getComputedStyle) em vez de repetir os
-   números. Uma fonte só: mexeu aqui, o JS acompanha sozinho.
-
-     --curso-4   quanto de rolagem a coreografia da seção 4 consome
-     --curso-pan quanto dura o deslize horizontal entre elas
-     --curso-5   quanto de rolagem a coreografia da seção 5 consome
-
-   A altura total é a soma. É ela que dá o curso; o sticky de dentro é o que
-   a pessoa vê parado enquanto isso acontece. */
+/* ---------- 5d. Seção 4 — o que a prefeitura ganha ---------- */
 .duo {
   --curso-4:   260;
   --curso-pan:  40;
   --curso-5:   320;
 
-  /* A FAIXA RESERVADA PARA A RÉGUA, no pé do palco.
-     É um token, e não um padding solto em cada seção, porque TRÊS coisas
-     precisam concordar sobre essa altura:
-       · o painel, que não pode deixar conteúdo passar por baixo da régua;
-       · a própria régua, que se ancora dentro dela;
-       · o palco da seção 5, cuja largura (--u) é calculada a partir da altura
-         disponível — sem descontar isto, o círculo seria recortado embaixo.
-     Mexeu aqui, as três acompanham. */
   --rodape: clamp(64px, 10vh, 108px);
 
   position: relative;
@@ -637,8 +611,6 @@ html {
   color: var(--ink);
 }
 
-/* A moldura. overflow: hidden é o que esconde o painel que ainda não chegou
-   (e o que já passou) — sem ele o trilho de 200% criaria rolagem lateral. */
 .duo__sticky {
   position: sticky;
   top: 0;
@@ -646,9 +618,6 @@ html {
   overflow: hidden;
 }
 
-/* O trilho: dois painéis de 100vw lado a lado.
-   --pan vai de 0 (seção 4 na tela) a 1 (seção 5 na tela), escrito pelo
-   duo.js. -50% do trilho de 200% é exatamente uma tela. */
 .duo__rail {
   display: flex;
   width: 200%;
@@ -668,10 +637,6 @@ html {
   padding-bottom: var(--rodape);
 }
 
-/* A RÉGUA UNIFICADA — irmã do trilho, não filha. É essa posição no DOM que
-   a deixa parada enquanto os painéis deslizam por trás.
-   As margens laterais acompanham o .container para a barra nascer alinhada
-   com o conteúdo da seção 4. */
 .duo__timeline {
   position: absolute;
   left: max(24px, (100% - var(--container)) / 2);
@@ -681,9 +646,6 @@ html {
   margin: 0;
 }
 
-/* ----- seção 4 como painel -----
-   Perdeu altura própria e sticky: quem fixa é o palco duplo. O que sobrou
-   aqui é só o que ela é por dentro. */
 .gains {
   position: relative;
   width: 100%;
@@ -745,9 +707,6 @@ html {
   background: #101828;           /* evita flash branco antes da foto carregar */
 }
 
-/* Filete laranja no topo do card: aceso SÓ no card da vez.
-   Quem liga/desliga é a classe .is-current, escrita por createTimelines()
-   no main.js a partir do mesmo índice que move o laranja da timeline. */
 .gain::after {
   content: "";
   position: absolute;
@@ -800,9 +759,6 @@ html {
   color: rgba(255, 255, 255, .92);
 }
 
-/* ----- linha do tempo -----
-   O track é uma linha SÓ, contínua de ponta a ponta (por isso não pode ser
-   border-top dos rótulos: o gap da grade cortaria a linha em três). */
 .timeline { margin-top: clamp(18px, 2.4vw, 32px); }
 
 .timeline__track {
@@ -812,15 +768,6 @@ html {
   background: #E6E8EC;            /* trecho ainda não percorrido */
   overflow: hidden;
 }
-
-/* Trecho percorrido. Começa em ZERO — a barra nasce toda cinza — e vai a
-   100% no fim do curso. --t vem do JS, na própria <section>.
-
-   A largura é o próprio --t, e isso deixou de ser só estética: a régua é
-   quem dá partida nos cards. Cada card entra quando o laranja alcança o
-   terço dele, então o que se vê na barra é literalmente o progresso da
-   sequência. Antes a barra começava em 33% e os cards entravam por conta
-   própria; as duas coisas não conversavam. */
 .timeline__fill {
   position: absolute;
   inset: 0 auto 0 0;
@@ -829,10 +776,6 @@ html {
   background: var(--brand);
 }
 
-/* Dois rótulos, um por seção — os capítulos do palco duplo. Eram três; o
-   terceiro ("Não é mais um sistema") saiu.
-   Com dois, a grade não espelha mais os cards: o primeiro ancora à esquerda,
-   o segundo à direita, e a régua entre eles cobre a distância. */
 .timeline__labels {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -850,59 +793,15 @@ html {
 .timeline__label:nth-child(2) { justify-self: end; text-align: right; }
 .timeline__label.is-current { color: var(--ink); }
 
-/* ---------- 5e. Seção 5 — a transformação ----------
-   ESTA SEÇÃO NÃO USA O .container DO PROJETO, e a razão é o material de
-   origem: a referência é um PALCO 1000 x 563, e o pedido é que fique
-   exatamente igual. Num container de 1160px centrado, a mesma composição
-   muda de proporção a cada largura de tela — foi o que aconteceu na primeira
-   versão, com o círculo encolhido e a régua no meio da seção.
-
-   Então o palco é reconstruído aqui: mesma proporção 1000:563, e TODA medida
-   sai de --u, a largura dele. Assim a composição é a mesma em qualquer tela,
-   só maior ou menor.
-
-     posições  ->  left/top em %, que já são relativos ao palco
-     tamanhos  ->  calc(var(--u) * fração medida na referência)
-
-   As frações abaixo vêm da referência, em pixels do artboard de 1000:
-     margem lateral    68/1000  = 6.8%
-     badge             y  54    = 9.6% da altura
-     título            34px     = .034u
-     círculo           340px    = .34u,  centro em (58.5%, 46.2%)
-     régua             y 510    = 90.6% da altura                          */
+/* ---------- 5e. Seção 5 — a transformação ---------- */
 .trans {
-  /* Largura do palco. O segundo termo é o que impede a composição de estourar
-     a altura da tela: 1.52 de largura por altura disponível dá 1.52/1.776 =
-     86% dela, e o respiro vertical fecha o resto.
-
-     "ALTURA DISPONÍVEL" NÃO É MAIS 100vh: desde o palco duplo a régua ocupa
-     uma faixa no pé (--rodape), e o painel não vai até lá embaixo. Descontar
-     aqui é o que impede o círculo de ser recortado — sem isso a composição
-     estoura o painel e o overflow do palco corta a parte de baixo.
-     O fallback 0px cobre a seção usada fora do palco. */
   --u: min(94vw, calc((100vh - var(--rodape, 0px)) * 1.52));
-
-  /* Diâmetro do círculo central. É o segundo token da seção: tudo o que é
-     circular (arcos, anéis, pílulas, pontos) deriva dele. */
   --foto: calc(var(--u) * .34);
-
-  /* Raios dos anéis, em múltiplos do RAIO do círculo.
-
-     --r-spot é igual a --arco-out de propósito: na referência os pontos
-     laranja ficam EXATAMENTE SOBRE o arco externo, não entre os dois arcos.
-     Confere: ponto "Atletas" a 116px à direita e 194px acima do centro dá
-     raio 226 — e o arco externo tem raio 226. */
   --r-pill:   1.12;
   --r-spot:   1.311;
-
-  /* Proporções reais dos PNGs: 747/647 e 848/647. Como a altura de uma meia
-     circunferência é o diâmetro dela, estes números são o diâmetro do arco
-     em múltiplos do diâmetro da foto. */
   --arco-in:  1.155;
   --arco-out: 1.311;
 
-  /* Painel do palco duplo: sem altura própria e sem sticky. O curso da
-     coreografia agora é --curso-5 no .duo, e quem fixa é o .duo__sticky. */
   position: relative;
   width: 100%;
   display: flex;
@@ -1201,8 +1100,10 @@ html {
   left: -.14em;
   right: -.14em;
   top: 50%;
-  height: max(1px, .085em);
-  background: currentColor;
+  height: max(3px, .085em);
+  /* vermelho fixo, não currentColor: o risco é o sinal de "isso sai", e
+     precisa destoar do texto da pílula em vez de acompanhá-lo */
+  background: var(--risco);
   border-radius: 1px;
 
   /* Cresce da esquerda para a direita. Ao voltar, a mesma transição desenha
