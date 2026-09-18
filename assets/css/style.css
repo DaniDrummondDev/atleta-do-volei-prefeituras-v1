@@ -1913,8 +1913,13 @@ html {
   padding-top: 26px;
   padding-bottom: 30px;
   border-top: 1px solid rgba(255, 255, 255, .12);
-  /* Alinhado à esquerda: acompanha a coluna da marca logo acima e sai de
-     baixo do indicador fixo "ROLE PARA BAIXO", que fica centralizado. */
+  /* Copyright à esquerda (acompanha a coluna da marca acima) e botões das
+     lojas à direita. O gap segura o espaçamento quando a faixa quebra. */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
   text-align: left;
 }
 
@@ -1922,6 +1927,36 @@ html {
   margin: 0;
   font-size: clamp(11px, .95vw, 13px);
   color: rgba(255, 255, 255, .5);
+}
+
+/* ----- lojas na faixa de baixo -----
+   Versão reduzida dos botões da seção 2 (.social__store). O tamanho é
+   ditado pela ALTURA da imagem — as duas artes têm proporções diferentes,
+   então width:auto mantém cada uma sem distorcer. */
+.foot__stores {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.foot__store {
+  display: block;
+  line-height: 0;                 /* mata o espaço extra abaixo do <img> */
+  transition: opacity .2s ease, transform .2s ease;
+}
+
+.foot__store img {
+  display: block;
+  height: 30px;                   /* <- ajuste o tamanho aqui */
+  width: auto;
+}
+
+.foot__store:hover,
+.foot__store:focus-visible { opacity: .82; transform: translateY(-1px); }
+
+@media (max-width: 640px) {
+  .foot__bottom { justify-content: flex-start; }
+  .foot__store img { height: 26px; }
 }
 
 /* ----- estados iniciais da animação -----
