@@ -2194,9 +2194,15 @@ html {
   /* cards viram retrato: foto em cima, texto embaixo, celular sobreposto */
   .features {
     --card-photo: 100%;
-    --card-phone: 46%;
-    --card-phone-x: 27%;
-    --card-phone-y: 14%;
+    /* Em retrato o celular encolhe e passa a ser medido a partir da DIREITA:
+       com a foto ocupando a largura toda, o texto só cabe na metade esquerda,
+       então o celular se recolhe para a coluna da direita. --card-phone-x
+       deixa de ser "left" e vira "right" aqui (ver a regra .card__phone
+       logo abaixo). Mexeu na largura? Ajuste também o `right` do .card__text,
+       senão as duas caixas voltam a se sobrepor. */
+    --card-phone: 38%;
+    --card-phone-x: 5%;
+    --card-phone-y: 16%;
   }
   /* retrato: a sobreposição de 9.6% da largura viraria quase nada frente à
      altura do card, então volta a ser lista com espaçamento normal */
@@ -2217,10 +2223,15 @@ html {
     top: auto;
     bottom: 7%;
     left: 8%;
-    right: 8%;
+    right: 44%;                  /* deixa a faixa direita livre p/ o celular */
     transform: none;
   }
-  .card--right .card__phone { left: var(--card-phone-x); right: auto; }
+  /* as quebras fixas do HTML foram desenhadas para a coluna larga do desktop;
+     na coluna estreita elas estouram — aqui o texto quebra sozinho. */
+  .card__desc br { display: none; }
+  /* as duas variantes se comportam igual: ancoradas à direita */
+  .card__phone,
+  .card--right .card__phone { left: auto; right: var(--card-phone-x); }
 }
 
 @media (max-width: 720px) {
@@ -2244,7 +2255,104 @@ html {
   .gain { aspect-ratio: 16 / 10; }
   .gain::after { opacity: 1; }
 
-  .trans { padding: clamp(48px, 9vw, 72px) 0; }
+  /* ----- Seção 5 no telefone -----
+     O palco 1000:563 punha texto e círculo LADO A LADO. Em retrato não há
+     lado: a composição vira uma pilha — badge, título em duas linhas, e o
+     grupo circular embaixo, maior.
+
+     Três movimentos, nesta ordem:
+       1. o palco perde a proporção fixa e vira coluna em fluxo;
+       2. o texto sai do absolute, centraliza e ocupa a largura toda;
+       3. o grupo circular ganha uma ESCALA PRÓPRIA (ver --u abaixo). */
+  .trans {
+    /* Topo menor que a base de propósito: a seção anterior termina numa
+       imagem, e o título encosta nela — quem separa os dois blocos aqui é a
+       troca de assunto, não o vazio. O respiro grande fica ENTRE o texto e o
+       gráfico (ver a margem do .trans__stage), que é onde ele trabalha. */
+    padding: clamp(20px, 4vw, 34px) 0 clamp(48px, 9vw, 72px);
+    /* Diâmetro do círculo: não sai mais de --u (daria ~32vw, o que se via
+       como um selinho no canto) — aqui é medido direto na tela.
+
+       58vw é o TETO PRÁTICO, não um número solto: acima disso o rótulo
+       "Campeonatos" (o mais longo do anel) passa da borda direita e o
+       `overflow-x: hidden` do body o corta sem avisar. Ver a conta no
+       comentário do .trans__stage. */
+    --foto: min(58vw, 260px);
+  }
+
+  .trans__inner {
+    aspect-ratio: auto;            /* a altura passa a ser a do conteúdo */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .trans__texto {
+    position: static;              /* desfaz left/top do desenho horizontal */
+    width: 100%;
+    z-index: auto;
+    text-align: center;
+  }
+
+  /* As fontes do palco saem de --u (94vw aqui), o que dava ~4px no telefone.
+     No mobile elas passam a medir em vw direto.
+     O badge é inline-flex, então quem o centra é o text-align do pai. */
+  .trans__eyebrow {
+    margin: 0 0 22px;
+    padding: 8px 16px;
+    font-size: clamp(10px, 2.9vw, 12px);
+  }
+
+  /* O <h2> é flex-column no desktop: uma linha por <span>, cinco linhas.
+     display:block devolve os <span> ao fluxo inline — o espaço em branco do
+     HTML entre eles vira separador e o texto quebra sozinho.
+
+     max-width é o que decide o número de linhas: 11em na fonte atual dá as
+     três linhas da referência ("De informações / espalhadas para um /
+     esporte conectado."). Mexeu na fonte, reconfira aqui — e note que `em`
+     acompanha a fonte, então a quebra se mantém ao mudar de tela. */
+  .trans__title {
+    display: block;
+    max-width: 11em;
+    margin-inline: auto;
+    font-size: clamp(22px, 6.4vw, 30px);
+    line-height: 1.26;
+    text-wrap: balance;
+  }
+  .trans__line { display: inline; }
+
+  /* ----- o grupo circular, maior -----
+     TUDO dentro do palco (pontos, pílulas, rótulos, seta, "ANTES") mede em
+     var(--u). Redefinir --u AQUI, no próprio .trans__stage, reescala o
+     conjunto inteiro de uma vez sem repetir um único número: --foto/.34 é a
+     razão da referência (o círculo é 34% do palco), então as proporções
+     continuam idênticas às do desktop — só maiores.
+
+     O CONJUNTO NÃO É SIMÉTRICO, e é isso que o translateX resolve. Medido em
+     múltiplos de --foto, a partir do centro:
+       à esquerda  0.699  (raio da pílula 0.56 + metade da largura dela)
+       à direita   0.655 + o rótulo, que é texto e não encolhe abaixo de 10px
+     Com --foto de 58vw isso dá ~0.94 para a direita contra 0.70 para a
+     esquerda. Os -13% deslocam o conjunto até o rótulo mais longo encostar na
+     borda direita — e as pílulas, de propósito, tocam a esquerda.
+     Mudou --foto ou o piso de fonte do rótulo? Refaça esta conta. */
+  .trans__stage {
+    --u: calc(var(--foto) / .34);
+    position: relative;
+    left: auto;
+    top: auto;
+    width: var(--foto);
+    height: var(--foto);
+    /* O respiro que separa texto e gráfico. Medido em --foto (e não em px)
+       para acompanhar o tamanho do círculo: gráfico maior, respiro maior. */
+    margin: calc(var(--foto) * .3) 0 calc(var(--foto) * .12);
+    transform: translateX(-13%);
+  }
+
+  /* Piso de legibilidade para os rótulos dos pontos: eles são a lista que a
+     pessoa realmente lê. As pílulas NÃO ganham piso — a largura delas é a do
+     PNG de fundo (.278 do círculo) e uma fonte maior estouraria esse fundo. */
+  .trans__spot b { font-size: max(10px, calc(var(--u) * .0145)); }
 
   /* ----- Seção 7 no telefone -----
      O desenho de origem é 16:9, com foto e texto lado a lado. Em retrato não
@@ -2267,12 +2375,29 @@ html {
     height: 52%;
     flex: none;
   }
+  /* OS CANTOS ESQUERDOS SÃO RETOS NO PRÓPRIO PNG.
+     Os arquivos 01..05.png (556x946, RGBA) trazem o arredondamento gravado
+     apenas à DIREITA: na primeira linha de pixels há 24px transparentes à
+     direita e nenhum à esquerda. No desktop isso não se via, porque o card
+     fica colado na borda esquerda do painel escuro. Centralizado no telefone,
+     a assimetria aparece — então o CSS completa o que falta.
+
+     De onde saem os números: 24px de recuo na linha do topo correspondem a um
+     raio de ~30px no arquivo (recuo ≈ R - √R). Daí:
+       horizontal  30/556 = 5.4% da LARGURA
+       vertical    30/946 = 3.2% da ALTURA
+     O par com barra é o que mantém o canto CIRCULAR: em border-radius, uma
+     porcentagem antes da barra mede contra a largura e depois dela contra a
+     altura. Um valor único viraria elipse, já que o card é bem mais alto que
+     largo. Trocou os PNGs? Refaça a medição antes de mexer aqui. */
   .bene__card {
     left: 50%;
     top: 4%;
     width: auto;
     height: 92%;
     transform: translateX(-50%);
+    overflow: hidden;              /* sem isto o raio não recorta o <img> */
+    border-radius: 5.4% 0 0 5.4% / 3.2% 0 0 3.2%;
   }
   .bene__word,
   .bene__rail { display: none; }
@@ -2284,11 +2409,27 @@ html {
   .bene__cap-t { font-size: calc(var(--u) * .038); }
   .bene__cap-d { font-size: calc(var(--u) * .032); }
 
+  /* --bene-pad é a margem lateral do painel de texto no telefone, e existe
+     como token por um motivo prático: ela é aplicada DUAS vezes, em dois
+     mecanismos diferentes, e as duas precisam bater no pixel.
+
+       · .bene__right  usa como padding   (o título está no fluxo normal)
+       · .bene__text   usa como left/right (é position:absolute)
+
+     Por que o absoluto não herda o padding: o bloco que o contém é a CAIXA DE
+     PADDING do .bene__right, então `left: 0` cai na borda externa do padding e
+     o "01 / MAIS PARTICIPAÇÃO" encostava na lateral da tela enquanto o título
+     acima respeitava a margem.
+
+     O token é em px (clamp), não em %: uma porcentagem no absoluto mediria
+     contra a caixa de padding (já 2x menor) e as duas margens sairiam
+     diferentes. Mexeu aqui, mexeu nos dois de uma vez. */
   .bene__right {
+    --bene-pad: clamp(22px, 6.5vw, 34px);
     position: relative;
     left: auto; right: auto; top: auto; bottom: auto;
     flex: 1;
-    padding: 6% 6% 0;
+    padding: 8% var(--bene-pad) 0;
   }
   .bene__eyebrow { position: relative; top: auto; font-size: calc(var(--u) * .03); }
   .bene__title {
@@ -2298,7 +2439,14 @@ html {
     font-size: calc(var(--u) * .062);
   }
   .bene__rule { display: none; }
-  .bene__text { top: auto; bottom: 6%; }
+  /* left/right em vez do `inset: 0` da regra base — ver o comentário do
+     .bene__right logo acima. */
+  .bene__text {
+    top: auto;
+    bottom: 8%;
+    left: var(--bene-pad);
+    right: var(--bene-pad);
+  }
   .bene__num    { font-size: calc(var(--u) * .045); }
   .bene__kicker { font-size: calc(var(--u) * .032); margin-bottom: .8em; }
   .bene__desc   { font-size: calc(var(--u) * .036); max-width: none; }
@@ -2582,9 +2730,22 @@ html {
   .plat__pill,
   .plat__title,
   .plat__list  { position: static; left: auto; top: auto; max-width: none; }
+  /* Empilhado, o bloco de texto passa a ser CENTRADO: sem a arte à direita
+     para equilibrar a página, o alinhamento à esquerda do desktop deixava o
+     conjunto pendendo para um lado só. */
   .plat__pill  { font-size: 11px; }
-  .plat__title { margin: 18px 0 16px; font-size: clamp(26px, 6.4vw, 34px); }
-  .plat__list  { font-size: clamp(11px, 2.9vw, 13px); white-space: normal; }
+  .plat__title { margin: 18px 0 16px; font-size: clamp(26px, 6.4vw, 34px); text-align: center; }
+  .plat__list  { font-size: clamp(11px, 2.9vw, 13px); white-space: normal; text-align: center; }
+
+  /* O pill é inline-flex: `text-align` NELE alinharia o conteúdo dentro da
+     pílula, não a pílula na linha. Quem centra uma caixa que se dimensiona
+     pelo conteúdo é margin auto — e para isso ela precisa ser um bloco
+     (flex), não inline-flex. */
+  .plat__pill {
+    display: flex;
+    width: fit-content;
+    margin-inline: auto;
+  }
 
   .plat__phone { position: relative; left: auto; top: auto; display: inline-block; }
   .plat__phone--b { width: 46%; margin: 40px 0 0 6%; }
@@ -2869,21 +3030,92 @@ html {
 }
 
 /* ---------- responsivo ----------
-   Abaixo de 860px a composição lado a lado não cabe: some a coluna vazia e
-   o texto ocupa a largura toda, sobre o mapa escurecido. */
+   Abaixo de 860px a composição lado a lado não cabe. O desenho aqui é outro:
+   o mapa ocupa a tela inteira, enquadrado no Brasil, e o texto fica ancorado
+   na parte de baixo, sobre um véu que dissolve o mapa no fundo. */
 @media (max-width: 860px) {
-  .mapa { min-height: 100vh; padding: 72px 6vw; }
+  .mapa {
+    /* AS MANIVELAS DO ENQUADRAMENTO. Só estes números se ajustam — nada de
+       mexer em left/top/transform mais abaixo.
 
-  /* o mapa vira textura de fundo: sem o véu, o texto branco disputa com os
-     pinos coloridos e perde legibilidade. O véu vai no PALCO, não na <img>,
-     para as luzes desbotarem junto — senão elas piscariam em cima de um
-     mapa apagado e chamariam ainda mais atenção que antes. */
-  .mapa__palco { opacity: .45; }
+       --zoom      QUANTO DA LARGURA DA ARTE cabe na tela, de 0 a 1.
+                   Menor = mais zoom. .21 mostra ~um quinto da arte, que é o
+                   Brasil de ponta a ponta na largura do telefone.
+       --foco-x/y  O PONTO DA ARTE que vai para a mira. Não é chute: os 21
+                   pinos (tabela em anim/map-lights.js) vão de x 26.9% a
+                   33.6% e de y 37.9% a 65.8% da arte 1920x1080 — o centro
+                   desse aglomerado é (30.5%, 52%), o miolo povoado do país.
+       --centro-y  ONDE NA TELA esse ponto cai. Não é 50% porque o terço de
+                   baixo é do texto: 34% centra o Brasil no espaço que sobra
+                   ACIMA do texto, que é o que se lê como centralizado.
+                   Quer o centro geométrico da tela? Troque por 50% — mas o
+                   sul do país vai para debaixo do véu.
+
+       CUIDADO AO BAIXAR O ZOOM (número maior): a arte é 16:9 e precisa
+       cobrir uma tela em retrato. Acima de ~.26 ela deixa de alcançar a
+       altura da tela e aparece uma faixa de fundo no topo. */
+    --zoom: .21;
+    --foco-x: 30.5%;
+    --foco-y: 52%;
+    --centro-y: 34%;
+
+    /* Cor MEDIDA no próprio PNG (pixel do rodapé da arte: #01132C). O --navy
+       da seção é #0B2545, mais claro — usá-lo aqui deixaria uma emenda
+       visível entre o fim do mapa e o fundo do texto. */
+    --mapa-fundo: #01132C;
+
+    /* O grid de duas colunas do desktop não tem função aqui. Coluna com
+       justify-content: flex-end = o texto encosta na base, e o espaço que
+       sobra em cima fica todo para o mapa. */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 100vh;
+    padding: 0 6vw 64px;
+    background: var(--mapa-fundo);
+  }
+
+  /* O ENQUADRAMENTO, em três linhas:
+     · left/top levam a QUINA do palco até a mira na tela;
+     · o translate em % mede contra o PRÓPRIO palco (é assim que transform
+       resolve porcentagem), então -30.5%/-52% puxam o palco até aquele ponto
+       da arte cair exatamente sobre a mira.
+     É o que permite enquadrar por coordenada da arte, sem calcular pixels. */
+  .mapa__palco {
+    opacity: 1;                 /* não é mais textura atrás do texto */
+    left: 50%;
+    top: var(--centro-y);
+    width: calc(100% / var(--zoom));
+    transform: translate(calc(var(--foco-x) * -1), calc(var(--foco-y) * -1));
+  }
+
+  /* O VÉU — o mapa dissolve no fundo antes de chegar ao texto: em cima é
+     transparente (mapa nítido, luzes acesas), embaixo é a cor sólida.
+
+     O Z-INDEX AQUI NÃO É DECORATIVO. O ::before é o PRIMEIRO filho da seção e
+     o palco vem depois no DOM; entre dois posicionados de mesmo nível quem
+     pinta por último é o último do DOM, então com z-index 0 o véu ficava
+     ATRÁS do mapa e não velava nada. O 1 o tira desse empate. E como ele
+     passa a cobrir também o .mapa__inner (que é z-index 1 na regra base),
+     o texto sobe para 2 logo abaixo. */
+  .mapa::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(to bottom,
+        transparent 40%,
+        var(--mapa-fundo) 62%);
+  }
 
   .mapa__inner {
+    z-index: 2;                 /* acima do véu — ver o comentário acima */
     grid-template-columns: 1fr;
     grid-template-areas: "titulo" "sub" "stats";
     min-height: auto;
+    width: 100%;
+    margin: 0;
     padding-bottom: 0;
   }
 
