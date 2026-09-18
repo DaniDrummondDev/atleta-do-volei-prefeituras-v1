@@ -92,10 +92,15 @@
           <a class="btn btn--primary btn--lg" href="#contato">Fale com um especialista</a>
         </div>
 
+        <!-- Os números são os MESMOS da seção do mapa (.mapa__stats). Quem
+             manda é o data-stat: assets/js/stats.js calcula o valor do dia
+             para cada métrica e reescreve o data-count aqui e lá, com o
+             mesmo resultado. O data-count abaixo é só o valor de segurança,
+             usado se o stats.js não rodar. -->
         <ul class="hero__stats" data-reveal data-reveal-delay="4">
-          <li><b data-count="340">0</b><span>atletas ativos</span></li>
-          <li><b data-count="10">0</b><span>equipes</span></li>
-          <li><b data-count="17">0</b><span>eventos já organizados</span></li>
+          <li><b data-stat="atletas" data-count="1568">0</b><span>atletas ativos</span></li>
+          <li><b data-stat="equipes" data-count="37">0</b><span>equipes</span></li>
+          <li><b data-stat="eventos" data-count="17">0</b><span>eventos já organizados</span></li>
         </ul>
       </div>
 
@@ -737,13 +742,14 @@
 
         <!-- Os números nascem em 0 no HTML, e não vazios: se o JS não rodar
              (CDN fora do ar, movimento reduzido), a pílula ainda diz algo
-             coerente. O valor de chegada mora no data-count — é ele a fonte
-             única do número; mudar a estatística é mudar só esse atributo.
-             Mesmo contrato do hero. -->
+             coerente. O valor de chegada mora no data-count, mas quem o
+             ESCREVE é assets/js/stats.js, a partir do data-stat: a base e o
+             crescimento diário ficam lá, num lugar só, e o hero mostra
+             exatamente o mesmo número. Mesmo contrato do hero. -->
         <ul class="mapa__stats" data-mapa="txt">
-          <li><b data-count="1568">0</b><span>atletas ativos</span></li>
-          <li><b data-count="37">0</b><span>equipes</span></li>
-          <li><b data-count="17">0</b><span>eventos já organizados</span></li>
+          <li><b data-stat="atletas" data-count="1568">0</b><span>atletas ativos</span></li>
+          <li><b data-stat="equipes" data-count="37">0</b><span>equipes</span></li>
+          <li><b data-stat="eventos" data-count="17">0</b><span>eventos já organizados</span></li>
         </ul>
 
         <!-- O rodapé da seção. Cada frase é um <span> SEPARADO porque cada
@@ -1060,6 +1066,10 @@
           integrity="sha384-InMmvD3VoYcY7hGjSC80aLb2bNNE4CzpX+Eq6FVDlmB0IKgDvmfPw4UY8L/M++iG"
           crossorigin="anonymous" defer></script>
 
+  <!-- ANTES do main.js: o rede() dele já escreve o data-count na tela quando
+       o Anime.js não carrega, então o número do dia precisa estar no
+       atributo antes disso. -->
+  <script src="assets/js/stats.js" defer></script>
   <script src="assets/js/main.js" defer></script>
   <script src="assets/js/anim/effects.js" defer></script>
   <script src="assets/js/anim/hero.js" defer></script>
