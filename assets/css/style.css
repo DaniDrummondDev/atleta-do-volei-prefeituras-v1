@@ -263,10 +263,27 @@ html {
   z-index: 0;
   /* sem overflow aqui: overflow criaria um scrollport e quebraria o sticky interno */
 }
+/* POR QUE dvh, E NÃO vh, DAQUI PARA BAIXO
+   `vh` é a viewport GRANDE: no telefone ele mede a tela como se a barra do
+   navegador estivesse escondida, mesmo quando ela está visível. Com a barra
+   na tela, 100vh é MAIOR que o espaço real — mas todo o JS desta página mede
+   com window.innerHeight, que é a viewport DINÂMICA (o espaço de fato). Os
+   dois discordavam, e a diferença aparecia como uma faixa de fundo na base do
+   hero. `dvh` é a unidade que acompanha o innerHeight, então CSS e JS voltam
+   a falar da mesma tela.
+
+   A linha em `vh` ANTES de cada `dvh` não é sobra: é o valor que navegadores
+   sem suporte a dvh vão usar. Quem entende dvh sobrescreve a linha de cima.
+
+   O PREÇO: quando a barra do navegador se esconde durante a rolagem, a
+   viewport dinâmica muda e estas alturas mudam junto. Se isso aparecer como
+   um salto na coreografia num aparelho real, a alternativa é `lvh` (sempre a
+   maior: nunca sobra faixa, mas corta um pouco embaixo). */
 .hero__media-inner {
   position: sticky;
   top: 0;
   height: 100vh;
+  height: 100dvh;
   overflow: hidden;   /* recorta a foto enquanto ela sobe para fora da tela */
 }
 
@@ -279,7 +296,10 @@ html {
 .hero__reel {
   position: absolute;
   inset: 0 0 auto 0;
+  /* dois painéis de uma tela cada — mesma unidade deles, senão o -50% do
+     transform deixaria de valer exatamente uma tela */
   height: 200vh;
+  height: 200dvh;
   transform: translate3d(0, calc(var(--reel, 0) * -50%), 0);
   will-change: transform;
 }
@@ -287,6 +307,7 @@ html {
 .hero__panel {
   position: relative;
   height: 100vh;
+  height: 100dvh;
   overflow: hidden;
 }
 .hero__panel-img {
@@ -321,6 +342,7 @@ html {
   position: relative;
   z-index: 1;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -404,7 +426,10 @@ html {
 .showcase__stage {
   position: sticky;
   top: 0;
+  /* mesma tela do hero (ver o comentário em .hero__media-inner): o palco
+     gruda em cima da foto e os dois precisam ter a mesma altura */
   height: 100vh;
+  height: 100dvh;
   display: grid;
   place-items: center;
   overflow: hidden;            /* recorta só o excedente do close, nunca o phone_02 */
