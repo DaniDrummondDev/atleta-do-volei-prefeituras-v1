@@ -2588,8 +2588,6 @@ html {
 
 /* ---------- a coluna de texto ----------*/
 .plat__stage {
-  /* fator = onde o texto começa dentro da bola.
-     Maior = mais para a direita. (.18 era o valor da arte) */
   --txt-x: calc(var(--bola-w) * .24 - (100vw - var(--u)) / 2);
 }
 
@@ -2631,7 +2629,7 @@ html {
   border-radius: var(--radius-pill);
   background: var(--white);
   color: var(--navy);
-  font-size: calc(var(--u) * .0107);   /* 11/1024 */
+  font-size: calc(var(--u) * .0107); 
   font-weight: 600;
   letter-spacing: .1em;
   text-transform: uppercase;
