@@ -69,9 +69,15 @@
      distribui. Tudo o que mexe no comparador passa por aqui — arrasto,
      teclado, o que vier depois. */
   /* ---------- os riscos sobre as fontes espalhadas ----------
-     Conforme o computador aparece, as fontes que ele substitui vão sendo
-     riscadas, de cima para baixo: 20% risca WHATSAPP, 40% PLANILHAS, e assim
-     até 100%, GRUPOS. Voltar o arrasto desfaz os riscos na ordem inversa.
+     Conforme a QUADRA aparece — isto é, conforme o corte anda para a
+     ESQUERDA —, as fontes que o aplicativo substitui vão sendo riscadas, de
+     cima para baixo: 20% de curso risca WHATSAPP, 40% PLANILHAS, e assim até
+     o fim do curso, GRUPOS. Voltar o arrasto desfaz os riscos na ordem
+     inversa.
+
+     Por isso o risco trabalha no eixo INVERTIDO do corte (`p = 100 - pct`):
+     o corte cresce para a direita revelando o notebook, e é o caminho oposto
+     que conta a história de "isto aqui deixa de existir".
 
      Os limiares são CALCULADOS a partir de quantas pílulas existem, não
      escritos à mão cinco vezes: tirar ou acrescentar uma no HTML redistribui
@@ -85,6 +91,9 @@
     var n = pilulas.length;
     if (!n) return;
 
+    /* o progresso do risco é o quanto o corte já andou para a esquerda */
+    var p = 100 - pct;
+
     pilulas.forEach(function (pill, i) {
       /* (i+1) * 100 / n, e não (i+1) * (100/n): esta ordem fecha em 100
          exato na última, sem sobra de ponto flutuante. A última só risca no
@@ -92,8 +101,8 @@
       var limiar = (i + 1) * 100 / n;
 
       var riscada = pill.classList.contains("is-riscado")
-        ? pct > limiar - ZONA_MORTA    /* já riscada: só sai se recuar além da zona */
-        : pct >= limiar;               /* ainda limpa: risca ao passar do limiar */
+        ? p > limiar - ZONA_MORTA    /* já riscada: só sai se recuar além da zona */
+        : p >= limiar;               /* ainda limpa: risca ao passar do limiar */
 
       pill.classList.toggle("is-riscado", riscada);
     });

@@ -1356,7 +1356,9 @@ html {
 }
 
 /* Quem põe .is-riscado é o compare.js, a partir do mesmo --split que move o
-   corte: cada pílula tem o seu limiar (20%, 40%, 60%, 80%, 100%). */
+   corte, só que lido de trás para frente: os riscos entram conforme o corte
+   anda para a ESQUERDA (a quadra aparecendo). Em --split, os limiares das
+   cinco pílulas caem em 80%, 60%, 40%, 20% e 0%. */
 .trans__pill.is-riscado i::after { transform: translateY(-50%) scaleX(1); }
 
 /* pontos: para a DIREITA, sobre o arco externo, com o rótulo em seguida.

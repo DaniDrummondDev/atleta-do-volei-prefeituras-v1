@@ -99,23 +99,25 @@ t('cinco pilulas encontradas', pilulas.length === 5, String(pilulas.length));
 
 function em(pct) { ponteiro('pointerdown', 0); ponteiro('pointermove', 100 + pct * 4); ponteiro('pointerup', 0); }
 
-em(0);   t('0%: nenhum risco', riscadas() === 0, String(riscadas()));
-em(19);  t('19%: ainda nenhum', riscadas() === 0, String(riscadas()));
-em(20);  t('20%: risca a 1a (' + palavra(0) + ')', riscadas() === 1 && pilulas[0].classList.contains('is-riscado'));
-em(40);  t('40%: duas (' + palavra(1) + ')', riscadas() === 2 && pilulas[1].classList.contains('is-riscado'));
-em(60);  t('60%: tres (' + palavra(2) + ')', riscadas() === 3 && pilulas[2].classList.contains('is-riscado'));
-em(80);  t('80%: quatro (' + palavra(3) + ')', riscadas() === 4 && pilulas[3].classList.contains('is-riscado'));
-em(100); t('100%: as cinco (' + palavra(4) + ')', riscadas() === 5);
+// o risco anda no eixo INVERTIDO do corte: quem risca e ir para a ESQUERDA
+// (a quadra aparecendo), nao para a direita.
+em(100); t('100%: nenhum risco', riscadas() === 0, String(riscadas()));
+em(81);  t('81%: ainda nenhum', riscadas() === 0, String(riscadas()));
+em(80);  t('80%: risca a 1a (' + palavra(0) + ')', riscadas() === 1 && pilulas[0].classList.contains('is-riscado'));
+em(60);  t('60%: duas (' + palavra(1) + ')', riscadas() === 2 && pilulas[1].classList.contains('is-riscado'));
+em(40);  t('40%: tres (' + palavra(2) + ')', riscadas() === 3 && pilulas[2].classList.contains('is-riscado'));
+em(20);  t('20%: quatro (' + palavra(3) + ')', riscadas() === 4 && pilulas[3].classList.contains('is-riscado'));
+em(0);   t('0%: as cinco (' + palavra(4) + ')', riscadas() === 5);
 
 // volta: os riscos saem na ordem inversa, respeitando a zona morta de 1.5
-em(99);  t('99%: a ultima resiste (zona morta)', riscadas() === 5, String(riscadas()));
-em(98);  t('98%: a ultima sai', riscadas() === 4, String(riscadas()));
-em(58);  t('58%: sobram duas', riscadas() === 2, String(riscadas()));
-em(0);   t('volta a 0%: nenhum risco', riscadas() === 0, String(riscadas()));
+em(1);   t('1%: a ultima resiste (zona morta)', riscadas() === 5, String(riscadas()));
+em(2);   t('2%: a ultima sai', riscadas() === 4, String(riscadas()));
+em(42);  t('42%: sobram duas', riscadas() === 2, String(riscadas()));
+em(100); t('volta a 100%: nenhum risco', riscadas() === 0, String(riscadas()));
 
 // saltar de ponta a ponta nao deixa estado preso
-em(100); em(0);
-t('salto 100 -> 0 limpa tudo', riscadas() === 0, String(riscadas()));
+em(0); em(100);
+t('salto 0 -> 100 limpa tudo', riscadas() === 0, String(riscadas()));
 
 // teclado
 function tecla(key, shiftKey = false) {
