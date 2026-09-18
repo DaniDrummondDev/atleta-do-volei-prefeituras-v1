@@ -64,7 +64,7 @@ const ok = (c, m) => console.log((c ? '  PASS  ' : '  FALHA ') + m);
 
   const secoes = await page.evaluate(() => {
     const vh = window.innerHeight;
-    return ['.hero', '.social', '.features', '.gains', '.trans'].map(sel => {
+    return ['.hero', '.social', '.features', '.gains', '.trans', '.plat'].map(sel => {
       const el = document.querySelector(sel);
       return {
         sel,
@@ -81,7 +81,7 @@ const ok = (c, m) => console.log((c ? '  PASS  ' : '  FALHA ') + m);
     const vh = window.innerHeight;
     return {
       tipo: getComputedStyle(document.documentElement).scrollSnapType,
-      secoes: ['.hero', '.social', '.features', '.gains', '.trans'].map(sel => {
+      secoes: ['.hero', '.social', '.features', '.gains', '.trans', '.plat'].map(sel => {
         const el = document.querySelector(sel);
         return {
           sel,

@@ -621,6 +621,144 @@
 
       </div>
     </section>
+
+    <!-- ============ SEÇÃO 8 — "Tudo o que o vôlei precisa" ============
+         Tela branca, texto à esquerda, dois celulares à direita e a bola de
+         marca d'água saindo pelo canto inferior esquerdo.
+
+         COMO ESTA SEÇÃO GUARDA A REFERÊNCIA:
+         tudo aqui dentro é posicionado em PORCENTAGEM de um palco de
+         proporção fixa (1024 x 725, a proporção da arte aprovada). O palco
+         mede-se por --u, no style.css; os filhos não conhecem pixel nenhum.
+         Assim a composição chega igual em qualquer tela: o palco encolhe
+         inteiro, e não os elementos um a um. Mesma ideia da seção 7.
+
+         ORDEM NO DOM = ORDEM DA ANIMAÇÃO, como no footer:
+         primeiro os três blocos de texto (sobem juntos), depois o celular de
+         trás (o maior, à direita) e por fim o da frente. Trocar a ordem daqui
+         troca a ordem de entrada. Quem rege é anim/section-08.js.
+
+         Os dois celulares são DIV + IMG, e não só IMG, de propósito: o JS
+         anima a entrada na div e o CSS mantém o wiggle infinito na img. São
+         dois `transform` em elementos diferentes — se fossem o mesmo, um
+         apagaria o outro. -->
+    <section class="plat" id="plataforma" data-snap data-anime="plat">
+
+      <!-- A bola é marca d'água e fica FORA do palco de propósito: ela cola
+           no canto inferior esquerdo da SEÇÃO, não do palco. O palco é
+           centralizado e tem largura máxima (o --container), então uma bola
+           presa a ele nunca alcançaria a borda da tela — sobraria sempre a
+           faixa branca entre os dois. Sendo irmã do palco, e vindo ANTES dele
+           no DOM, ela também fica naturalmente por baixo do texto. -->
+      <img class="plat__bg" src="assets/images/section_08_bg.png"
+           alt="" aria-hidden="true" draggable="false" />
+
+      <div class="plat__stage">
+
+        <p class="plat__pill" data-plat="txt">
+          <i aria-hidden="true"></i>Uma plataforma completa
+        </p>
+
+        <h2 class="plat__title" data-plat="txt">
+          Tudo o que o vôlei precisa.<br /><b>Em um só lugar.</b>
+        </h2>
+
+        <ul class="plat__list" data-plat="txt">
+          <li>Comunidade · Criação de eventos</li>
+          <li>Placar eletrônico · Board tático</li>
+          <li>Quadras · Campeonatos · Circuitos</li>
+          <li>Escolas · Rede social · Jogos · Chat</li>
+          <li>Jogos em destaque · Atletas · Equipes</li>
+        </ul>
+
+        <!-- o de trás entra primeiro -->
+        <div class="plat__phone plat__phone--b" data-plat="phone">
+          <img src="assets/images/section_08_phone_02.png"
+               alt="Tela do aplicativo com a lista de equipes: equipes que você participa, equipes que você segue e busca por nível"
+               loading="lazy" draggable="false" />
+        </div>
+
+        <div class="plat__phone plat__phone--a" data-plat="phone">
+          <img src="assets/images/section_08_phone_01.png"
+               alt="Tela do aplicativo com a agenda de dezembro e os próximos eventos de vôlei"
+               loading="lazy" draggable="false" />
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============ SEÇÃO 9 — "Já está acontecendo!" ============
+         Uma tela cheia (por isso data-snap), com o mapa ocupando o fundo
+         inteiro e a coluna de texto à direita.
+
+         O MAPA É <img> E NÃO background-image de propósito: como <img> ele
+         entra na fila de download do navegador (pode ser priorizado, pode
+         ser lazy) e carrega um alt="" explícito, dizendo ao leitor de tela
+         que é decoração. Com background-image ele seria invisível para as
+         ferramentas e baixaria sempre, mesmo fora da tela.
+
+         ORDEM NO DOM = ORDEM DA ANIMAÇÃO, como nas seções 7 e 8:
+         título, subtítulo e estatísticas sobem escalonados nessa ordem; o
+         rodapé de frases tem coreografia própria. Quem rege é
+         anim/section-09.js. -->
+    <section class="mapa" id="ja-acontecendo" data-snap data-anime="mapa">
+
+      <!-- O PALCO DO MAPA.
+           A imagem NÃO usa object-fit: cover direto na seção, e isso é o que
+           torna as luzes possíveis. As luzes são posicionadas em % sobre o
+           mapa, e % só bate com a arte se a caixa tiver a MESMA proporção
+           dela. Com object-fit, a caixa é a seção (proporção qualquer) e a
+           imagem se encolhe por dentro — os dois sistemas de coordenadas
+           deixam de coincidir e a luz desgruda do pino.
+
+           Então o cover é refeito à mão: este palco tem a proporção da arte
+           (1920x1080), é grande o bastante para cobrir a seção e é ele que
+           transborda. A <img> apenas o preenche 100%/100%, e as luzes, sendo
+           filhas dele, acompanham a arte pixel a pixel em qualquer tela.
+
+           A camada de luzes nasce VAZIA: quem cria os pontos é o
+           anim/map-lights.js, que carrega a tabela de coordenadas. São 21
+           posições medidas na imagem — dado derivado da arte, não conteúdo,
+           e por isso não moram aqui. -->
+      <div class="mapa__palco" aria-hidden="true">
+        <img class="mapa__bg" src="assets/images/section_09_map.png"
+             alt="" draggable="false" />
+        <div class="mapa__luzes" data-mapa="luzes"></div>
+      </div>
+
+      <div class="mapa__inner">
+
+        <h2 class="mapa__title" data-mapa="txt">Já está acontecendo!</h2>
+
+        <p class="mapa__sub" data-mapa="txt">
+          Atletas, equipes, eventos e quadras reunidos<br />
+          em uma única plataforma.
+        </p>
+
+        <!-- Os números nascem em 0 no HTML, e não vazios: se o JS não rodar
+             (CDN fora do ar, movimento reduzido), a pílula ainda diz algo
+             coerente. O valor de chegada mora no data-count — é ele a fonte
+             única do número; mudar a estatística é mudar só esse atributo.
+             Mesmo contrato do hero. -->
+        <ul class="mapa__stats" data-mapa="txt">
+          <li><b data-count="1568">0</b><span>atletas ativos</span></li>
+          <li><b data-count="37">0</b><span>equipes</span></li>
+          <li><b data-count="17">0</b><span>eventos já organizados</span></li>
+        </ul>
+
+        <!-- O rodapé da seção. Cada frase é um <span> SEPARADO porque cada
+             uma entra por conta própria, em cascata — não dá para animar
+             pedaços de um texto corrido. O traço é um <i> vazio: é desenho,
+             não conteúdo, e some para o leitor de tela. -->
+        <p class="mapa__kicker">
+          <i class="mapa__traco" data-mapa="traco" aria-hidden="true"></i>
+          <span data-mapa="frase">Mais vôlei.</span>
+          <span data-mapa="frase">Mais conexões.</span>
+          <span data-mapa="frase">Mais cidades ativas.</span>
+        </p>
+
+      </div>
+    </section>
   </main>
 
   <!-- ============ FOOTER ============
@@ -708,6 +846,11 @@
   <!-- Carrossel da seção 7. Também não depende do window.anime: a seção não
        tem estado escondido, então sem ele ela fica parada no primeiro slide. -->
   <script src="assets/js/anim/bene.js" defer></script>
+  <script src="assets/js/anim/section-08.js" defer></script>
+  <script src="assets/js/anim/section-09.js" defer></script>
+  <!-- As luzes das cidades. Como o spots.js, não depende do window.anime:
+       ele só cria os pontos e sorteia os atrasos; quem pisca é o CSS. -->
+  <script src="assets/js/anim/map-lights.js" defer></script>
   <script src="assets/js/anim/footer.js" defer></script>
 </body>
 </html>

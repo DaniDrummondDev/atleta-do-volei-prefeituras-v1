@@ -101,8 +101,9 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
    Nessas, não existe "posição certa" para encaixar: cada pixel de rolagem é
    um quadro da animação. Encaixar seria escolher um quadro pela pessoa.
 
-   .social é a única de uma tela só: ali existe um enquadramento certo, e é
-   ali que o encaixe ajuda.
+   .social e .plat (seção 8) são as de uma tela só: ali existe um
+   enquadramento certo, e é ali que o encaixe ajuda. As duas são composições
+   fechadas — encaixar é mostrar a arte inteira, não um pedaço dela.
 
    COMO SE MARCA: pelo atributo data-snap no HTML, não por lista de classes
    aqui. Assim uma seção nova de 100vh ganha encaixe adicionando o atributo,
@@ -110,8 +111,8 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
    confere que todo [data-snap] realmente tem no máximo uma tela — se alguém
    deixar o atributo numa seção que cresceu, o teste avisa.
 
-   `proximity` e não `mandatory`: com um único ponto de encaixe na página,
-   `mandatory` prenderia a rolagem nele.
+   `proximity` e não `mandatory`: com pouquíssimos pontos de encaixe numa
+   página longa, `mandatory` prenderia a rolagem neles.
 
    SEM scroll-padding de propósito: o header é fixo mas transparente, e as
    seções são desenhadas para encostar no topo da tela. */
@@ -2345,15 +2346,549 @@ html {
 
   .card__photo,
   .card__phone { transform: none !important; }
-
-  /* Seção 7: o carrossel CONTINUA — trocar de slide é o conteúdo da seção,
-     não um enfeite, e desligá-lo esconderia quatro quintos do texto. O que
-     sai é o MOVIMENTO: os blocos deixam de descer e subir e passam a só
-     aparecer e sumir. A opacidade continua vindo do bene.js.
-
-     A palavra deitada é a exceção: o transform dela não é movimento, é o
-     que a deita. `transform: none` a deixaria em pé, atravessada. */
   .bene__cap,
   .bene__text { transform: none !important; }
   .bene__word { transform: translate(-50%, -50%) rotate(-90deg) !important; }
+}
+
+/* =========================================================
+   9. SEÇÃO 8 — "Tudo o que o vôlei precisa. Em um só lugar."
+   --------------------------------------------------------- */
+.plat {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: 0 4vw;
+  background: var(--white);
+  color: var(--navy);
+  overflow: hidden;
+  --bola-w: min(38vw, 500px);
+}
+
+.plat__stage {
+  --u: min(var(--container), 92vw, 132vh);
+  position: relative;
+  z-index: 1;               /* acima da bola: o texto passa por cima dela */
+  width: var(--u);
+  aspect-ratio: 1024 / 725;
+}
+
+/* ---------- a coluna de texto ----------*/
+.plat__stage {
+  /* fator = onde o texto começa dentro da bola.
+     Maior = mais para a direita. (.18 era o valor da arte) */
+  --txt-x: calc(var(--bola-w) * .24 - (100vw - var(--u)) / 2);
+}
+
+/* ---------- estado de partida do texto ----------
+   Os três blocos nascem escondidos e 24px abaixo do lugar; o section-08.js
+   leva os dois valores a zero. Esconder aqui, no CSS, e não no JS, é o que
+   evita o flash de conteúdo enquanto o script da biblioteca não chegou —
+   mesmo acordo do [data-reveal] do projeto. As redes lá embaixo desfazem
+   isto quando não há animação nenhuma para rodar. */
+.plat [data-plat="txt"] {
+  opacity: 0;
+  transform: translateY(24px);
+}
+
+/* ---------- a bola, marca d'água ---------- */
+.plat__bg {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: var(--bola-w);
+  height: auto;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ---------- a pílula "— UMA PLATAFORMA COMPLETA" ----------*/
+.plat__pill {
+  position: absolute;
+  left: var(--txt-x);
+  top: 3.6%;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: .7em;
+  margin: 0;
+  padding: .62em 1.15em;
+  border: 1px solid rgba(11, 37, 69, .18);
+  border-radius: var(--radius-pill);
+  background: var(--white);
+  color: var(--navy);
+  font-size: calc(var(--u) * .0107);   /* 11/1024 */
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.plat__pill i {
+  display: block;
+  width: 1.4em;
+  height: 2px;
+  background: var(--brand);
+  font-style: normal;
+}
+
+/* ---------- o título ----------
+   Duas linhas, a segunda em 600. O <br> é conteúdo: a quebra depois de
+   "precisa." está na arte e não pode ficar a cargo da largura da caixa. */
+.plat__title {
+  position: absolute;
+  left: var(--txt-x);
+  top: 9%;
+  z-index: 2;
+  margin: 0;
+  max-width: 62%;
+  font-size: calc(var(--u) * .0332);   /* 34/1024 */
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -.01em;
+  color: #2A3B55;
+}
+.plat__title b { font-weight: 600; color: var(--navy); }
+
+/* ---------- a lista de recursos ----------
+   Uma linha por <li>, sem marcador (o reset global já tira) e sem quebra: os
+   pontos médios separam os itens dentro da linha, como na arte. */
+.plat__list {
+  position: absolute;
+  left: var(--txt-x);
+  top: 23%;
+  z-index: 2;
+  font-size: calc(var(--u) * .0127);   /* 13/1024 */
+  font-weight: 400;
+  line-height: 1.52;
+  letter-spacing: .055em;
+  text-transform: uppercase;
+  color: rgba(11, 37, 69, .82);
+  white-space: nowrap;
+}
+
+/* ---------- os dois celulares ----------
+   A DIV é do JS (entrada) e a IMG é do CSS (wiggle). Ver o comentário no
+   index.html: são dois transform, em elementos diferentes, porque um só
+   apagaria o outro.
+
+   --sobe espelha o deslocamento de entrada do section-08.js. Ele mora aqui
+   porque é o CSS quem precisa saber onde o celular NASCE — o JS só anima até
+   zero. Mexer num lugar sem mexer no outro faz o aparelho saltar no primeiro
+   quadro. */
+.plat__phone {
+  --sobe: 8%;
+  position: absolute;
+  z-index: 1;
+  opacity: 0;
+  transform: translateY(var(--sobe));
+  will-change: transform, opacity;
+}
+
+/* o de trás: maior, à direita, mais alto */
+.plat__phone--b {
+  left: 63.8%;              /* 653/1024 */
+  top: 12.1%;               /*  88/725  */
+  width: 24.4%;             /* 250/1024 */
+}
+
+/* o da frente: menor, ao centro, mais baixo — cobre a borda do outro */
+.plat__phone--a {
+  left: 41.4%;              /* 424/1024 */
+  top: 23.7%;               /* 172/725  */
+  width: 21.2%;             /* 217/1024 */
+  z-index: 2;
+}
+
+.plat__phone img { width: 100%; height: auto; }
+
+/* ---------- o wiggle ----------
+   Começa só quando o JS marca .is-parado, isto é, DEPOIS que o aparelho
+   terminou de entrar: senão o balanço disputaria os mesmos pixels com a
+   subida e o movimento sairia trêmulo.
+
+   Os dois têm duração e atraso diferentes de propósito. Com o mesmo ciclo,
+   os aparelhos balançam em espelho e a tela inteira parece respirar junto —
+   lê como bug, não como vida. */
+@keyframes plat-wiggle {
+  0%   { transform: translateY(0)      rotate(0deg); }
+  50%  { transform: translateY(-1.35%) rotate(.45deg); }
+  100% { transform: translateY(0)      rotate(0deg); }
+}
+.plat__phone.is-parado img {
+  animation: plat-wiggle 5.4s ease-in-out infinite;
+}
+.plat__phone--a.is-parado img {
+  animation-duration: 6.7s;
+  animation-delay: -1.8s;   /* negativo: entra no meio do ciclo, sem espera */
+}
+
+/* ---------- responsivo ----------
+   Abaixo de 860px a composição lado a lado não cabe: o texto empilha em cima
+   e os celulares embaixo. Aqui o palco deixa de ter proporção fixa — a arte
+   de referência é de desktop, e forçá-la no telefone deixaria a fonte
+   ilegível (13px * 92vw/1024 = 4px num aparelho de 360px). */
+@media (max-width: 860px) {
+  .plat { min-height: auto; padding: 72px 6vw; }
+
+  .plat__stage {
+    --u: min(560px, 88vw);
+    width: 100%;
+    max-width: 560px;
+    aspect-ratio: auto;
+  }
+
+  /* No empilhado a bola só cresce; o texto vira fluxo normal (position:
+     static logo abaixo), então --txt-x deixa de ser usado aqui. */
+  .plat        { --bola-w: 66vw; }
+  .plat__pill,
+  .plat__title,
+  .plat__list  { position: static; left: auto; top: auto; max-width: none; }
+  .plat__pill  { font-size: 11px; }
+  .plat__title { margin: 18px 0 16px; font-size: clamp(26px, 6.4vw, 34px); }
+  .plat__list  { font-size: clamp(11px, 2.9vw, 13px); white-space: normal; }
+
+  .plat__phone { position: relative; left: auto; top: auto; display: inline-block; }
+  .plat__phone--b { width: 46%; margin: 40px 0 0 6%; }
+  .plat__phone--a { width: 40%; margin-left: -6%; vertical-align: bottom; }
+}
+
+/* ---------- redes de segurança ----------
+   Sem a biblioteca (.sem-anime), os celulares precisam nascer visíveis: o
+   opacity: 0 acima é um estado de PARTIDA de animação, e sem animação ele
+   vira uma seção com metade do conteúdo invisível. */
+.sem-anime .plat__phone,
+.sem-anime .plat [data-plat="txt"] {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* A entrada não roda e o wiggle não existe: quem pediu menos movimento
+     recebe a composição parada, no estado final. */
+  .plat [data-plat="txt"],
+  .plat__phone {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .plat__phone.is-parado img { animation: none !important; }
+}
+
+/* =========================================================
+   10. SEÇÃO 9 — "Já está acontecendo!" (o mapa)
+   ---------------------------------------------------------
+   Uma tela cheia, fundo escuro, texto à direita. O mapa é uma <img>
+   absoluta cobrindo a seção (object-fit: cover), e não background-image:
+   ver o comentário no index.html.
+
+   O conteúdo vive numa grade de duas colunas e ocupa só a SEGUNDA. A
+   primeira fica vazia de propósito — é onde o Brasil do mapa aparece.
+   Não é margem chutada: a coluna vazia acompanha a largura da tela, então
+   o texto nunca invade o mapa nem foge dele.
+   ========================================================= */
+.mapa {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: 0 4vw;
+  background: var(--navy);   /* pinta a faixa que o cover não cobrir */
+  color: var(--white);
+  overflow: hidden;
+}
+
+/* ---------- o palco do mapa (o "cover" refeito à mão) ----------
+   Ver o comentário no index.html: as luzes precisam de uma caixa com a
+   proporção da arte, e object-fit não dá isso.
+
+   A CONTA: para cobrir uma seção de 100vh, uma caixa 16:9 precisa de
+   177.78vh de largura (100 * 1920/1080). Se a tela for mais larga que isso,
+   quem manda é a largura — daí o max() com 100%. O resultado é o mesmo
+   enquadramento do object-fit: cover, só que numa caixa que as luzes
+   entendem.
+
+   Ancorado à ESQUERDA porque o Brasil está na metade esquerda da arte:
+   quando sobra imagem, quem transborda é a África. */
+.mapa__palco {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: max(100%, 177.78vh);
+  aspect-ratio: 1920 / 1080;
+  pointer-events: none;
+  user-select: none;
+}
+
+.mapa__bg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---------- as luzes das cidades ----------
+   Uma camada do tamanho exato do palco; cada luz é um <i> posicionado em %
+   pelo JS (anim/map-lights.js), com o centro no bulbo do pino pintado.
+
+   O HALO É UM RADIAL-GRADIENT, e não box-shadow: o gradiente apaga na
+   borda, então o brilho some no mapa sem deixar o anel duro que um
+   box-shadow deixa.
+
+   A cor vem de --rgb, escrita pelo JS para a luz casar com o pino que está
+   embaixo (laranja, amarelo ou verde). É um TRIO DE CANAIS ("242 101 34") e
+   não uma cor pronta, porque o gradiente precisa da mesma cor em três
+   opacidades — com uma cor pronta seria preciso color-mix() para cada
+   parada. */
+.mapa__luzes {
+  position: absolute;
+  inset: 0;
+}
+
+.mapa__luzes i {
+  position: absolute;
+  /* 2.4% da largura do palco ≈ 4x o pino (que tem ~0.6%): o halo transborda
+     do pino para os lados, que é o que faz parecer luz e não um disco. */
+  width: 2.4%;
+  aspect-ratio: 1;
+  /* left/top do JS marcam o CENTRO do pino; o translate tira o canto da
+     conta. O -50%/-50% se repete em TODOS os quadros do @keyframes de
+     propósito: transform é uma propriedade só, então um quadro que
+     escrevesse apenas scale() apagaria o centramento e a luz saltaria para
+     baixo e para a direita do pino. */
+  transform: translate(-50%, -50%) scale(.35);
+  border-radius: 50%;
+  background: radial-gradient(circle,
+              rgba(var(--rgb), .95) 0%,
+              rgba(var(--rgb), .50) 26%,
+              rgba(var(--rgb), 0)   68%);
+  opacity: 0;
+
+  /* --ciclo e --atraso são sorteados pelo JS. O 0s de reserva é o caso "o
+     JS não rodou": sem duração, a luz fica no estado base (opacity: 0) e a
+     seção volta a ser o mapa parado — nada quebra, nada pisca sozinho. */
+  animation: mapa-piscar var(--ciclo, 0s) ease-in-out var(--atraso, 0s) infinite;
+}
+
+/* A piscada ocupa só os primeiros 18% do ciclo; o resto é pausa.
+   É esse desequilíbrio que faz a leitura de "luzes de cidade": muitas
+   luzes, poucas acesas ao mesmo tempo, nenhuma em ritmo previsível.
+
+   O pico de escala é 1 e o repouso .35 — a luz nasce do próprio pino e
+   cresce, em vez de aparecer já grande. */
+@keyframes mapa-piscar {
+  0%    { opacity: 0;   transform: translate(-50%, -50%) scale(.35); }
+  5%    { opacity: .95; transform: translate(-50%, -50%) scale(1); }
+  10%   { opacity: .45; transform: translate(-50%, -50%) scale(.82); }
+  13%   { opacity: .8;  transform: translate(-50%, -50%) scale(.95); }
+  18%   { opacity: 0;   transform: translate(-50%, -50%) scale(.35); }
+  100%  { opacity: 0;   transform: translate(-50%, -50%) scale(.35); }
+}
+
+.mapa__inner {
+  position: relative;
+  z-index: 1;
+  width: min(var(--container), 92vw);
+  /* a coluna vazia da esquerda é o mapa; o texto mora na direita */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    "vazio titulo"
+    "vazio sub"
+    "vazio stats";
+  align-content: center;
+  row-gap: 0;
+  /* Quase a tela inteira: é a altura do .mapa__inner que define o quanto o
+     rodapé desce, porque ele está ancorado na BASE deste bloco (ver
+     .mapa__kicker). 88vh deixa ~6vh de respiro embaixo, que é a distância
+     da arte. Subir este número desce o rodapé; descer, sobe. */
+  min-height: min(880px, 88vh);
+  /* o piso reservado ao rodapé: como ele saiu do fluxo, é este padding que
+     impede a pilha centralizada de encostar nele em tela baixa */
+  padding-bottom: 4.5em;
+}
+
+.mapa__title  { grid-area: titulo; }
+.mapa__sub    { grid-area: sub; }
+.mapa__stats  { grid-area: stats; }
+
+/* O rodapé SAI DO FLUXO de propósito.
+   Se ele fosse mais uma linha da grade, empurrar para baixo só daria certo
+   com uma margem grande — e essa margem também empurraria a pilha inteira
+   (título, subtítulo, pílulas) para cima, porque a grade é centralizada.
+   Fora do fluxo, ele encosta na base do bloco e o texto de cima fica onde
+   está: os dois param de disputar o mesmo espaço vertical.
+
+   left: 50% = o começo da segunda coluna da grade (1fr 1fr) — o rodapé
+   continua alinhado com o título, sem repetir o valor em outro lugar. */
+.mapa__kicker {
+  position: absolute;
+  left: 50%;
+  right: 0;
+  bottom: 0;
+}
+
+/* ---------- estado de partida ----------
+   Título, subtítulo e estatísticas nascem escondidos e 24px abaixo; o
+   section-09.js leva os dois valores a zero. Esconder aqui, no CSS, e não
+   no JS, é o que evita o flash enquanto o script do CDN não chegou — mesmo
+   acordo do [data-reveal] e do [data-plat] da seção 8. As redes lá embaixo
+   desfazem isto quando não há animação nenhuma para rodar. */
+.mapa [data-mapa="txt"] {
+  opacity: 0;
+  transform: translateY(24px);
+}
+
+/* O traço cresce da esquerda para a direita: origem à esquerda, senão ele
+   se abriria para os dois lados a partir do meio. */
+.mapa [data-mapa="traco"] {
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+/* As frases entram DA ESQUERDA, então partem deslocadas para a esquerda.
+   Em em, e não em px: o deslocamento acompanha o tamanho da fonte, que é
+   fluido — assim o gesto tem a mesma proporção em qualquer tela. */
+.mapa [data-mapa="frase"] {
+  opacity: 0;
+  transform: translateX(-1.2em);
+}
+
+/* ---------- tipografia ---------- */
+.mapa__title {
+  margin: 0;
+  font-size: clamp(30px, 3.6vw, 52px);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -.01em;
+}
+
+.mapa__sub {
+  margin: 14px 0 0;
+  font-size: clamp(15px, 1.45vw, 21px);
+  line-height: 1.42;
+  color: var(--muted);
+}
+
+/* ---------- as pílulas de estatística ----------
+   inline-flex e wrap: em tela estreita elas quebram de linha sozinhas, sem
+   media query. O <b> é o número (o JS conta nele) e o <span> o rótulo. */
+.mapa__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 30px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mapa__stats li {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, .07);
+  border: 1px solid rgba(255, 255, 255, .14);
+  /* impede o "pulo" da pílula enquanto o contador ganha dígitos: o número
+     usa largura tabular, então 9 e 1568 ocupam o mesmo por caractere */
+  font-variant-numeric: tabular-nums;
+}
+
+.mapa__stats b {
+  font-weight: 600;
+  font-size: clamp(12px, 1.05vw, 14px);
+  color: var(--white);
+}
+
+.mapa__stats span {
+  font-size: clamp(9px, .78vw, 11px);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, .62);
+}
+
+/* ---------- o rodapé de frases ---------- */
+.mapa__kicker {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0 .38em;
+  margin: 0;   /* está ancorado pelo bottom; margem aqui só brigaria com ele */
+  font-size: clamp(10px, .88vw, 12.5px);
+  font-weight: 600;
+  letter-spacing: .085em;
+  text-transform: uppercase;
+  color: var(--white);
+}
+
+.mapa__traco {
+  display: block;
+  width: 18px;
+  height: 2px;
+  margin-right: .3em;
+  background: var(--brand);
+  border-radius: 2px;
+}
+
+/* ---------- responsivo ----------
+   Abaixo de 860px a composição lado a lado não cabe: some a coluna vazia e
+   o texto ocupa a largura toda, sobre o mapa escurecido. */
+@media (max-width: 860px) {
+  .mapa { min-height: 100vh; padding: 72px 6vw; }
+
+  /* o mapa vira textura de fundo: sem o véu, o texto branco disputa com os
+     pinos coloridos e perde legibilidade. O véu vai no PALCO, não na <img>,
+     para as luzes desbotarem junto — senão elas piscariam em cima de um
+     mapa apagado e chamariam ainda mais atenção que antes. */
+  .mapa__palco { opacity: .45; }
+
+  .mapa__inner {
+    grid-template-columns: 1fr;
+    grid-template-areas: "titulo" "sub" "stats";
+    min-height: auto;
+    padding-bottom: 0;
+  }
+
+  /* No empilhado o rodapé volta ao fluxo: ancorá-lo na base deixaria ele
+     por cima das pílulas, já que aqui o bloco não tem altura sobrando. */
+  .mapa__kicker {
+    position: static;
+    left: auto; right: auto; bottom: auto;
+    margin-top: 44px;
+    font-size: 10px;
+  }
+
+  .mapa__title  { font-size: clamp(28px, 7vw, 38px); }
+  .mapa__sub    { font-size: clamp(14px, 3.6vw, 17px); }
+  .mapa__sub br { display: none; }
+  .mapa__stats  { margin-top: 24px; }
+  .mapa__stats span { font-size: 9px; }
+}
+
+/* ---------- redes de segurança ----------
+   Sem a biblioteca (.sem-anime) os estados de partida acima viram conteúdo
+   invisível para sempre: a seção chegaria só com o mapa. Aqui tudo volta ao
+   estado final. O contador não roda, e o 0 do HTML seria uma informação
+   errada — por isso o JS escreve o valor final de cara nesse caso (ver
+   section-09.js). */
+.sem-anime .mapa [data-mapa="txt"],
+.sem-anime .mapa [data-mapa="frase"] {
+  opacity: 1 !important;
+  transform: none !important;
+}
+.sem-anime .mapa [data-mapa="traco"] { transform: scaleX(1) !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mapa [data-mapa="txt"],
+  .mapa [data-mapa="frase"] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .mapa [data-mapa="traco"] { transform: scaleX(1) !important; }
+
+  /* As luzes somem inteiras: são movimento puro, sem informação nenhuma —
+     os pinos continuam pintados na arte. O JS também desiste antes de
+     criá-las; isto aqui cobre quem muda a preferência com a página aberta. */
+  .mapa__luzes { display: none; }
 }
