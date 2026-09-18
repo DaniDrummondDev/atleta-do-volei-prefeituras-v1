@@ -3452,24 +3452,29 @@ html {
   text-align: center;
 }
 
-/* ---------- a pílula "— PERGUNTAS FREQUENTES —" ----------
-   Aqui os traços são DOIS, um de cada lado, e por isso não dá para
-   reaproveitar .passos__eyebrow (que tem um só, à esquerda). Também não
-   tem borda: na arte desta seção o rótulo flutua. */
+/* ---------- a pílula "— PERGUNTAS FREQUENTES" ----------
+   Mesma peça de .passos__eyebrow: caixa com borda, raio pill e UM traço
+   laranja à esquerda. Os valores são repetidos (e não herdados) porque as
+   duas seções têm ganchos de animação diferentes — unificar a classe
+   acoplaria o FAQ ao data-passo da seção 10. Ao mexer em uma, conferir a
+   outra em ~3231. */
 .faq__eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: .9em;
+  gap: .7em;
   margin: 0;
+  padding: .62em 1.15em;
+  border: 1px solid rgba(16, 24, 40, .16);
+  border-radius: var(--radius-pill);
   font-size: clamp(10px, .86vw, 12px);
   font-weight: 600;
-  letter-spacing: .16em;
+  letter-spacing: .1em;
   text-transform: uppercase;
   white-space: nowrap;
 }
 .faq__eyebrow i {
   display: block;
-  width: 1.8em;
+  width: 1.4em;
   height: 2px;
   background: var(--brand);
   font-style: normal;
