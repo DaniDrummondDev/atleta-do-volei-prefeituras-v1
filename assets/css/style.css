@@ -1913,7 +1913,9 @@ html {
   padding-top: 26px;
   padding-bottom: 30px;
   border-top: 1px solid rgba(255, 255, 255, .12);
-  text-align: center;
+  /* Alinhado à esquerda: acompanha a coluna da marca logo acima e sai de
+     baixo do indicador fixo "ROLE PARA BAIXO", que fica centralizado. */
+  text-align: left;
 }
 
 .foot__copy {
@@ -3319,4 +3321,70 @@ html {
 @media (prefers-reduced-motion: reduce) {
   .faq__painel,
   .faq__sinal { transition: none !important; }
+}
+
+
+/* -------------------------------------------------------------------
+   SCROLL HINT — "ROLE PARA BAIXO" fixo no rodapé da janela
+   -------------------------------------------------------------------
+   Markup criado por assets/js/anim/scroll-hint.js, como filho direto
+   do <body>:
+     <div class="scroll-hint"><img class="scroll-hint__icon"><span class="scroll-hint__label"></span></div>
+
+   Fica FIXO na viewport (não rola com a página) e acima de tudo:
+   o maior z-index do projeto hoje e 500, entao usamos 9999.
+
+   Ajustes rapidos (tokens no .scroll-hint):
+   - distancia do fundo .......... --scroll-hint-bottom
+   - amplitude do sobe-e-desce ... --scroll-hint-travel
+   - velocidade .................. --scroll-hint-speed
+   ------------------------------------------------------------------- */
+.scroll-hint {
+  --scroll-hint-bottom: 16px;
+  --scroll-hint-travel: 10px;
+  --scroll-hint-speed: 1.8s;
+
+  position: fixed;
+  left: 50%;
+  bottom: var(--scroll-hint-bottom);
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;            /* respiro interno, nao cola no texto */
+  z-index: 9999;                /* acima de header (500) e de tudo mais */
+  pointer-events: none;         /* nunca bloqueia clique em CTA embaixo */
+}
+
+.scroll-hint__icon {
+  display: block;
+  width: 22px;
+  height: auto;
+  animation: scroll-hint-bob var(--scroll-hint-speed) ease-in-out infinite;
+  will-change: transform;
+}
+
+.scroll-hint__label {
+  font-family: "TT Firs Neue", system-ui, sans-serif; /* mesma família do body */
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--brand, #F26522);
+  white-space: nowrap;
+}
+
+@keyframes scroll-hint-bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(var(--scroll-hint-travel)); }
+}
+
+@media (max-width: 640px) {
+  .scroll-hint { gap: 8px; padding: 4px 10px; --scroll-hint-bottom: 12px; }
+  .scroll-hint__icon { width: 18px; }
+  .scroll-hint__label { font-size: 10px; letter-spacing: .12em; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-hint__icon { animation: none; }
 }
