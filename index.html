@@ -759,6 +759,240 @@
 
       </div>
     </section>
+
+    <!-- ============ SEÇÃO 10 — "Como implementamos" ============
+         Uma tela cheia (por isso data-snap), fundo branco, tudo centrado: a
+         pílula, o título e, embaixo, a linha do tempo de cinco passos.
+
+         ORDEM NO DOM = ORDEM DA ANIMAÇÃO, como nas seções 8 e 9: a pílula e
+         o título sobem escalonados nessa ordem; depois o traço cresce da
+         esquerda para a direita e os cinco passos entram atrás dele, um de
+         cada vez. Quem rege é anim/section-10.js.
+
+         O TRAÇO É UM <i> VAZIO, irmão dos passos e não filho de nenhum: ele
+         atravessa as cinco colunas, então não pode morar dentro de uma. É
+         desenho, não conteúdo — daí o aria-hidden.
+
+         Cada passo é um <li> com três peças na vertical: a pílula do nome, o
+         trilho com o ponto (que cai exatamente em cima do traço) e o texto.
+         O ponto também é <i> vazio: a arte vem do CSS
+         (assets/images/section_10_point.png), porque é decoração repetida
+         cinco vezes — um <img> aqui só encheria o HTML de alt="" . -->
+    <section class="passos" id="como-implementamos" data-snap data-anime="passos">
+      <div class="passos__inner">
+
+        <p class="passos__eyebrow" data-passo="txt">
+          <i aria-hidden="true"></i>Como implementamos
+        </p>
+
+        <!-- O <br> é conteúdo: a quebra entre as duas frases está na arte e
+             não pode ficar a cargo da largura da caixa. -->
+        <h2 class="passos__title" data-passo="txt">
+          Cuidamos de cada etapa.<br />
+          <b>Um processo simples e seguro para sua prefeitura.</b>
+        </h2>
+
+        <ol class="passos__grade">
+          <i class="passos__traco" data-passo="traco" aria-hidden="true"></i>
+
+          <li class="passos__passo" data-passo="bloco">
+            <span class="passos__step">Entendemos</span>
+            <i class="passos__ponto" data-passo="ponto" aria-hidden="true"></i>
+            <p class="passos__desc">Entendemos a realidade e os objetivos do município.</p>
+          </li>
+
+          <li class="passos__passo" data-passo="bloco">
+            <span class="passos__step">Configuramos</span>
+            <i class="passos__ponto" data-passo="ponto" aria-hidden="true"></i>
+            <p class="passos__desc">Configuramos a plataforma conforme a realidade da sua cidade.</p>
+          </li>
+
+          <li class="passos__passo" data-passo="bloco">
+            <span class="passos__step">Preparamos</span>
+            <i class="passos__ponto" data-passo="ponto" aria-hidden="true"></i>
+            <p class="passos__desc">Preparamos a comunidade para começar a usar a plataforma.</p>
+          </li>
+
+          <li class="passos__passo" data-passo="bloco">
+            <span class="passos__step">Acompanhamos</span>
+            <i class="passos__ponto" data-passo="ponto" aria-hidden="true"></i>
+            <p class="passos__desc">Oferecemos suporte contínuo e acompanhamos o engajamento.</p>
+          </li>
+
+          <li class="passos__passo" data-passo="bloco">
+            <span class="passos__step">Evoluímos</span>
+            <i class="passos__ponto" data-passo="ponto" aria-hidden="true"></i>
+            <p class="passos__desc">Aprimoramos a operação conforme o esporte cresce na cidade.</p>
+          </li>
+        </ol>
+
+      </div>
+    </section>
+
+    <!-- ============ SEÇÃO 11 — "Ainda tem dúvidas?" (FAQ) ============
+         SEM ANIMAÇÃO DE ENTRADA, de propósito: não tem data-anime nem
+         data-snap. É a única seção da página que é INTERAÇÃO pura — o
+         accordion. Ela também NÃO tem uma tela de altura fixa: cresce e
+         encolhe conforme o item aberto, e por isso ficaria fora do encaixe
+         de rolagem de qualquer forma (ver a regra do scroll snap no topo do
+         CSS).
+
+         POR QUE <button> E NÃO <details>: o pedido é "ao abrir um, todos os
+         outros fecham ANTES". Isso é uma sequência (fecha → espera → abre)
+         e <details> não deixa interceptar nem atrasar a própria abertura.
+         Com botão, quem manda na ordem é o anim/faq.js.
+
+         O CONTRATO DE ACESSIBILIDADE — mexer aqui quebra leitor de tela:
+           .faq__btn      aria-expanded  ..... aberto ou fechado (o JS escreve)
+           .faq__btn      aria-controls  ..... id do painel que ele abre
+           .faq__painel   id             ..... alvo do aria-controls
+           .faq__painel   aria-labelledby .... id do botão que o rege
+           .faq__painel   hidden         ..... some do fluxo quando fechado
+         Ao adicionar uma pergunta, copie um bloco inteiro e troque o par de
+         ids (faq-bN / faq-pN). Ids repetidos fazem o botão novo controlar o
+         painel antigo — falha silenciosa, nada quebra na tela.
+
+         O "+" que vira "×" é CSS puro (dois riscos em ::before/::after),
+         não ícone: é decoração repetida sete vezes.
+
+         O <h3> em volta do botão é a estrutura do documento (a lista de
+         perguntas é navegável por cabeçalhos). O texto visível é o botão. -->
+    <section class="faq" id="duvidas">
+      <div class="faq__inner">
+
+        <p class="faq__eyebrow">
+          <i aria-hidden="true"></i>Perguntas frequentes<i aria-hidden="true"></i>
+        </p>
+
+        <h2 class="faq__title">Ainda tem dúvidas?</h2>
+
+        <!-- data-faq="lista" é o gancho do JS. A classe é estilo; o
+             data-attribute é comportamento. Renomear a classe não quebra o
+             accordion, renomear o data-attribute quebra. -->
+        <div class="faq__lista" data-faq="lista">
+
+          <div class="faq__item">
+            <h3 class="faq__head">
+              <button class="faq__btn" type="button" id="faq-b1"
+                      aria-expanded="false" aria-controls="faq-p1">
+                <span class="faq__pergunta">Como funciona para a prefeitura?</span>
+                <i class="faq__sinal" aria-hidden="true"></i>
+              </button>
+            </h3>
+            <div class="faq__painel" id="faq-p1" role="region" aria-labelledby="faq-b1" hidden>
+              <div class="faq__resposta">
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq__item">
+            <h3 class="faq__head">
+              <button class="faq__btn" type="button" id="faq-b2"
+                      aria-expanded="false" aria-controls="faq-p2">
+                <span class="faq__pergunta">Quanto tempo leva para implementar?</span>
+                <i class="faq__sinal" aria-hidden="true"></i>
+              </button>
+            </h3>
+            <div class="faq__painel" id="faq-p2" role="region" aria-labelledby="faq-b2" hidden>
+              <div class="faq__resposta">
+                <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+                dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+                proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq__item">
+            <h3 class="faq__head">
+              <button class="faq__btn" type="button" id="faq-b3"
+                      aria-expanded="false" aria-controls="faq-p3">
+                <span class="faq__pergunta">Precisamos cadastrar todos os atletas?</span>
+                <i class="faq__sinal" aria-hidden="true"></i>
+              </button>
+            </h3>
+            <div class="faq__painel" id="faq-p3" role="region" aria-labelledby="faq-b3" hidden>
+              <div class="faq__resposta">
+                <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium
+                doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore
+                veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq__item">
+            <h3 class="faq__head">
+              <button class="faq__btn" type="button" id="faq-b4"
+                      aria-expanded="false" aria-controls="faq-p4">
+                <span class="faq__pergunta">Precisamos trocar o sistema que a Secretaria já usa?</span>
+                <i class="faq__sinal" aria-hidden="true"></i>
+              </button>
+            </h3>
+            <div class="faq__painel" id="faq-p4" role="region" aria-labelledby="faq-b4" hidden>
+              <div class="faq__resposta">
+                <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
+                sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
+                Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq__item">
+            <h3 class="faq__head">
+              <button class="faq__btn" type="button" id="faq-b5"
+                      aria-expanded="false" aria-controls="faq-p5">
+                <span class="faq__pergunta">Tem custo para os atletas da cidade?</span>
+                <i class="faq__sinal" aria-hidden="true"></i>
+              </button>
+            </h3>
+            <div class="faq__painel" id="faq-p5" role="region" aria-labelledby="faq-b5" hidden>
+              <div class="faq__resposta">
+                <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis
+                praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias
+                excepturi sint occaecati cupiditate non provident.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq__item">
+            <h3 class="faq__head">
+              <button class="faq__btn" type="button" id="faq-b6"
+                      aria-expanded="false" aria-controls="faq-p6">
+                <span class="faq__pergunta">Como funciona a contratação?</span>
+                <i class="faq__sinal" aria-hidden="true"></i>
+              </button>
+            </h3>
+            <div class="faq__painel" id="faq-p6" role="region" aria-labelledby="faq-b6" hidden>
+              <div class="faq__resposta">
+                <p>Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus
+                saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.
+                Itaque earum rerum hic tenetur a sapiente delectus.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq__item">
+            <h3 class="faq__head">
+              <button class="faq__btn" type="button" id="faq-b7"
+                      aria-expanded="false" aria-controls="faq-p7">
+                <span class="faq__pergunta">Como começar?</span>
+                <i class="faq__sinal" aria-hidden="true"></i>
+              </button>
+            </h3>
+            <div class="faq__painel" id="faq-p7" role="region" aria-labelledby="faq-b7" hidden>
+              <div class="faq__resposta">
+                <p>Ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis
+                doloribus asperiores repellat. Quis autem vel eum iure reprehenderit qui in
+                ea voluptate velit esse quam nihil molestiae consequatur.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
   </main>
 
   <!-- ============ FOOTER ============
@@ -848,9 +1082,14 @@
   <script src="assets/js/anim/bene.js" defer></script>
   <script src="assets/js/anim/section-08.js" defer></script>
   <script src="assets/js/anim/section-09.js" defer></script>
+  <script src="assets/js/anim/section-10.js" defer></script>
   <!-- As luzes das cidades. Como o spots.js, não depende do window.anime:
        ele só cria os pontos e sorteia os atrasos; quem pisca é o CSS. -->
   <script src="assets/js/anim/map-lights.js" defer></script>
+  <!-- Accordion da seção 11. Como o compare.js, é INTERAÇÃO e não animação:
+       não toca no window.anime e continua funcionando se o CDN cair — quem
+       anima a altura é a transição CSS do .faq__painel. -->
+  <script src="assets/js/anim/faq.js" defer></script>
   <script src="assets/js/anim/footer.js" defer></script>
 </body>
 </html>

@@ -2892,3 +2892,431 @@ html {
      criá-las; isto aqui cobre quem muda a preferência com a página aberta. */
   .mapa__luzes { display: none; }
 }
+
+/* =========================================================
+   11. SEÇÃO 10 — "Como implementamos" (a linha do tempo)
+   ---------------------------------------------------------
+   Tela cheia, fundo branco, tudo centrado. Embaixo do título, cinco
+   colunas iguais atravessadas por um traço horizontal.
+
+   O PONTO DE APOIO DESTE LAYOUT são dois tokens de altura: --pill-h e
+   --rail-h. É por causa deles que o traço encontra os pontos sem
+   JavaScript e sem medir nada: o traço é absoluto e seu topo é
+   exatamente `--pill-h + --rail-h / 2`, que é o centro do trilho onde os
+   pontos moram. Mexer na altura da pílula SEM mexer no token faz a linha
+   desencostar dos pontos — por isso a altura da pílula é o token, e não
+   um resultado do padding.
+   ========================================================= */
+.passos {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: 0 4vw;
+  background: var(--white);
+  color: var(--ink);
+  overflow: hidden;
+
+  --pill-h: clamp(38px, 3.1vw, 46px);
+  --rail-h: 26px;   /* a faixa onde o ponto (e só ele) vive */
+}
+
+.passos__inner {
+  width: min(var(--container), 92vw);
+  text-align: center;
+}
+
+/* ---------- a pílula "— COMO IMPLEMENTAMOS" ----------
+   Mesma peça da seção 8 (.plat__pill), refeita aqui em vez de
+   compartilhada: lá ela é absoluta dentro de um palco de proporção fixa,
+   aqui é um item centrado no fluxo. Juntar as duas exigiria desfazer o
+   posicionamento de uma delas a cada uso — sairia mais frágil que repetir
+   sete linhas. O <i> é o traço laranja. */
+.passos__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: .7em;
+  margin: 0;
+  padding: .62em 1.15em;
+  border: 1px solid rgba(16, 24, 40, .16);
+  border-radius: var(--radius-pill);
+  font-size: clamp(10px, .86vw, 12px);
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.passos__eyebrow i {
+  display: block;
+  width: 1.4em;
+  height: 2px;
+  background: var(--brand);
+  font-style: normal;
+}
+
+/* ---------- o título ----------
+   Duas vozes na mesma frase: a primeira linha em cinza e peso normal, a
+   segunda em preto e 600 — é ela que carrega a promessa. O <b> não é
+   ênfase decorativa, é a hierarquia da arte. */
+.passos__title {
+  margin: clamp(18px, 2.2vw, 30px) 0 0;
+  font-size: clamp(26px, 2.9vw, 42px);
+  font-weight: 400;
+  line-height: 1.24;
+  letter-spacing: -.01em;
+  color: rgba(16, 24, 40, .52);
+}
+.passos__title b {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* ---------- a grade dos cinco passos ----------
+   Cinco colunas iguais: a linha do tempo é regular na arte, e 1fr repetido
+   mantém isso em qualquer largura. `position: relative` existe para o
+   traço, que é absoluto e precisa desta caixa como referência. */
+.passos__grade {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  column-gap: clamp(10px, 1.4vw, 26px);
+  margin: clamp(38px, 5vw, 76px) 0 0;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+}
+
+/* O traço atravessa as cinco colunas, então é irmão delas e não filho de
+   nenhuma. Cresce da esquerda para a direita: origem à esquerda, senão ele
+   se abriria para os dois lados a partir do meio. */
+.passos__traco {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--pill-h) + var(--rail-h) / 2);
+  height: 1px;
+  background: var(--brand);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+.passos__passo {
+  display: flex;
+  flex-direction: column;
+}
+
+/* A pílula do nome do passo. A altura é o token (ver o cabeçalho): é ela
+   que o traço usa para se posicionar. */
+.passos__step {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--pill-h);
+  padding: 0 1em;
+  border: 1px solid rgba(242, 101, 34, .55);
+  border-radius: var(--radius-pill);
+  background: var(--white);
+  font-size: clamp(12px, 1.12vw, 16px);
+  text-align: center;
+}
+
+/* ---------- o ponto ----------
+   A faixa tem altura fixa (--rail-h) e o ponto fica no centro dela, que é
+   onde o traço passa. `z-index: 1` para o ponto cobrir a linha em vez de
+   ser cortado por ela.
+
+   A arte vem por background e não por <img>: são cinco cópias da mesma
+   decoração, e como <img> cada uma pediria um alt="" só para se anular. */
+.passos__ponto {
+  height: var(--rail-h);
+  align-self: center;
+  position: relative;
+  z-index: 1;
+  width: 14px;
+  background: url("../images/section_10_point.png") center / 14px 14px no-repeat;
+  /* O ponto nasce menor e invisível; o JS o leva a 1. O centro é fixado
+     aqui porque o scale do JS reescreve o transform inteiro — sem a origem
+     no centro ele cresceria para o canto e desencostaria da linha. */
+  transform: scale(.4);
+  transform-origin: center;
+  opacity: 0;
+}
+
+.passos__desc {
+  margin: clamp(14px, 1.3vw, 20px) 0 0;
+  font-size: clamp(11px, .92vw, 13.5px);
+  line-height: 1.5;
+  color: rgba(16, 24, 40, .72);
+}
+
+/* ---------- estado de partida ----------
+   Pílula e título nascem escondidos e 24px abaixo; os blocos nascem
+   escondidos e deslocados PARA A ESQUERDA, porque entram vindo de lá,
+   atrás do traço. Esconder aqui, no CSS, e não no JS, é o que evita o
+   flash enquanto o script do CDN não chegou — mesmo acordo das seções 8 e
+   9. As redes lá embaixo desfazem isto quando não há animação para rodar. */
+.passos [data-passo="txt"] {
+  opacity: 0;
+  transform: translateY(24px);
+}
+
+.passos [data-passo="bloco"] {
+  opacity: 0;
+  transform: translateX(-18px);
+}
+
+/* ---------- responsivo ----------
+   Abaixo de 860px cinco colunas viram cinco tiras ilegíveis: a linha do
+   tempo empilha. O traço HORIZONTAL some — deitado ele não liga mais nada,
+   e virar um traço vertical exigiria trocar scaleX por scaleY no JS, dois
+   comportamentos para manter. No empilhado o ponto vira o marcador à
+   esquerda de cada passo, que já cumpre o papel de "são cinco etapas". */
+@media (max-width: 860px) {
+  .passos { min-height: auto; padding: 72px 6vw; }
+
+  .passos__grade {
+    grid-template-columns: 1fr;
+    row-gap: 28px;
+    margin-top: 40px;
+  }
+
+  .passos__traco { display: none; }
+
+  /* ponto à esquerda, pílula ao lado, texto embaixo da pílula */
+  .passos__passo {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      "ponto pill"
+      ".     desc";
+    column-gap: 12px;
+    align-items: center;
+  }
+  .passos__step  { grid-area: pill; justify-content: flex-start; }
+  .passos__ponto { grid-area: ponto; }
+  .passos__desc  { grid-area: desc; margin-top: 8px; }
+}
+
+/* ---------- redes de segurança ----------
+   Sem a biblioteca (.sem-anime) os estados de partida acima viram conteúdo
+   invisível para sempre: a seção chegaria com o título e mais nada. Aqui
+   tudo volta ao estado final. */
+.sem-anime .passos [data-passo="txt"],
+.sem-anime .passos [data-passo="bloco"],
+.sem-anime .passos [data-passo="ponto"] {
+  opacity: 1 !important;
+  transform: none !important;
+}
+.sem-anime .passos [data-passo="traco"] { transform: scaleX(1) !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .passos [data-passo="txt"],
+  .passos [data-passo="bloco"],
+  .passos [data-passo="ponto"] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .passos [data-passo="traco"] { transform: scaleX(1) !important; }
+}
+
+/* =========================================================
+   11. SEÇÃO 11 — "Ainda tem dúvidas?" (FAQ / accordion)
+   ---------------------------------------------------------
+   A ÚNICA seção sem animação de entrada: aqui o movimento é resposta ao
+   clique, não à rolagem. Por isso não há estado de partida escondido e
+   nenhuma rede .sem-anime — se a biblioteca do CDN cair, esta seção não
+   percebe.
+
+   ALTURA VARIÁVEL, e é de propósito: a seção cresce quando um item abre.
+   Não tem data-snap justamente por isso (a regra do scroll snap, no topo
+   deste arquivo, só encaixa seção de exatamente uma tela).
+
+   O CONTRATO COM O JS (anim/faq.js) são três coisas, e só três:
+     [data-faq="lista"]  ... o gancho que o script procura
+     .faq__painel        ... quem tem a transição de altura
+     .is-aberto          ... marca o item aberto (gira o "+" e pinta o card)
+   Mexer em qualquer uma delas exige mexer no JS junto.
+
+   --faq-dur ESPELHA a constante DUR do faq.js. Mudou aqui, muda lá: é esse
+   número que o script usa para saber quando a transição acabou.
+   ========================================================= */
+.faq {
+  position: relative;
+  padding: clamp(72px, 9vw, 130px) 4vw clamp(80px, 10vw, 150px);
+  background: #FBF8F3;          /* creme da arte — não é o --white */
+  color: var(--navy);
+
+  --faq-dur: .38s;
+  --faq-borda: rgba(11, 37, 69, .10);
+}
+
+.faq__inner {
+  width: min(1010px, 92vw);
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* ---------- a pílula "— PERGUNTAS FREQUENTES —" ----------
+   Aqui os traços são DOIS, um de cada lado, e por isso não dá para
+   reaproveitar .passos__eyebrow (que tem um só, à esquerda). Também não
+   tem borda: na arte desta seção o rótulo flutua. */
+.faq__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: .9em;
+  margin: 0;
+  font-size: clamp(10px, .86vw, 12px);
+  font-weight: 600;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.faq__eyebrow i {
+  display: block;
+  width: 1.8em;
+  height: 2px;
+  background: var(--brand);
+  font-style: normal;
+}
+
+/* O título é a única peça laranja da seção: ele é o ponto de entrada da
+   leitura, e as perguntas embaixo são azul-marinho. */
+.faq__title {
+  margin: clamp(14px, 1.6vw, 22px) 0 clamp(34px, 4.4vw, 62px);
+  font-size: clamp(30px, 4vw, 54px);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -.02em;
+  color: var(--brand);
+}
+
+/* ---------- a lista ----------
+   Cartões separados por um respiro, não por divisórias: o espaço entre
+   eles é o que deixa claro que cada um abre sozinho. */
+.faq__lista {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 1.1vw, 14px);
+  text-align: left;
+}
+
+.faq__item {
+  border: 1px solid var(--faq-borda);
+  border-radius: 8px;
+  background: var(--white);
+  overflow: hidden;   /* segura o painel dentro do canto arredondado */
+}
+
+/* O <h3> existe para a estrutura do documento (navegação por cabeçalhos);
+   visualmente ele não é título nenhum, quem manda é o botão. */
+.faq__head {
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+/* O botão ocupa o cartão inteiro: a área de clique é a linha toda, não só
+   o texto nem só o "+". */
+.faq__btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+  padding: clamp(18px, 1.9vw, 26px) clamp(18px, 2vw, 28px);
+  border: 0;
+  background: none;
+  font: inherit;               /* herda a TT Firs Neue do body */
+  font-size: clamp(14px, 1.15vw, 17px);
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--navy);
+  text-align: left;
+  cursor: pointer;
+  transition: color .2s var(--ease-out);
+}
+.faq__btn:hover { color: var(--brand); }
+
+/* Foco visível: o botão é a única coisa focável da seção e o teclado
+   precisa enxergar onde está. `outline-offset` negativo para o anel ficar
+   dentro do cartão, sem ser cortado pelo overflow: hidden. */
+.faq__btn:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: -4px;
+  border-radius: 8px;
+}
+
+.faq__pergunta { flex: 1; }
+
+/* ---------- o sinal "+" ----------
+   Dois riscos cruzados em ::before/::after. Ao abrir, o conjunto gira 45°
+   e o risco vertical some — o "+" vira "×" sem trocar de elemento e sem
+   pedir um ícone. `flex: none` para ele não encolher quando a pergunta é
+   longa. */
+.faq__sinal {
+  position: relative;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  transition: transform var(--faq-dur) var(--ease-out);
+}
+.faq__sinal::before,
+.faq__sinal::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background: var(--brand);
+  transform: translate(-50%, -50%);
+}
+.faq__sinal::before { width: 16px; height: 1.5px; }   /* risco deitado */
+.faq__sinal::after  { width: 1.5px; height: 16px; }   /* risco em pé */
+
+.faq__btn[aria-expanded="true"] .faq__sinal { transform: rotate(135deg); }
+.faq__btn[aria-expanded="true"] { color: var(--brand); }
+
+/* ---------- o painel ----------
+   A ALTURA É ESCRITA PELO JS em pixels (ver anim/faq.js): esta transição é
+   o que transforma aquele número em movimento. `overflow: hidden` é o que
+   faz o texto ser revelado em vez de espremido.
+
+   O padding mora no filho .faq__resposta, NÃO aqui: com padding próprio o
+   painel nunca chegaria a zero de altura e sobraria uma faixa aberta
+   quando fechado. */
+.faq__painel {
+  overflow: hidden;
+  height: 0;
+  transition: height var(--faq-dur) var(--ease-out);
+}
+
+.faq__resposta {
+  padding: 0 clamp(18px, 2vw, 28px) clamp(20px, 2.1vw, 28px);
+}
+.faq__resposta p {
+  margin: 0;
+  font-size: clamp(13px, 1.02vw, 15px);
+  font-weight: 400;
+  line-height: 1.65;
+  color: rgba(11, 37, 69, .70);
+}
+.faq__resposta p + p { margin-top: .8em; }
+
+/* O item aberto ganha a borda laranja: sem isso, num cartão branco sobre
+   fundo creme, não fica claro qual pergunta a resposta responde. */
+.faq__item:has(.faq__painel.is-aberto) { border-color: rgba(242, 101, 34, .45); }
+
+/* ---------- responsivo ---------- */
+@media (max-width: 860px) {
+  .faq { padding: 64px 6vw 76px; }
+  .faq__btn { padding: 16px 16px; }
+  .faq__resposta { padding: 0 16px 18px; }
+}
+
+/* ---------- acessibilidade ----------
+   Sem movimento, a troca é instantânea. O JS lê a mesma media query e zera
+   a espera entre fechar um item e abrir o outro — as duas pontas precisam
+   concordar, senão sobra uma pausa com a tela parada. */
+@media (prefers-reduced-motion: reduce) {
+  .faq__painel,
+  .faq__sinal { transition: none !important; }
+}
