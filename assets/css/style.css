@@ -1672,6 +1672,14 @@ html {
   color: rgba(255, 255, 255, .76);
 }
 
+.foot__address {
+  margin: 28px 0 0;
+  font-size: clamp(10px, .8vw, 12px);
+  font-style: normal;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, .56);
+}
+
 /* ----- colunas 2 e 3 ----- */
 .foot__head {
   margin: 0 0 22px;
@@ -1800,12 +1808,14 @@ html {
    O logo é o único que não se desloca — só aparece, como pedido. */
 .foot__logo,
 .foot__desc,
+.foot__address,
 .foot__head,
 .foot__list li,
 .foot__copy,
 .foot__social { opacity: 0; }
 
 .foot__desc,
+.foot__address,
 .foot__head,
 .foot__list li,
 .foot__copy,
@@ -1981,6 +1991,7 @@ html {
 /* footer — a entrada é escalonada por JS; sem ele, tudo no lugar */
 .sem-anime .foot__logo,
 .sem-anime .foot__desc,
+.sem-anime .foot__address,
 .sem-anime .foot__head,
 .sem-anime .foot__list li,
 .sem-anime .foot__copy,
@@ -2361,6 +2372,7 @@ html {
   /* footer: a entrada não roda; o conteúdo já nasce no lugar */
   .foot__logo,
   .foot__desc,
+  .foot__address,
   .foot__head,
   .foot__list li,
   .foot__copy,
