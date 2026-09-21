@@ -120,8 +120,6 @@
   }
   </script>
 
-  <!-- Fontes locais do projeto: preload dos dois pesos usados, para o texto
-       não repintar quando o CSS terminar de carregar. -->
   <link rel="preload" as="font" type="font/woff2" crossorigin
     href="assets/fonts/TT%20Firs%20Neue%20Trial%20Regular.woff2" />
   <link rel="preload" as="font" type="font/woff2" crossorigin
@@ -157,9 +155,7 @@
   <!-- ============ HERO ============ -->
   <main id="top">
     <section class="hero" data-anime="hero">
-      <!-- Tira de dois painéis de 100vh, um embaixo do outro.
-           A tira inteira sobe 100vh: a foto sai por cima enquanto o vídeo
-           entra por baixo. Os dois se movem juntos, sem fade. -->
+
       <div class="hero__media" aria-hidden="true">
         <div class="hero__media-inner">
           <div class="hero__reel">
@@ -202,11 +198,6 @@
           <a class="btn btn--primary btn--lg" href="#contato">Fale com um especialista</a>
         </div>
 
-        <!-- Os números são os MESMOS da seção do mapa (.mapa__stats). Quem
-             manda é o data-stat: assets/js/stats.js calcula o valor do dia
-             para cada métrica e reescreve o data-count aqui e lá, com o
-             mesmo resultado. O data-count abaixo é só o valor de segurança,
-             usado se o stats.js não rodar. -->
         <ul class="hero__stats" data-reveal data-reveal-delay="4">
           <li><b data-stat="atletas" data-count="1568">0</b><span>atletas ativos</span></li>
           <li><b data-stat="equipes" data-count="37">0</b><span>equipes</span></li>
@@ -238,13 +229,6 @@
       </div>
     </section>
 
-    <!-- ============ SEÇÃO 2 — APP / LOJAS ============ -->
-    <!-- data-reveal-scope: o texto e os botões só animam quando a seção
-         inteira estiver na tela (ver observeScope no main.js) -->
-    <!-- data-snap: esta é a única seção de exatamente uma tela, então é a
-         única que encaixa na rolagem. As demais são mais altas que 100vh de
-         propósito — a altura extra é o curso das animações — e por isso são
-         contínuas. Ver a seção 1b do style.css. -->
     <section class="social" id="solucao" data-snap data-anime="social" data-reveal-scope>
 
       <div class="social__copy">
@@ -275,11 +259,6 @@
 
     </section>
 
-    <!-- ============ SEÇÃO 3 — RECURSOS (CARDS) ============
-         Diferente das demais: NÃO é 100vh. A altura é ditada pelos 4 cards.
-         data-enter="N" = entrada controlada pelo scroll (reversível), onde N
-         é a distância de entrada em frações de viewport. Como cada elemento
-         tem o próprio progresso, os cards cascateiam sozinhos. -->
     <section class="features" id="como-funciona" data-anime="features">
       <div class="container">
 
@@ -346,18 +325,6 @@
       <div class="duo__sticky">
         <div class="duo__rail">
 
-          <!-- ============ SEÇÃO 4 — O QUE A PREFEITURA GANHA ============
-         Animações (todas via [data-reveal], ver main.js -> reveal()):
-           · badge e as duas linhas do título sobem de baixo para cima;
-           · os cards entram da direita e dão um pequeno bounce ao parar
-             (data-reveal="slide-right" -> @keyframes gain-in no CSS).
-         O escalonamento vem de data-reveal-delay (multiplica o atraso).
-         NÃO usa data-reveal-scope: o escopo exige a seção 98% visível e
-         esta seção passa de 100vh no mobile — a animação nunca dispararia. -->
-          <!-- data-anime: é por este atributo que assets/js/anim/section-04.js
-         encontra a seção. Cada módulo de anim/ procura o seu pelo nome.
-         Não há mais sticky nem altura extra aqui: quem fixa é o .duo__sticky
-         acima, e quem dá o curso de rolagem é a altura do .duo. -->
           <div class="duo__panel">
             <section class="gains" id="beneficios" data-anime="gains" data-timeline-steps="3">
               <div class="container gains__inner">
@@ -407,23 +374,10 @@
 
                 </ul>
 
-                <!-- A régua que ficava aqui subiu para o palco duplo, lá embaixo:
-             agora é uma só para as duas seções. -->
-
               </div>
             </section>
           </div>
 
-          <!-- ============ SEÇÃO 5 — A TRANSFORMAÇÃO ============
-         Segundo painel do palco duplo: não fixa por conta própria, entra
-         deslizando pela direita quando o trilho anda.
-         TODA a animação é uma coreografia única, em sequência, raspada pelo
-         scroll — ver assets/js/anim/section-05.js, que monta a partitura.
-         Nada aqui anima sozinho.
-
-         Os ângulos vêm no HTML (--ang) porque são DADOS de cada item, não
-         estilo: mudar a ordem ou a quantidade dos rótulos é mexer aqui, sem
-         tocar no CSS. Os raios e proporções ficam nos tokens do .trans. -->
           <div class="duo__panel">
             <section class="trans" id="transformacao" data-anime="trans">
               <div class="trans__inner">
@@ -443,27 +397,8 @@
                   </h2>
                 </div>
 
-                <!-- Palco circular. Tudo aqui dentro se posiciona a partir do MESMO
-             centro, em ângulo e raio, para os anéis fecharem sozinhos. -->
                 <div class="trans__stage">
 
-                  <!-- COMPARADOR ANTES / DEPOIS.
-               Era uma foto só, com o antes e o depois já montados lado a lado.
-               Agora são DUAS fotos inteiras, empilhadas, e o que a pessoa vê de
-               cada uma depende de onde o corte está.
-
-               A de baixo (antes) é desenhada inteira, sempre. A de cima
-               (depois) é recortada a partir do corte: à esquerda dele some e
-               deixa a de baixo aparecer.
-
-               Quem manda na posição é UM token só, --split (0 a 100), no
-               .trans__stage. Três coisas o leem — o recorte desta imagem, a
-               linha do corte e a posição da seta —, e é isso que as mantém
-               grudadas sem nenhum cálculo repetido.
-               Quem escreve o token é assets/js/anim/compare.js.
-
-               .trans__foto continua sendo o elemento que a coreografia anima
-               (opacidade e escala): virou <div>, mas o seletor é o mesmo. -->
                   <div class="trans__foto" data-comparador>
                     <img class="trans__foto-img" src="assets/images/section_06_image_01_center.webp"
                       alt="Antes: os dados do esporte da cidade espalhados numa planilha" loading="lazy"
@@ -477,17 +412,6 @@
 
                   <p class="trans__antes"><span>ANTES</span></p>
 
-                  <!-- A seta é a alça do comparador, e continua sendo o que pulsa.
-               Três níveis, cada um com um transform só, porque eles se
-               anulariam no mesmo elemento:
-                 <span>  entrada da coreografia (opacity + scale, via Anime.js)
-                 <img>   o pulso contínuo (CSS)
-               E a POSIÇÃO não usa transform nenhum: é `left`, calculado do
-               --split. Era a única forma de arrastar sem brigar com os dois
-               de cima — a regra está no topo deste bloco no style.css.
-
-               role="slider" e não <button>: é exatamente o que este controle
-               é, e dá de graça as setas do teclado para quem não arrasta. -->
                   <span class="trans__seta" role="slider" tabindex="0" aria-label="Comparar antes e depois"
                     aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
                     <img src="assets/images/section_5_elem_center.webp" alt="" />
@@ -501,16 +425,6 @@
                   <img class="trans__arco trans__arco--out" src="assets/images/section_5_line_out.webp" alt=""
                     aria-hidden="true" loading="lazy" />
 
-                  <!-- ANTES: as fontes espalhadas, à esquerda.
-
-               O <i> em volta do texto NÃO é decoração: o <span> é a pílula
-               inteira, de largura fixa, com o texto centralizado por grid. O
-               risco tem de ter a largura da PALAVRA, e o <i> é a única caixa
-               que a mede — o ::after dele é o traço.
-
-               Tinha de ser uma tag SEM ser <span>: a coreografia da seção 5
-               anima `.trans__pill span`, e um segundo <span> aqui dentro
-               entraria na conta e seria animado junto, sem querer. -->
                   <ul class="trans__pills">
                     <li class="trans__pill" style="--ang:  36deg"><span><i>Whatsapp</i></span></li>
                     <li class="trans__pill" style="--ang:  18deg"><span><i>Planilhas</i></span></li>
@@ -549,17 +463,7 @@
             </section>
           </div>
 
-        </div><!-- /.duo__rail -->
-
-        <!-- ===== A RÉGUA UNIFICADA =====
-           Uma só para as duas seções, e IRMÃ do trilho, não filha: por isso
-           não desliza com ele. O que ela mostra é o progresso do palco
-           INTEIRO — 0% no começo da seção 4, 100% no fim da seção 5 —, e o
-           rótulo em destaque troca no momento do deslize.
-           Quem escreve --t e .is-current é assets/js/anim/duo.js.
-
-           Eram três rótulos; "Não é mais um sistema" saiu por pedido do
-           cliente, e a grade abaixo virou de duas colunas no CSS. -->
+        </div>
         <div class="timeline duo__timeline">
           <div class="timeline__track" aria-hidden="true">
             <span class="timeline__fill"></span>
@@ -573,43 +477,8 @@
       </div><!-- /.duo__sticky -->
     </section>
 
-    <!-- ============ SEÇÃO 7 — BENEFÍCIOS (CARROSSEL) ============
-         Vem DEPOIS do palco duplo e não faz parte dele: quando a rolagem
-         horizontal termina, a página volta a descer e chega aqui.
-
-         O QUE A PESSOA VÊ é sempre UMA TELA — o .bene__sticky. A seção é mais
-         alta (uma tela por slide) porque essa altura extra é o curso de
-         rolagem do carrossel: é o scroll que troca os slides, não um timer
-         nem um botão.
-
-         O ENCAIXE (scroll snap) fica nos DEGRAUS, não na seção. A regra do
-         projeto (seção 1b do style.css) é que só encaixa quem tem no máximo
-         uma tela, e o tests/snap.spec.js confere isso em todo [data-snap].
-         Uma seção de 500vh com data-snap reprovaria — e estaria certo em
-         reprovar. Cada degrau tem exatamente 100vh, então o encaixe cai em
-         cima de cada slide, como pedido, sem quebrar a regra.
-
-         SEM ANIMAÇÃO DE ENTRADA, por pedido do cliente: nada aqui nasce
-         escondido esperando um gatilho. O que anima é só a TROCA de um slide
-         para o outro, e quem a comanda é assets/js/anim/bene.js.
-
-         DUAS RÉGUAS, DE PROPÓSITO:
-           · o painel preto e tudo dentro dele medem-se pelo PALCO (--u), que
-             é derivado da ALTURA da janela. É o que guarda as proporções da
-             referência — a foto, a logo e a legenda andam sempre juntas.
-           · a coluna da direita e o trilho medem-se pela JANELA.
-
-         A primeira versão media tudo pelo palco e o recortava para cobrir a
-         tela. Numa janela mais larga que 16:9 — o caso comum, porque a barra
-         do navegador come altura — o palco ficava mais ALTO que a janela e o
-         recorte comia a margem de cima da foto. O que parecia "falta de
-         padding" era padding cortado. Agora nada é recortado: o palco cabe
-         pela altura, e o que sobra de largura é branco, que já é a cor desse
-         lado. -->
     <section class="bene" id="beneficios-lista" data-anime="bene">
 
-      <!-- Os degraus do encaixe. São só espaçadores: não têm conteúdo, não
-           recebem clique e o leitor de tela os ignora. Um por slide. -->
       <div class="bene__steps" aria-hidden="true">
         <div class="bene__step" data-snap></div>
         <div class="bene__step" data-snap></div>
@@ -620,15 +489,8 @@
 
       <div class="bene__sticky">
 
-        <!-- ===== ESQUERDA: o painel preto =====
-             Mede-se pelo PALCO (--u), para guardar as proporções da
-             referência. A coluna da direita e o trilho, abaixo, medem-se pela
-             JANELA — a explicação está no style.css, no .bene__panel. -->
         <div class="bene__panel">
 
-          <!-- As cinco fotos, empilhadas no mesmo lugar. Só a opacidade
-               muda — elas não se movem, e por isso ficam num grupo próprio,
-               separado dos textos (que descem e sobem). -->
           <figure class="bene__card" data-slide="0">
             <img src="assets/images/01.webp"
               alt="Uma jogadora sorri em quadra de vôlei ao entardecer, com a bola em jogo ao fundo" loading="lazy"
@@ -749,34 +611,8 @@
       </div>
     </section>
 
-    <!-- ============ SEÇÃO 8 — "Tudo o que o vôlei precisa" ============
-         Tela branca, texto à esquerda, dois celulares à direita e a bola de
-         marca d'água saindo pelo canto inferior esquerdo.
-
-         COMO ESTA SEÇÃO GUARDA A REFERÊNCIA:
-         tudo aqui dentro é posicionado em PORCENTAGEM de um palco de
-         proporção fixa (1024 x 725, a proporção da arte aprovada). O palco
-         mede-se por --u, no style.css; os filhos não conhecem pixel nenhum.
-         Assim a composição chega igual em qualquer tela: o palco encolhe
-         inteiro, e não os elementos um a um. Mesma ideia da seção 7.
-
-         ORDEM NO DOM = ORDEM DA ANIMAÇÃO, como no footer:
-         primeiro os três blocos de texto (sobem juntos), depois o celular de
-         trás (o maior, à direita) e por fim o da frente. Trocar a ordem daqui
-         troca a ordem de entrada. Quem rege é anim/section-08.js.
-
-         Os dois celulares são DIV + IMG, e não só IMG, de propósito: o JS
-         anima a entrada na div e o CSS mantém o wiggle infinito na img. São
-         dois `transform` em elementos diferentes — se fossem o mesmo, um
-         apagaria o outro. -->
     <section class="plat" id="plataforma" data-snap data-anime="plat">
 
-      <!-- A bola é marca d'água e fica FORA do palco de propósito: ela cola
-           no canto inferior esquerdo da SEÇÃO, não do palco. O palco é
-           centralizado e tem largura máxima (o --container), então uma bola
-           presa a ele nunca alcançaria a borda da tela — sobraria sempre a
-           faixa branca entre os dois. Sendo irmã do palco, e vindo ANTES dele
-           no DOM, ela também fica naturalmente por baixo do texto. -->
       <img class="plat__bg" src="assets/images/section_08_bg.webp" alt="" aria-hidden="true" draggable="false" />
 
       <div class="plat__stage">
@@ -813,39 +649,8 @@
       </div>
     </section>
 
-    <!-- ============ SEÇÃO 9 — "Já está acontecendo!" ============
-         Uma tela cheia (por isso data-snap), com o mapa ocupando o fundo
-         inteiro e a coluna de texto à direita.
-
-         O MAPA É <img> E NÃO background-image de propósito: como <img> ele
-         entra na fila de download do navegador (pode ser priorizado, pode
-         ser lazy) e carrega um alt="" explícito, dizendo ao leitor de tela
-         que é decoração. Com background-image ele seria invisível para as
-         ferramentas e baixaria sempre, mesmo fora da tela.
-
-         ORDEM NO DOM = ORDEM DA ANIMAÇÃO, como nas seções 7 e 8:
-         título, subtítulo e estatísticas sobem escalonados nessa ordem; o
-         rodapé de frases tem coreografia própria. Quem rege é
-         anim/section-09.js. -->
     <section class="mapa" id="ja-acontecendo" data-snap data-anime="mapa">
 
-      <!-- O PALCO DO MAPA.
-           A imagem NÃO usa object-fit: cover direto na seção, e isso é o que
-           torna as luzes possíveis. As luzes são posicionadas em % sobre o
-           mapa, e % só bate com a arte se a caixa tiver a MESMA proporção
-           dela. Com object-fit, a caixa é a seção (proporção qualquer) e a
-           imagem se encolhe por dentro — os dois sistemas de coordenadas
-           deixam de coincidir e a luz desgruda do pino.
-
-           Então o cover é refeito à mão: este palco tem a proporção da arte
-           (1920x1080), é grande o bastante para cobrir a seção e é ele que
-           transborda. A <img> apenas o preenche 100%/100%, e as luzes, sendo
-           filhas dele, acompanham a arte pixel a pixel em qualquer tela.
-
-           A camada de luzes nasce VAZIA: quem cria os pontos é o
-           anim/map-lights.js, que carrega a tabela de coordenadas. São 21
-           posições medidas na imagem — dado derivado da arte, não conteúdo,
-           e por isso não moram aqui. -->
       <div class="mapa__palco" aria-hidden="true">
         <img class="mapa__bg" src="assets/images/section_09_map.webp" alt="" draggable="false" />
         <div class="mapa__luzes" data-mapa="luzes"></div>
@@ -860,22 +665,12 @@
           em uma única plataforma.
         </p>
 
-        <!-- Os números nascem em 0 no HTML, e não vazios: se o JS não rodar
-             (CDN fora do ar, movimento reduzido), a pílula ainda diz algo
-             coerente. O valor de chegada mora no data-count, mas quem o
-             ESCREVE é assets/js/stats.js, a partir do data-stat: a base e o
-             crescimento diário ficam lá, num lugar só, e o hero mostra
-             exatamente o mesmo número. Mesmo contrato do hero. -->
         <ul class="mapa__stats" data-mapa="txt">
           <li><b data-stat="atletas" data-count="1568">0</b><span>atletas ativos</span></li>
           <li><b data-stat="equipes" data-count="37">0</b><span>equipes</span></li>
           <li><b data-stat="eventos" data-count="17">0</b><span>eventos já organizados</span></li>
         </ul>
 
-        <!-- O rodapé da seção. Cada frase é um <span> SEPARADO porque cada
-             uma entra por conta própria, em cascata — não dá para animar
-             pedaços de um texto corrido. O traço é um <i> vazio: é desenho,
-             não conteúdo, e some para o leitor de tela. -->
         <p class="mapa__kicker">
           <i class="mapa__traco" data-mapa="traco" aria-hidden="true"></i>
           <span data-mapa="frase">Mais vôlei.</span>
