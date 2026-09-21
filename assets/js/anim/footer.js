@@ -105,7 +105,7 @@
      start: PASSO reserva o primeiro passo para o logo, que ficou de fora
      desta animação (ele não se desloca) mas é o primeiro da fila na tela. */
   var textos = foot.querySelectorAll(
-    ".foot__desc, .foot__head, .foot__list li, .foot__copy"
+    ".foot__desc, .foot__head, .foot__list li, .foot__copy, .foot__social"
   );
   if (!textos.length) return;
 

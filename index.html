@@ -140,9 +140,10 @@
       </a>
 
       <nav class="header__nav" aria-label="Navegação principal">
-        <a href="#beneficios">O que a prefeitura ganha</a>
-        <a href="#solucao">A solução</a>
-        <a href="#como-funciona">Como funciona</a>
+        <a href="#como-funciona">Plataforma</a>
+        <a href="#beneficios">Equipe</a>
+        <a href="#beneficios-lista">Benefícios</a>
+        <a href="#como-implementamos">Jornada</a>
       </nav>
 
       <a class="btn btn--primary header__cta" href="#contato">Fale com um especialista</a>
@@ -248,9 +249,12 @@
 
       <div class="social__copy">
         <h2 class="social__title">
-          <span class="social__title-strong" data-reveal>A prefeitura organiza.</span>
-          <span class="social__title-soft" data-reveal data-reveal-delay="1">A rede social movimenta.</span>
+          <span class="social__title-strong" data-reveal>Baixe o app e entre em quadra.</span>
         </h2>
+
+        <p class="social__cta" data-reveal data-reveal-delay="1">
+          O Atleta do Vôlei já está disponível para Android e iPhone. Baixe gratuitamente e encontre jogos, quadras e atletas do seu nível.
+        </p>
 
         <div class="social__stores" data-reveal="fade" data-reveal-delay="2">
           <a class="social__store" href="#" aria-label="Baixar na Google Play">
@@ -337,23 +341,6 @@
       </div>
     </section>
 
-    <!-- ============ PALCO DUPLO — SEÇÕES 4 e 5 ============
-         As duas seções dividem UM ÚNICO palco fixado. A passagem da 4 para a 5
-         não é mais rolagem vertical: é um DESLIZE HORIZONTAL do trilho de
-         dentro, comandado pelo mesmo scroll.
-
-         Três peças, e a divisão de trabalho entre elas é o que mantém isto
-         legível:
-           .duo          — altura extra; é ela que dá o curso de rolagem
-           .duo__sticky  — a moldura fixada de 100vh (o que a pessoa vê)
-           .duo__rail    — o trilho de 200% que desliza; contém os 2 painéis
-
-         A RÉGUA FICA FORA DO TRILHO, filha direta do sticky. É isso, e só
-         isso, que faz dela uma barra parada: se estivesse dentro de um painel,
-         viajaria junto no deslize. Ela é única para as duas seções e o seu
-         preenchimento atravessa as duas de ponta a ponta.
-
-         Quem rege os três atos é assets/js/anim/duo.js. -->
     <section class="duo" data-anime="duo">
       <div class="duo__sticky">
         <div class="duo__rail">
@@ -376,7 +363,7 @@
 
                 <p class="badge badge--light gains__eyebrow" data-reveal>
                   <span class="badge__dash" aria-hidden="true"></span>
-                  O que a prefeitura ganha?
+                  O que a equipe ganha?
                 </p>
 
                 <h2 class="gains__title">
@@ -1081,17 +1068,6 @@
     </section>
   </main>
 
-  <!-- ============ FOOTER ============
-       id="contato" NÃO é decoração: os dois botões "Fale com um especialista"
-       (no header e no hero) apontam para #contato desde a etapa 1, e até aqui
-       não havia destino nenhum — os dois cliques não saíam do lugar. O footer
-       é esse destino.
-
-       ANIMAÇÃO: os textos entram de baixo para cima, o logo só aparece, e
-       tudo escalonado da ESQUERDA para a DIREITA. A ordem do escalonamento é
-       a ordem do DOM — por isso as colunas estão escritas na ordem em que
-       aparecem na tela, e dentro de cada uma de cima para baixo. Mexer na
-       ordem daqui muda a ordem da animação. Quem rege é anim/footer.js. -->
   <footer class="foot" id="contato" data-anime="foot">
     <div class="container foot__inner">
 
@@ -1106,11 +1082,13 @@
 
       <!-- coluna 2: navegação -->
       <nav class="foot__col" aria-labelledby="foot-nav">
-        <h2 class="foot__head" id="foot-nav">Navegação</h2>
+        <h2 class="foot__head" id="foot-nav">Produto</h2>
         <ul class="foot__list">
-          <li><a class="foot__link" href="#beneficios">O que a prefeitura ganha</a></li>
-          <li><a class="foot__link" href="#solucao">A solução</a></li>
-          <li><a class="foot__link" href="#como-funciona">Como funciona</a></li>
+          <li><a class="foot__link" href="#como-funciona">Plataforma</a></li>
+          <li><a class="foot__link" href="#beneficios">Equipe</a></li>
+          <li><a class="foot__link" href="#beneficios-lista">Benefícios</a></li>
+          <li><a class="foot__link" href="#como-implementamos">Jornada</a></li>
+          <li><a class="foot__link" href="#solucao">Baixar o app</a></li>
         </ul>
       </nav>
 
@@ -1122,14 +1100,36 @@
           <li><a class="foot__link" href="https://atletadovolei.com.br" target="_blank"
               rel="noopener">atletadovolei.com.br</a></li>
         </ul>
+
+        <section class="foot__legal" aria-labelledby="foot-legal">
+          <h2 class="foot__head" id="foot-legal">Legal</h2>
+          <ul class="foot__list">
+          <li><a class="foot__link" href="https://atletadovolei.com.br/termos.html">Termo de uso</a></li>
+          <li><a class="foot__link" href="https://atletadovolei.com.br/privacidade.html">Política de privacidade</a></li>
+          </ul>
+        </section>
       </div>
 
     </div>
 
-    <!-- Faixa de baixo: copyright à esquerda, lojas à direita.
-         No mobile a faixa vira coluna (ver .foot__bottom no style.css). -->
+    <!-- Faixa de baixo: copyright, redes centralizadas e lojas. -->
     <div class="container foot__bottom">
       <p class="foot__copy">© 2026 Atleta do Vôlei. Todos os direitos reservados.</p>
+
+      <nav class="foot__social" aria-label="Redes sociais">
+        <a href="https://www.instagram.com/atletadovolei" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.3-2.2-.4a3.8 3.8 0 0 1-1.4-.9 3.8 3.8 0 0 1-.9-1.4c-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2Zm0 1.8c-3.1 0-3.5 0-4.7.1-1.1 0-1.7.2-2.1.4-.5.2-.9.4-1.3.8-.4.4-.6.8-.8 1.3-.2.4-.3 1-.4 2.1C2.6 9.9 2.6 10.3 2.6 12s0 2.1.1 3.3c0 1.1.2 1.7.4 2.1.2.5.4.9.8 1.3.4.4.8.6 1.3.8.4.2 1 .3 2.1.4 1.2.1 1.6.1 4.7.1s3.5 0 4.7-.1c1.1 0 1.7-.2 2.1-.4.5-.2.9-.4 1.3-.8.4-.4.6-.8.8-1.3.2-.4.3-1 .4-2.1.1-1.2.1-1.6.1-3.3s0-2.1-.1-3.3c0-1.1-.2-1.7-.4-2.1a3.5 3.5 0 0 0-.8-1.3 3.5 3.5 0 0 0-1.3-.8c-.4-.2-1-.3-2.1-.4-1.2-.1-1.6-.1-4.7-.1Zm0 3.1a4.9 4.9 0 1 1 0 9.8 4.9 4.9 0 0 1 0-9.8Zm0 1.8a3.1 3.1 0 1 0 0 6.2 3.1 3.1 0 0 0 0-6.2Zm5.1-3.2a1.1 1.1 0 1 1 0 2.3 1.1 1.1 0 0 1 0-2.3Z"/></svg>
+        </a>
+        <a href="https://www.tiktok.com/@atletadovolei" target="_blank" rel="noopener" aria-label="TikTok">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.6 5.8c-1-.7-1.7-1.8-1.9-3h-3v12.1a2.5 2.5 0 1 1-2.5-2.5c.3 0 .5 0 .7.1V9.5a5.5 5.5 0 1 0 4.8 5.4V9c1 .7 2.3 1.1 3.6 1.1V7.1c-.6 0-1.2-.2-1.7-.4Z"/></svg>
+        </a>
+        <a href="https://www.youtube.com/@AtletadoVoleiOficial" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23 7.5c-.3-1-1-1.8-2-2C19 5 12 5 12 5s-7 0-9 .5c-1 .2-1.8 1-2 2C.5 9.5.5 12 .5 12s0 2.5.5 4.5c.3 1 1 1.8 2 2C5 19 12 19 12 19s7 0 9-.5c1-.2 1.8-1 2-2 .5-2 .5-4.5.5-4.5s0-2.5-.5-4.5ZM9.8 15.3V8.7l5.7 3.3-5.7 3.3Z"/></svg>
+        </a>
+        <a href="https://www.facebook.com/atletadovolei" target="_blank" rel="noopener" aria-label="Facebook">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.3v7A10 10 0 0 0 22 12Z"/></svg>
+        </a>
+      </nav>
 
       <div class="foot__stores">
         <a class="foot__store" href="#" aria-label="Baixar na Google Play">

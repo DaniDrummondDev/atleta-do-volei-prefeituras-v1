@@ -434,10 +434,18 @@ html {
 .social__title-strong { font-weight: 600; color: var(--ink); }
 .social__title-soft   { font-weight: 400; color: #9AA1AC; }
 
+.social__cta {
+  max-width: 350px;
+  margin: 16px 0 0;
+  font-size: clamp(14px, 1.25vw, 16px);
+  line-height: 1.5;
+  color: #687386;
+}
+
 .social__stores {
   display: flex;
   gap: .8vh;
-  margin-top: 7.5vh;
+  margin-top: 4vh;
 }
 .social__store img {
   height: var(--store-h);
@@ -1629,11 +1637,8 @@ html {
    seção é tipografia num container, como a seção 4, e não uma composição de
    proporção fixa como a 5 e a 7.
 
-   Frações medidas, sobre o conteúdo de 1167px:
-     coluna "Navegação"   533/1167 = 45.7%
-     coluna "Contato"     835/1167 = 71.5%
-   As duas viram o grid abaixo: 45.7% para a marca, e o resto dividido no
-   ponto em que a terceira começa. */
+   A marca ocupa a primeira faixa; Produto e Contato dividem o espaço
+   restante. O bloco Legal fica abaixo de Contato. */
 .foot {
   position: relative;
   z-index: 2;
@@ -1677,6 +1682,8 @@ html {
   color: var(--white);
 }
 
+.foot__legal { margin-top: 32px; }
+
 .foot__list {
   display: flex;
   flex-direction: column;
@@ -1700,20 +1707,51 @@ html {
   padding-top: 26px;
   padding-bottom: 30px;
   border-top: 1px solid rgba(255, 255, 255, .12);
-  /* Copyright à esquerda (acompanha a coluna da marca acima) e botões das
-     lojas à direita. O gap segura o espaçamento quando a faixa quebra. */
-  display: flex;
+  /* Três colunas deixam as redes realmente no centro da faixa, mesmo com
+     copyright e lojas de larguras diferentes. */
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
   gap: 16px;
   text-align: left;
 }
 
 .foot__copy {
   margin: 0;
+  justify-self: start;
   font-size: clamp(11px, .95vw, 13px);
   color: rgba(255, 255, 255, .5);
+}
+
+/* ----- redes sociais, no centro da faixa ----- */
+.foot__social {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  line-height: 0;
+}
+
+.foot__social a {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  color: rgba(255, 255, 255, .72);
+  transition: color .2s ease, transform .2s ease;
+}
+
+.foot__social svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+.foot__social a:hover,
+.foot__social a:focus-visible {
+  color: var(--brand);
+  transform: translateY(-1px);
 }
 
 /* ----- lojas na faixa de baixo -----
@@ -1723,6 +1761,7 @@ html {
 .foot__stores {
   display: flex;
   align-items: center;
+  justify-self: end;
   gap: 10px;
 }
 
@@ -1742,7 +1781,13 @@ html {
 .foot__store:focus-visible { opacity: .82; transform: translateY(-1px); }
 
 @media (max-width: 640px) {
-  .foot__bottom { justify-content: flex-start; }
+  .foot__bottom {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+  .foot__copy,
+  .foot__stores { justify-self: center; }
   .foot__store img { height: 26px; }
 }
 
@@ -1757,12 +1802,14 @@ html {
 .foot__desc,
 .foot__head,
 .foot__list li,
-.foot__copy { opacity: 0; }
+.foot__copy,
+.foot__social { opacity: 0; }
 
 .foot__desc,
 .foot__head,
 .foot__list li,
-.foot__copy { transform: translateY(24px); }
+.foot__copy,
+.foot__social { transform: translateY(24px); }
 
 /* ---------- 6. Animações de entrada ---------- */
 [data-reveal] {
@@ -1936,7 +1983,8 @@ html {
 .sem-anime .foot__desc,
 .sem-anime .foot__head,
 .sem-anime .foot__list li,
-.sem-anime .foot__copy { opacity: 1 !important; transform: none !important; }
+.sem-anime .foot__copy,
+.sem-anime .foot__social { opacity: 1 !important; transform: none !important; }
 
 /* ---------- 7. Responsivo ---------- */
 @media (max-width: 900px) {
@@ -1967,6 +2015,7 @@ html {
     padding-inline: 24px;
   }
   .social__title { font-size: clamp(24px, 6.4vw, 34px); white-space: normal; }
+  .social__cta { margin-top: 12px; font-size: 15px; }
   .social__stores { margin-top: 24px; gap: 10px; }
   .social__store img { height: 38px; }
   .social__art {
@@ -2314,7 +2363,8 @@ html {
   .foot__desc,
   .foot__head,
   .foot__list li,
-  .foot__copy { opacity: 1 !important; transform: none !important; }
+  .foot__copy,
+  .foot__social { opacity: 1 !important; transform: none !important; }
 
   .card__photo,
   .card__phone { transform: none !important; }
@@ -3411,6 +3461,11 @@ html {
   padding: 6px 12px;            /* respiro interno, nao cola no texto */
   z-index: 9999;                /* acima de header (500) e de tudo mais */
   pointer-events: none;         /* nunca bloqueia clique em CTA embaixo */
+}
+
+.scroll-hint.is-hidden {
+  opacity: 0;
+  visibility: hidden;
 }
 
 .scroll-hint__icon {

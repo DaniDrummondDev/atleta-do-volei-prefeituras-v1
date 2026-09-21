@@ -62,38 +62,41 @@
   }
 
   /* ------- 3. O header vive só sobre o hero -------
-     O header é fixo e transparente, e a legibilidade dele vinha do gradiente
-     escuro do hero. Passado o hero, ele flutuava por cima de tudo — e na
-     seção 7 a logo branca caía em cima do painel preto e virava parte do
-     desenho, que não é o que a referência mostra.
+     O hero inclui o palco de transição dos celulares. Observar esse bloco
+     inteiro deixava a navbar visível nos primeiros pixels da seção seguinte,
+     antes de o observador receber o aviso de que o hero tinha terminado.
 
-     A REGRA: visível enquanto o hero estiver na tela, escondido depois.
-
-     IntersectionObserver e não evento de scroll: a pergunta aqui é
-     literalmente "este elemento está na tela?", que é o que o observador
-     responde — de graça, fora da thread principal, sem medir nada a cada
-     quadro. Um ouvinte de scroll faria getBoundingClientRect() o tempo todo
-     para chegar na mesma resposta.
-
-     O hero tem mais de cinco telas de altura, então ele deixa de intersectar
-     só quando a base dele passa pelo topo da janela — exatamente o ponto em
-     que o gradiente escuro acaba.
-
-     Esconder com transform, e não com display: assim a volta é suave e o
-     header não some do fluxo (ele é fixed, mas display: none também tiraria
-     o foco de quem estiver navegando por teclado no meio da transição). */
+     Por isso a fronteira é o início da primeira seção após o hero. A partir
+     do momento em que ela entra na janela, o header fica oculto e só volta
+     quando a rolagem retorna integralmente ao hero. Assim ele jamais
+     sobrepõe a seção "A prefeitura organiza" ou qualquer seção posterior. */
   function header() {
     var barra = document.querySelector("[data-header]");
     var hero = document.querySelector(".hero");
-    if (!barra || !hero) return;
+    var proximaSecao = hero && hero.nextElementSibling;
+    if (!barra || !hero || !proximaSecao) return;
 
-    /* Sem suporte ao observador, o header fica como sempre esteve: visível.
-       É o comportamento antigo, que nunca deixou a página quebrada. */
-    if (!("IntersectionObserver" in window)) return;
+    function alternar(oculto) {
+      barra.classList.toggle("is-oculto", oculto);
+    }
 
-    new IntersectionObserver(function (entradas) {
-      barra.classList.toggle("is-oculto", !entradas[0].isIntersecting);
-    }).observe(hero);
+    /* Atualiza no máximo uma vez por frame. A coordenada do topo mantém a
+       barra oculta também depois que a primeira seção sai da janela; usar só
+       isIntersecting a faria reaparecer nas seções seguintes. */
+    var agendado = false;
+    function sincronizar() {
+      agendado = false;
+      var limites = proximaSecao.getBoundingClientRect();
+      alternar(limites.top < window.innerHeight);
+    }
+    window.addEventListener("scroll", function () {
+      if (!agendado) {
+        agendado = true;
+        window.requestAnimationFrame(sincronizar);
+      }
+    }, { passive: true });
+    window.addEventListener("resize", sincronizar);
+    sincronizar();
   }
 
   rede();

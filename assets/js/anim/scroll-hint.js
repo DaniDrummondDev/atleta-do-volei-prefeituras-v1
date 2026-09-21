@@ -45,9 +45,41 @@
     label.className = 'scroll-hint__label';
     label.textContent = LABEL;
 
-    wrap.appendChild(icon);
-    wrap.appendChild(label);
-    document.body.appendChild(wrap);
+   wrap.appendChild(icon);
+   wrap.appendChild(label);
+   document.body.appendChild(wrap);
+
+    /* O indicador só orienta enquanto ainda há conteúdo abaixo. Ao alcançar
+       o footer ele deixa de fazer sentido e não pode cobrir os seus links. */
+    var footer = document.querySelector('.foot');
+    if (!footer) return;
+
+    function alternar(oculto) {
+      wrap.classList.toggle('is-hidden', oculto);
+    }
+
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        alternar(entries[0].isIntersecting);
+      }).observe(footer);
+      return;
+    }
+
+    /* Fallback para navegadores sem o observador. */
+    var agendado = false;
+    function sincronizar() {
+      agendado = false;
+      var limites = footer.getBoundingClientRect();
+      alternar(limites.top < window.innerHeight && limites.bottom > 0);
+    }
+    window.addEventListener('scroll', function () {
+      if (!agendado) {
+        agendado = true;
+        window.requestAnimationFrame(sincronizar);
+      }
+    }, { passive: true });
+    window.addEventListener('resize', sincronizar);
+    sincronizar();
   }
 
   if (document.readyState === 'loading') {
