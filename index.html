@@ -523,8 +523,6 @@
           <span class="bene__word" data-slide="3">Visibilidade</span>
           <span class="bene__word" data-slide="4">Dados</span>
 
-          <!-- O logo é o mesmo em todos os slides, então fica FORA do grupo
-               que troca: não pisca junto com a legenda. -->
           <img class="bene__logo" src="assets/images/section_07_logo.webp" alt="" aria-hidden="true" />
 
           <div class="bene__cap" data-slide="0">
@@ -595,10 +593,6 @@
           </article>
         </div>
 
-        <!-- ===== O TRILHO DE ÍNDICE, à direita =====
-             O filete laranja é UM só e desliza; não há um por número. Assim
-             ele acompanha o scroll continuamente, em vez de pular de degrau
-             em degrau. -->
         <ol class="bene__rail">
           <span class="bene__rail-mark" aria-hidden="true"></span>
           <li class="bene__rail-i" data-slide="0">01</li>
@@ -689,8 +683,6 @@
           <i aria-hidden="true"></i>SUA JORNADA NO ATLETA
         </p>
 
-        <!-- O <br> é conteúdo: a quebra entre as duas frases está na arte e
-             não pode ficar a cargo da largura da caixa. -->
         <h2 class="passos__title" data-passo="txt">
           Entre para viver o vôlei.<br />
           <b>O próximo jogo começa no Atleta.</b>
@@ -743,9 +735,6 @@
 
         <h2 class="faq__title">Ainda tem dúvidas?</h2>
 
-        <!-- data-faq="lista" é o gancho do JS. A classe é estilo; o
-             data-attribute é comportamento. Renomear a classe não quebra o
-             accordion, renomear o data-attribute quebra. -->
         <div class="faq__lista" data-faq="lista">
 
           <div class="faq__item">
@@ -956,60 +945,34 @@
     </div>
   </footer>
 
-
-  <!-- Anime.js 4.5.0 — bundle UMD, versão fixa, com verificação de integridade.
-       É ELE que anima a página inteira: sem ele, nada se move.
-
-       defer em todos: não bloqueiam o parse e executam NA ORDEM do documento,
-       então a biblioteca já existe quando os nossos rodam, e o main.js roda
-       antes dos módulos de anim/.
-
-       Se o CDN cair, ou se o arquivo não bater com o hash (o navegador então
-       RECUSA executá-lo), window.anime fica indefinido. Quem cobre esse caso
-       é a rede .sem-anime do main.js: o conteúdo aparece, só não anima. -->
   <script src="https://cdn.jsdelivr.net/npm/animejs@4.5.0/dist/bundles/anime.umd.min.js"
     integrity="sha384-InMmvD3VoYcY7hGjSC80aLb2bNNE4CzpX+Eq6FVDlmB0IKgDvmfPw4UY8L/M++iG" crossorigin="anonymous"
     defer></script>
 
-  <!-- ANTES do main.js: o rede() dele já escreve o data-count na tela quando
-       o Anime.js não carrega, então o número do dia precisa estar no
-       atributo antes disso. -->
   <script src="assets/js/stats.min.js" defer></script>
   <script src="assets/js/main.min.js" defer></script>
   <script src="assets/js/anim/effects.min.js" defer></script>
   <script src="assets/js/anim/hero.min.js" defer></script>
   <script src="assets/js/anim/section-02.min.js" defer></script>
-  <!-- duo.js ANTES das duas seções, e a ordem importa: ele publica window.DUO,
-       que as duas consultam na hora de escolher o driver de scroll. Com defer,
-       a ordem de execução é a ordem das tags. -->
+
   <script src="assets/js/anim/duo.min.js" defer></script>
   <script src="assets/js/anim/section-04.min.js" defer></script>
   <script src="assets/js/anim/section-05.min.js" defer></script>
-  <!-- O comparador é interação, não animação: não depende do window.anime e
-       funciona mesmo se o CDN cair. Vem por último porque lê o estado que os
-       outros deixaram (a classe .is-ativa na seta). -->
+
   <script src="assets/js/anim/compare.min.js" defer></script>
-  <!-- Sorteia o respiro dos pontos do anel. Roda uma vez e acaba: a animação
-       em si é CSS. Também não depende do window.anime. -->
+
   <script src="assets/js/anim/spots.min.js" defer></script>
-  <!-- Carrossel da seção 7. Também não depende do window.anime: a seção não
-       tem estado escondido, então sem ele ela fica parada no primeiro slide. -->
+
   <script src="assets/js/anim/bene.min.js" defer></script>
   <script src="assets/js/anim/section-08.min.js" defer></script>
   <script src="assets/js/anim/section-09.min.js" defer></script>
   <script src="assets/js/anim/section-10.min.js" defer></script>
-  <!-- As luzes das cidades. Como o spots.js, não depende do window.anime:
-       ele só cria os pontos e sorteia os atrasos; quem pisca é o CSS. -->
+
   <script src="assets/js/anim/map-lights.min.js" defer></script>
-  <!-- Accordion da seção 11. Como o compare.js, é INTERAÇÃO e não animação:
-       não toca no window.anime e continua funcionando se o CDN cair — quem
-       anima a altura é a transição CSS do .faq__painel. -->
+
   <script src="assets/js/anim/faq.min.js" defer></script>
   <script src="assets/js/anim/footer.min.js" defer></script>
 
-  <!-- Indicador "ROLE PARA BAIXO": um único bloco fixo no rodapé da janela,
-       criado por JS como filho direto do <body> (fixed não funciona dentro de
-       ancestral com transform). Estilo e animação no fim de style.css (animations.css não é carregado). -->
   <script src="assets/js/anim/scroll-hint.min.js" defer></script>
 </body>
 
