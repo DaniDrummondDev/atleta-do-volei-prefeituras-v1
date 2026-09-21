@@ -528,7 +528,7 @@ html {
   overflow: hidden;              /* recorta o celular que estoura por baixo */
   border-radius: var(--card-radius);
   /* cards_bg.png é o fundo comum a todos (retângulo branco arredondado) */
-  background: url("../images/cards_bg.png") center / 100% 100% no-repeat;
+  background: url("../images/cards_bg.webp") center / 100% 100% no-repeat;
 }
 
 /* Janela da foto: recuada das bordas do card e com raio próprio.
@@ -1069,7 +1069,7 @@ html {
   place-items: center;
   width: calc(var(--foto) * .278);    /* 180/647 */
   height: calc(var(--foto) * .0757);  /*  49/647 */
-  background: url("../images/section_5_elem_bg.png") center / 100% 100% no-repeat;
+  background: url("../images/section_5_elem_bg.webp") center / 100% 100% no-repeat;
   color: var(--white);
   font-size: calc(var(--u) * .0092);
   font-weight: 600;
@@ -3087,7 +3087,7 @@ html {
   position: relative;
   z-index: 1;
   width: 14px;
-  background: url("../images/section_10_point.png") center / 14px 14px no-repeat;
+  background: url("../images/section_10_point.webp") center / 14px 14px no-repeat;
   /* O ponto nasce menor e invisível; o JS o leva a 1. O centro é fixado
      aqui porque o scale do JS reescreve o transform inteiro — sem a origem
      no centro ele cresceria para o canto e desencostaria da linha. */
