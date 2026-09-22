@@ -1,0 +1,14 @@
+# Atleta do Vôlei
+
+> Aplicativo e rede social para praticantes de vôlei encontrarem atletas, equipes, quadras, jogos e eventos.
+
+## Páginas principais
+
+- https://atletadovolei.com.br/ — produto, recursos, download e perguntas frequentes
+- https://atletadovolei.com.br/termos.html — termos de uso
+- https://atletadovolei.com.br/privacidade.html — política de privacidade
+
+## Informações verificadas na página
+
+- O aplicativo está disponível para Android e iPhone.
+- O download é gratuito.

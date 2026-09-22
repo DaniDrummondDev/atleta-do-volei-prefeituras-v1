@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://atletadovolei.com.br/sitemap.xml

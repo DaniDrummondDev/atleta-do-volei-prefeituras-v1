@@ -7,7 +7,7 @@
      1. O TEXTO entra de baixo para cima, opacidade 0 -> 1. Os três blocos
         (pílula, título, lista) sobem escalonados, de cima para baixo.
      2. OS CELULARES entram UM DE CADA VEZ, também de baixo para cima: o de
-        trás primeiro, o da frente depois.
+        trás primeiro, o da frente depois e o terceiro por último.
      3. Quando um celular PARA, ele começa o wiggle — o balanço suave e
         infinito. O wiggle não está aqui: é CSS (@keyframes plat-wiggle), e
         este arquivo só liga a chave, com a classe .is-parado. Laço infinito
@@ -51,7 +51,7 @@
 
   var DUR_PHONE = 900;
   var ESPERA_PHONE = 320;   /* depois do texto: o texto lê primeiro */
-  var PASSO_PHONE = 260;    /* "um de cada vez": o intervalo entre os dois */
+  var PASSO_PHONE = 260;    /* "um de cada vez": o intervalo entre celulares */
 
   /* ---------- O GATILHO ----------
      Mesmo da seção 2: dispara quando a SEÇÃO está praticamente toda na tela,
@@ -89,7 +89,7 @@
      Uma animação POR celular, e não uma só com stagger, porque cada uma
      precisa do próprio onComplete: é ele que acende o wiggle daquele
      aparelho, no instante em que AQUELE parou. Com uma animação só, o
-     onComplete dispararia uma vez, no fim dos dois — e o primeiro celular
+     onComplete dispararia uma vez, no fim de todos — e o primeiro celular
      ficaria imóvel esperando o segundo.
 
      O deslocamento inicial vem do CSS (--sobe, em %) e aqui a subida é

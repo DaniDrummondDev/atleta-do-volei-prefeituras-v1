@@ -11,8 +11,6 @@
   <title>Atleta do Vôlei — A rede social feita para quem ama jogar vôlei</title>
   <meta name="description"
     content="Atleta do Vôlei é a rede social do vôlei: encontre jogos, quadras e atletas do seu nível, monte equipes, participe de campeonatos e compartilhe seus momentos. Baixe o app grátis para Android e iPhone." />
-  <meta name="keywords"
-    content="vôlei, volei, rede social de vôlei, quadras de vôlei, vôlei de praia, atletas de vôlei, jogos de vôlei, campeonatos de vôlei, app de vôlei" />
   <meta name="author" content="Atleta do Vôlei" />
   <meta name="robots" content="index, follow, max-image-preview:large" />
   <link rel="canonical" href="https://atletadovolei.com.br/" />
@@ -39,7 +37,7 @@
   <meta name="twitter:image" content="https://atletadovolei.com.br/assets/img/og-cover.jpg" />
 
   <link rel="icon" href="assets/images/icon.png" />
-  <link rel="apple-touch-icon" href="assets/img/icon.png">
+  <link rel="apple-touch-icon" href="assets/images/icon.png" />
 
   <!-- Dados estruturados (Schema.org) — ajuda o Google a entender a marca e ligar aos perfis sociais -->
   <script type="application/ld+json">
@@ -51,7 +49,7 @@
         "@id": "https://atletadovolei.com.br/#organization",
         "name": "Atleta do Vôlei",
         "url": "https://atletadovolei.com.br/",
-        "logo": "https://atletadovolei.com.br/assets/img/icon.png",
+        "logo": "https://atletadovolei.com.br/assets/images/icon.png",
         "description": "A rede social feita para quem ama jogar vôlei.",
         "sameAs": [
           "https://www.instagram.com/atletadovolei",
@@ -69,12 +67,28 @@
         "publisher": { "@id": "https://atletadovolei.com.br/#organization" }
       },
       {
+        "@type": "WebPage",
+        "@id": "https://atletadovolei.com.br/#webpage",
+        "url": "https://atletadovolei.com.br/",
+        "name": "Atleta do Vôlei — A rede social feita para quem ama jogar vôlei",
+        "description": "Atleta do Vôlei é a rede social do vôlei: encontre jogos, quadras e atletas do seu nível, monte equipes, participe de campeonatos e compartilhe seus momentos.",
+        "inLanguage": "pt-BR",
+        "isPartOf": { "@id": "https://atletadovolei.com.br/#website" },
+        "about": { "@id": "https://atletadovolei.com.br/#application" }
+      },
+      {
         "@type": "MobileApplication",
+        "@id": "https://atletadovolei.com.br/#application",
         "name": "Atleta do Vôlei",
         "operatingSystem": "ANDROID, IOS",
         "applicationCategory": "SportsApplication",
+        "description": "Rede social de vôlei para encontrar jogos, quadras, atletas, equipes e eventos.",
         "offers": { "@type": "Offer", "price": "0", "priceCurrency": "BRL" },
-        "publisher": { "@id": "https://atletadovolei.com.br/#organization" }
+        "publisher": { "@id": "https://atletadovolei.com.br/#organization" },
+        "sameAs": [
+          "https://play.google.com/store/apps/details?id=br.atletadovolei.com",
+          "https://apps.apple.com/br/app/atleta-do-v%C3%B4lei/id1513042771"
+        ]
       }
     ]
   }
@@ -88,33 +102,48 @@
     "mainEntity": [
       {
         "@type": "Question",
-        "name": "O Atleta do Vôlei é gratuito?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Sim. Você cria seu perfil, encontra jogos, equipes e quadras sem pagar nada. Existe também um plano Premium opcional com recursos avançados." }
+        "name": "O que é o Atleta do Vôlei?",
+        "acceptedAnswer": { "@type": "Answer", "text": "O Atleta do Vôlei é uma rede social feita para quem ama jogar vôlei. No aplicativo, você encontra atletas, equipes, quadras, jogos, torneios e tudo o que acontece dentro e fora da quadra." }
       },
       {
         "@type": "Question",
-        "name": "Serve para vôlei de quadra e de praia?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Sim. O app cobre os dois mundos — você filtra por tipo de piso (areia, grama, quadra) e encontra jogos do seu estilo." }
+        "name": "O Atleta do Vôlei é gratuito para baixar?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Sim. O Atleta do Vôlei é gratuito para baixar, e você pode criar seu perfil e fazer parte da comunidade." }
       },
       {
         "@type": "Question",
-        "name": "Como o app encontra jogos perto de mim?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Pela sua cidade e localização, mostramos eventos, equipes e quadras próximas, sempre filtrando por nível para jogos mais justos." }
+        "name": "Quem pode usar o Atleta do Vôlei?",
+        "acceptedAnswer": { "@type": "Answer", "text": "O Atleta do Vôlei é para todos. Você pode ser amador, iniciante, atleta profissional ou simplesmente apaixonado pelo esporte e querer fazer parte dessa comunidade." }
       },
       {
         "@type": "Question",
-        "name": "Preciso já ter um time para usar?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Não. Você pode jogar avulso, entrar em equipes existentes ou criar a sua e convidar outros atletas." }
+        "name": "Como encontro jogos, equipes, atletas e quadras?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No menu inferior do Atleta do Vôlei, você encontra as seções para Equipes, Locais e Eventos. Em cada seção, pode usar os filtros disponíveis para encontrar opções de acordo com seu nível, localização e outras características." }
       },
       {
         "@type": "Question",
-        "name": "Em quais aparelhos funciona?",
-        "acceptedAnswer": { "@type": "Answer", "text": "O Atleta do Vôlei está disponível para Android e iPhone. Baixe gratuitamente na loja do seu celular." }
+        "name": "Posso criar uma equipe ou participar de uma equipe existente?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Sim. Você pode criar sua própria equipe ou participar de uma equipe já cadastrada. Ao criar uma equipe, é necessário vincular um local onde ela costuma jogar. Se o local ainda não estiver no aplicativo, basta cadastrar a quadra para depois vinculá-la à equipe." }
       },
       {
         "@type": "Question",
-        "name": "Como reportar um problema ou sugerir algo?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Use os canais de contato no rodapé. A comunidade é o coração do app e adoramos receber sugestões dos atletas." }
+        "name": "Posso criar torneios e amistosos pelo aplicativo?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Sim. O Atleta do Vôlei permite criar e gerenciar eventos, como torneios e amistosos. Na criação do evento, o organizador pode configurar formato da competição, quantidade de sets, sistema de disputa, chaveamento, equipes participantes, local, regulamento e outras regras." }
+      },
+      {
+        "@type": "Question",
+        "name": "Como cadastrar uma quadra ou local para jogar?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Você pode cadastrar o local diretamente no aplicativo. Basta clicar no ícone de (+), preencher as informações da quadra e concluir o cadastro. Depois, ela poderá ser encontrada por outros atletas da região." }
+      },
+      {
+        "@type": "Question",
+        "name": "O app está disponível para Android e iPhone?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Sim. O Atleta do Vôlei está disponível gratuitamente para Android e iPhone nas lojas de aplicativos." }
+      },
+      {
+        "@type": "Question",
+        "name": "Como entrar em contato ou reportar um problema?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Entre em contato pelo e-mail contato@atletadovolei.com.br. O canal também pode ser usado para enviar sugestões ou reportar problemas." }
       }
     ]
   }
@@ -138,13 +167,12 @@
       </a>
 
       <nav class="header__nav" aria-label="Navegação principal">
-        <a href="#como-funciona">Plataforma</a>
+        <a href="#aplicativo">Aplicativo</a>
+        <a href="#como-funciona">Como funciona</a>
         <a href="#beneficios">Equipe</a>
-        <a href="#beneficios-lista">Benefícios</a>
-        <a href="#como-implementamos">Jornada</a>
       </nav>
 
-      <!-- <a class="btn btn--primary header__cta" href="#contato">Fale com um especialista</a> -->
+      <a class="btn btn--primary header__cta" href="#solucao">Baixar App</a>
 
       <button class="header__burger" type="button" aria-label="Abrir menu" aria-expanded="false" data-burger>
         <span></span><span></span><span></span>
@@ -188,8 +216,8 @@
         </h1>
 
         <p class="hero__subtitle" data-reveal data-reveal-delay="2">
-          Atletas, equipes, jogos, quadras, torneios e tudo o que acontece dentro e fora da quadra em uma plataforma
-          gratuita.
+          Atletas, equipes, jogos, quadras, torneios e tudo o que acontece dentro e fora da quadra em um Aplicativo
+          gratuito.
         </p>
 
         <div data-reveal data-reveal-delay="3">
@@ -216,11 +244,11 @@
           </figure>
 
           <!-- Fase 3: texto que entra sobre o vídeo já revelado -->
-          <div class="bridge" data-bridge>
+          <div class="bridge" data-bridge id="aplicativo">
             <p class="bridge__text">
               <span class="bridge__line">Encontre <strong>jogos</strong>, <strong>atletas</strong>,
                 <strong>equipes</strong>, <strong>quadras</strong></span>
-              <span class="bridge__line">e <strong>eventos</strong> em uma única plataforma.</span>
+              <span class="bridge__line">e <strong>eventos</strong> em um único aplicativo.</span>
             </p>
           </div>
         </div>
@@ -240,10 +268,12 @@
         </p>
 
         <div class="social__stores" data-reveal="fade" data-reveal-delay="2">
-          <a class="social__store" href="#" aria-label="Baixar na Google Play">
+          <a href="https://play.google.com/store/apps/details?id=br.atletadovolei.com" target="_blank"
+            rel="noopener noreferrer" class="social__store" aria-label="Baixar na Google Play">
             <img src="assets/images/google_play.webp" alt="Disponível no Google Play" />
           </a>
-          <a class="social__store" href="#" aria-label="Baixar na App Store">
+          <a href="https://apps.apple.com/br/app/atleta-do-v%C3%B4lei/id1513042771" target="_blank"
+            rel="noopener noreferrer" class="social__store" aria-label="Baixar na App Store">
             <img src="assets/images/app_store.webp" alt="Disponível na App Store" />
           </a>
         </div>
@@ -261,7 +291,7 @@
       <div class="container">
 
         <h2 class="features__title" data-enter="0.26">
-          <strong>Uma plataforma só</strong> para organizar e conectar toda a comunidade do vôlei.
+          <strong>Um aplicativo só</strong> para organizar e conectar toda a comunidade do vôlei.
         </h2>
 
         <ul class="features__list">
@@ -341,9 +371,8 @@
                 </p>
 
                 <h2 class="gains__title">
-                  <span class="gains__line gains__line--strong" data-reveal data-reveal-delay="1">Mais
-                    organização.</span>
-                  <span class="gains__line gains__line--soft" data-reveal data-reveal-delay="2">Mais jogo.</span>
+                  <span class="gains__line gains__line--strong" data-reveal data-reveal-delay="1">Onde o vôlei</span>
+                  <span class="gains__line gains__line--soft" data-reveal data-reveal-delay="2">acontece.</span>
                 </h2>
 
                 <ul class="gains__list">
@@ -476,7 +505,7 @@
             <span class="timeline__fill"></span>
           </div>
           <ol class="timeline__labels">
-            <li class="timeline__label" data-cap="0">O que a prefeitura ganha?</li>
+            <li class="timeline__label" data-cap="0">O que a equipe ganha?</li>
             <li class="timeline__label" data-cap="1">A transformação</li>
           </ol>
         </div>
@@ -623,7 +652,7 @@
       <div class="plat__stage">
 
         <p class="plat__pill" data-plat="txt">
-          <i aria-hidden="true"></i>Uma plataforma completa
+          <i aria-hidden="true"></i>Um aplicativo completo
         </p>
 
         <h2 class="plat__title" data-plat="txt">
@@ -651,6 +680,12 @@
             draggable="false" />
         </div>
 
+        <!-- entra por último e sobrepõe discretamente o telefone da direita -->
+        <div class="plat__phone plat__phone--c" data-plat="phone">
+          <img src="assets/images/card_03_phone.webp" alt="Tela do aplicativo Atleta do Vôlei" loading="lazy"
+            draggable="false" />
+        </div>
+
       </div>
     </section>
 
@@ -667,7 +702,7 @@
 
         <p class="mapa__sub" data-mapa="txt">
           Atletas, equipes, eventos e quadras reunidos<br />
-          em uma única plataforma.
+          em um único aplicativo.
         </p>
 
         <ul class="mapa__stats" data-mapa="txt">
@@ -751,14 +786,14 @@
           <div class="faq__item">
             <h3 class="faq__head">
               <button class="faq__btn" type="button" id="faq-b1" aria-expanded="false" aria-controls="faq-p1">
-                <span class="faq__pergunta">Preciso ser atleta profissional para usar o Atleta do Vôlei?</span>
+                <span class="faq__pergunta">O que é o Atleta do Vôlei?</span>
                 <i class="faq__sinal" aria-hidden="true"></i>
               </button>
             </h3>
             <div class="faq__painel" id="faq-p1" role="region" aria-labelledby="faq-b1" hidden>
               <div class="faq__resposta">
-                <p>Não! O Atleta do Vôlei é para todos . Você pode ser amador, iniciante, atleta profissional, ou
-                  simplesmente apaixonado pelo esporte e querer fazer parte dessa comunidade.</p>
+                <p>O Atleta do Vôlei é uma rede social feita para quem ama jogar vôlei. No aplicativo, você encontra
+                  atletas, equipes, quadras, jogos, torneios e tudo o que acontece dentro e fora da quadra.</p>
               </div>
             </div>
           </div>
@@ -766,15 +801,14 @@
           <div class="faq__item">
             <h3 class="faq__head">
               <button class="faq__btn" type="button" id="faq-b2" aria-expanded="false" aria-controls="faq-p2">
-                <span class="faq__pergunta">Como encontro jogos, torneios e locais para jogar?</span>
+                <span class="faq__pergunta">O Atleta do Vôlei é gratuito para baixar?</span>
                 <i class="faq__sinal" aria-hidden="true"></i>
               </button>
             </h3>
             <div class="faq__painel" id="faq-p2" role="region" aria-labelledby="faq-b2" hidden>
               <div class="faq__resposta">
-                <p>No menu inferior do Atleta do Vôlei, você encontra as seções para Equipes, Locais e Eventos. Em cada
-                  seção, você pode utilizar os filtros disponíveis para encontrar opções de acordo com seu nível,
-                  localização e outras características.</p>
+                <p>Sim. O Atleta do Vôlei é gratuito para baixar, e você pode criar seu perfil e fazer parte da
+                  comunidade.</p>
               </div>
             </div>
           </div>
@@ -782,15 +816,14 @@
           <div class="faq__item">
             <h3 class="faq__head">
               <button class="faq__btn" type="button" id="faq-b3" aria-expanded="false" aria-controls="faq-p3">
-                <span class="faq__pergunta">E se eu não encontrar uma quadra ou local perto de mim?</span>
+                <span class="faq__pergunta">Quem pode usar o Atleta do Vôlei?</span>
                 <i class="faq__sinal" aria-hidden="true"></i>
               </button>
             </h3>
             <div class="faq__painel" id="faq-p3" role="region" aria-labelledby="faq-b3" hidden>
               <div class="faq__resposta">
-                <p>Você mesmo(a) pode cadastrar o local diretamente no aplicativo . Basta clicar no ícone de (+) e
-                  cadastrar as informações da quadra. Assim, ele passa a fazer parte da plataforma e pode ser encontrado
-                  por outros atletas da região.</p>
+                <p>O Atleta do Vôlei é para todos. Você pode ser amador, iniciante, atleta profissional ou simplesmente
+                  apaixonado pelo esporte e querer fazer parte dessa comunidade.</p>
               </div>
             </div>
           </div>
@@ -798,15 +831,15 @@
           <div class="faq__item">
             <h3 class="faq__head">
               <button class="faq__btn" type="button" id="faq-b4" aria-expanded="false" aria-controls="faq-p4">
-                <span class="faq__pergunta">Posso criar uma equipe ou participar de uma equipe existente?</span>
+                <span class="faq__pergunta">Como encontro jogos, equipes, atletas e quadras?</span>
                 <i class="faq__sinal" aria-hidden="true"></i>
               </button>
             </h3>
             <div class="faq__painel" id="faq-p4" role="region" aria-labelledby="faq-b4" hidden>
               <div class="faq__resposta">
-                <p>Sim! Você pode criar sua própria equipe ou participar de uma equipe já cadastrada.</p>
-                <p>Ao criar uma equipe, é necessário vincular um local onde ela costuma jogar . Se o local ainda não
-                  estiver no aplicativo, basta cadastrar a quadra para depois vinculá-lo à equipe.</p>
+                <p>No menu inferior do Atleta do Vôlei, você encontra as seções para Equipes, Locais e Eventos. Em cada
+                  seção, pode usar os filtros disponíveis para encontrar opções de acordo com seu nível, localização e
+                  outras características.</p>
               </div>
             </div>
           </div>
@@ -814,17 +847,15 @@
           <div class="faq__item">
             <h3 class="faq__head">
               <button class="faq__btn" type="button" id="faq-b5" aria-expanded="false" aria-controls="faq-p5">
-                <span class="faq__pergunta">Posso organizar meu próprio torneio pelo Atleta do Vôlei?</span>
+                <span class="faq__pergunta">Posso criar uma equipe ou participar de uma equipe existente?</span>
                 <i class="faq__sinal" aria-hidden="true"></i>
               </button>
             </h3>
             <div class="faq__painel" id="faq-p5" role="region" aria-labelledby="faq-b5" hidden>
               <div class="faq__resposta">
-                <p>Sim! O Atleta do Vôlei permite que você crie e gerencie seus próprios eventos, como torneios e
-                  amistosos.</p>
-                <p>Na criação do evento, o organizador pode configurar informações como f ormato da competição,
-                  quantidade de sets, sistema de disputa, chaveamento, equipes participantes, local, regulamento e
-                  outras regras do evento.</p>
+                <p>Sim. Você pode criar sua própria equipe ou participar de uma equipe já cadastrada.</p>
+                <p>Ao criar uma equipe, é necessário vincular um local onde ela costuma jogar. Se o local ainda não
+                  estiver no aplicativo, basta cadastrar a quadra para depois vinculá-la à equipe.</p>
               </div>
             </div>
           </div>
@@ -832,32 +863,64 @@
           <div class="faq__item">
             <h3 class="faq__head">
               <button class="faq__btn" type="button" id="faq-b6" aria-expanded="false" aria-controls="faq-p6">
-                <span class="faq__pergunta">Preciso pagar para usar o Atleta do Vôlei?</span>
+                <span class="faq__pergunta">Posso criar torneios e amistosos pelo aplicativo?</span>
                 <i class="faq__sinal" aria-hidden="true"></i>
               </button>
             </h3>
             <div class="faq__painel" id="faq-p6" role="region" aria-labelledby="faq-b6" hidden>
               <div class="faq__resposta">
-                <p>O Atleta do Vôlei é gratuito para baixar , e você pode criar seu perfil e fazer parte da comunidade.
-                </p>
+                <p>Sim. O Atleta do Vôlei permite criar e gerenciar eventos, como torneios e amistosos.</p>
+                <p>Na criação do evento, o organizador pode configurar formato da competição, quantidade de sets,
+                  sistema de disputa, chaveamento, equipes participantes, local, regulamento e outras regras.</p>
               </div>
             </div>
           </div>
 
-          <!-- <div class="faq__item">
+          <div class="faq__item">
             <h3 class="faq__head">
               <button class="faq__btn" type="button" id="faq-b7" aria-expanded="false" aria-controls="faq-p7">
-                <span class="faq__pergunta">Como começar?</span>
+                <span class="faq__pergunta">Como cadastrar uma quadra ou local para jogar?</span>
                 <i class="faq__sinal" aria-hidden="true"></i>
               </button>
             </h3>
             <div class="faq__painel" id="faq-p7" role="region" aria-labelledby="faq-b7" hidden>
               <div class="faq__resposta">
-                <p>Preencha o formulário abaixo. Nosso time entra em contato para entender o cenário da sua cidade e
-                  estruturar a proposta.</p>
+                <p>Você pode cadastrar o local diretamente no aplicativo. Basta clicar no ícone de (+), preencher as
+                  informações da quadra e concluir o cadastro. Depois, ela poderá ser encontrada por outros atletas da
+                  região.</p>
               </div>
             </div>
-          </div> -->
+          </div>
+
+          <div class="faq__item">
+            <h3 class="faq__head">
+              <button class="faq__btn" type="button" id="faq-b8" aria-expanded="false" aria-controls="faq-p8">
+                <span class="faq__pergunta">O app está disponível para Android e iPhone?</span>
+                <i class="faq__sinal" aria-hidden="true"></i>
+              </button>
+            </h3>
+            <div class="faq__painel" id="faq-p8" role="region" aria-labelledby="faq-b8" hidden>
+              <div class="faq__resposta">
+                <p>Sim. O Atleta do Vôlei está disponível gratuitamente para Android e iPhone nas lojas de aplicativos.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq__item">
+            <h3 class="faq__head">
+              <button class="faq__btn" type="button" id="faq-b9" aria-expanded="false" aria-controls="faq-p9">
+                <span class="faq__pergunta">Como entrar em contato ou reportar um problema?</span>
+                <i class="faq__sinal" aria-hidden="true"></i>
+              </button>
+            </h3>
+            <div class="faq__painel" id="faq-p9" role="region" aria-labelledby="faq-b9" hidden>
+              <div class="faq__resposta">
+                <p>Entre em contato pelo e-mail contato@atletadovolei.com.br. O canal também pode ser usado para enviar
+                  sugestões ou reportar problemas.</p>
+              </div>
+            </div>
+          </div>
 
         </div>
       </div>
@@ -885,7 +948,7 @@
       <nav class="foot__col" aria-labelledby="foot-nav">
         <h2 class="foot__head" id="foot-nav">Produto</h2>
         <ul class="foot__list">
-          <li><a class="foot__link" href="#como-funciona">Plataforma</a></li>
+          <li><a class="foot__link" href="#como-funciona">Aplicativo</a></li>
           <li><a class="foot__link" href="#beneficios">Equipe</a></li>
           <li><a class="foot__link" href="#beneficios-lista">Benefícios</a></li>
           <li><a class="foot__link" href="#como-implementamos">Jornada</a></li>
@@ -899,7 +962,7 @@
         <ul class="foot__list">
           <li><a class="foot__link" href="mailto:contato@atletadovolei.com.br">contato@atletadovolei.com.br</a></li>
           <li><a class="foot__link" href="https://atletadovolei.com.br" target="_blank"
-              rel="noopener">atletadovolei.com.br</a></li>
+              rel="noopener noreferrer">atletadovolei.com.br</a></li>
         </ul>
 
         <section class="foot__legal" aria-labelledby="foot-legal">
@@ -919,25 +982,28 @@
       <p class="foot__copy">© 2026 Atleta do Vôlei. Todos os direitos reservados.</p>
 
       <nav class="foot__social" aria-label="Redes sociais">
-        <a href="https://www.instagram.com/atletadovolei" target="_blank" rel="noopener" aria-label="Instagram">
+        <a href="https://www.instagram.com/atletadovolei" target="_blank" rel="noopener noreferrer"
+          aria-label="Instagram">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path
               d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.3-2.2-.4a3.8 3.8 0 0 1-1.4-.9 3.8 3.8 0 0 1-.9-1.4c-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2Zm0 1.8c-3.1 0-3.5 0-4.7.1-1.1 0-1.7.2-2.1.4-.5.2-.9.4-1.3.8-.4.4-.6.8-.8 1.3-.2.4-.3 1-.4 2.1C2.6 9.9 2.6 10.3 2.6 12s0 2.1.1 3.3c0 1.1.2 1.7.4 2.1.2.5.4.9.8 1.3.4.4.8.6 1.3.8.4.2 1 .3 2.1.4 1.2.1 1.6.1 4.7.1s3.5 0 4.7-.1c1.1 0 1.7-.2 2.1-.4.5-.2.9-.4 1.3-.8.4-.4.6-.8.8-1.3.2-.4.3-1 .4-2.1.1-1.2.1-1.6.1-3.3s0-2.1-.1-3.3c0-1.1-.2-1.7-.4-2.1a3.5 3.5 0 0 0-.8-1.3 3.5 3.5 0 0 0-1.3-.8c-.4-.2-1-.3-2.1-.4-1.2-.1-1.6-.1-4.7-.1Zm0 3.1a4.9 4.9 0 1 1 0 9.8 4.9 4.9 0 0 1 0-9.8Zm0 1.8a3.1 3.1 0 1 0 0 6.2 3.1 3.1 0 0 0 0-6.2Zm5.1-3.2a1.1 1.1 0 1 1 0 2.3 1.1 1.1 0 0 1 0-2.3Z" />
           </svg>
         </a>
-        <a href="https://www.tiktok.com/@atletadovolei" target="_blank" rel="noopener" aria-label="TikTok">
+        <a href="https://www.tiktok.com/@atletadovolei" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path
               d="M16.6 5.8c-1-.7-1.7-1.8-1.9-3h-3v12.1a2.5 2.5 0 1 1-2.5-2.5c.3 0 .5 0 .7.1V9.5a5.5 5.5 0 1 0 4.8 5.4V9c1 .7 2.3 1.1 3.6 1.1V7.1c-.6 0-1.2-.2-1.7-.4Z" />
           </svg>
         </a>
-        <a href="https://www.youtube.com/@AtletadoVoleiOficial" target="_blank" rel="noopener" aria-label="YouTube">
+        <a href="https://www.youtube.com/@AtletadoVoleiOficial" target="_blank" rel="noopener noreferrer"
+          aria-label="YouTube">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path
               d="M23 7.5c-.3-1-1-1.8-2-2C19 5 12 5 12 5s-7 0-9 .5c-1 .2-1.8 1-2 2C.5 9.5.5 12 .5 12s0 2.5.5 4.5c.3 1 1 1.8 2 2C5 19 12 19 12 19s7 0 9-.5c1-.2 1.8-1 2-2 .5-2 .5-4.5.5-4.5s0-2.5-.5-4.5ZM9.8 15.3V8.7l5.7 3.3-5.7 3.3Z" />
           </svg>
         </a>
-        <a href="https://www.facebook.com/atletadovolei" target="_blank" rel="noopener" aria-label="Facebook">
+        <a href="https://www.facebook.com/atletadovolei" target="_blank" rel="noopener noreferrer"
+          aria-label="Facebook">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path
               d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.3v7A10 10 0 0 0 22 12Z" />
@@ -946,10 +1012,12 @@
       </nav>
 
       <div class="foot__stores">
-        <a class="foot__store" href="#" aria-label="Baixar na Google Play">
+        <a href="https://play.google.com/store/apps/details?id=br.atletadovolei.com" target="_blank"
+          rel="noopener noreferrer" class="foot__store" aria-label="Baixar na Google Play">
           <img src="assets/images/google_play.webp" alt="Disponível no Google Play" loading="lazy" />
         </a>
-        <a class="foot__store" href="#" aria-label="Baixar na App Store">
+        <a href="https://apps.apple.com/br/app/atleta-do-v%C3%B4lei/id1513042771" target="_blank"
+          rel="noopener noreferrer" class="foot__store" aria-label="Baixar na App Store">
           <img src="assets/images/app_store.webp" alt="Disponível na App Store" loading="lazy" />
         </a>
       </div>
@@ -964,7 +1032,7 @@
   <script src="assets/js/main.min.js" defer></script>
   <script src="assets/js/anim/effects.min.js" defer></script>
   <script src="assets/js/anim/hero.min.js" defer></script>
-  <script src="assets/js/anim/section-02.min.js" defer></script>
+  <script src="assets/js/anim/section-02.js" defer></script>
 
   <script src="assets/js/anim/duo.min.js" defer></script>
   <script src="assets/js/anim/section-04.min.js" defer></script>

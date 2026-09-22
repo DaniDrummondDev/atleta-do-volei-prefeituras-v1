@@ -2443,7 +2443,7 @@ html {
   position: absolute;
   left: var(--txt-x);
   top: 3.6%;
-  z-index: 2;
+  z-index: 4;
   display: inline-flex;
   align-items: center;
   gap: .7em;
@@ -2474,7 +2474,7 @@ html {
   position: absolute;
   left: var(--txt-x);
   top: 9%;
-  z-index: 2;
+  z-index: 4;
   margin: 0;
   max-width: 62%;
   font-size: calc(var(--u) * .0332);   /* 34/1024 */
@@ -2492,7 +2492,7 @@ html {
   position: absolute;
   left: var(--txt-x);
   top: 23%;
-  z-index: 2;
+  z-index: 4;
   font-size: calc(var(--u) * .0127);   /* 13/1024 */
   font-weight: 400;
   line-height: 1.52;
@@ -2502,7 +2502,7 @@ html {
   white-space: nowrap;
 }
 
-/* ---------- os dois celulares ----------
+/* ---------- os celulares ----------
    A DIV é do JS (entrada) e a IMG é do CSS (wiggle). Ver o comentário no
    index.html: são dois transform, em elementos diferentes, porque um só
    apagaria o outro.
@@ -2535,6 +2535,16 @@ html {
   z-index: 2;
 }
 
+/* O terceiro aparelho usa uma arte mais larga (386 × 798). A largura de
+   24.4% compensa essa proporção para que sua altura seja a mesma do --a
+   (419 × 996). À direita, ele avança somente sobre a lateral do --b. */
+.plat__phone--c {
+  left: 80%;                /* 819/1024 */
+  top: 21.5%;               /* 156/725  */
+  width: 24.4%;             /* mesma altura visual do --a */
+  z-index: 3;
+}
+
 .plat__phone img { width: 100%; height: auto; }
 
 /* ---------- o wiggle ----------
@@ -2556,6 +2566,10 @@ html {
 .plat__phone--a.is-parado img {
   animation-duration: 6.7s;
   animation-delay: -1.8s;   /* negativo: entra no meio do ciclo, sem espera */
+}
+.plat__phone--c.is-parado img {
+  animation-duration: 6.1s;
+  animation-delay: -3.2s;
 }
 
 /* ---------- responsivo ----------
@@ -2599,6 +2613,8 @@ html {
   .plat__phone { position: relative; left: auto; top: auto; display: inline-block; }
   .plat__phone--b { width: 46%; margin: 40px 0 0 6%; }
   .plat__phone--a { width: 40%; margin-left: -6%; vertical-align: bottom; }
+  /* Mantém a mesma altura do --a e uma pequena sobreposição no empilhado. */
+  .plat__phone--c { width: 46%; margin-left: -34%; vertical-align: bottom; }
 }
 
 /* ---------- redes de segurança ----------
