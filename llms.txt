@@ -11,4 +11,4 @@
 ## Informações verificadas na página
 
 - O aplicativo está disponível para Android e iPhone.
-- O download é gratuito.
+- O download é gratuito. 
