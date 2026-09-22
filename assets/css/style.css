@@ -2635,8 +2635,8 @@ html {
   .plat__phone { position: relative; left: auto; top: auto; display: inline-block; }
   .plat__phone--b { width: 46%; margin: 40px 0 0 6%; }
   .plat__phone--a { width: 40%; margin-left: -6%; vertical-align: bottom; }
-  /* Mantém a mesma altura do --a e uma pequena sobreposição no empilhado. */
-  .plat__phone--c { width: 46%; margin-left: -34%; vertical-align: bottom; }
+  /* No mobile a composição usa apenas os dois telefones superiores. */
+  .plat__phone--c { display: none; }
 }
 
 /* ---------- redes de segurança ----------
