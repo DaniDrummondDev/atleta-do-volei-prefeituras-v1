@@ -1591,6 +1591,7 @@ html {
   line-height: 1.55;
   color: var(--ink);
 }
+.bene__subtitle { font-size: calc(var(--u) * .0233); }
 
 /* ----- o trilho de índice -----
    Cinco fatias iguais. O filete laranja é UM só e desliza continuamente com
@@ -2297,6 +2298,7 @@ html {
   .bene__num    { font-size: calc(var(--u) * .045); }
   .bene__kicker { font-size: calc(var(--u) * .032); margin-bottom: .8em; }
   .bene__desc   { font-size: calc(var(--u) * .036); max-width: none; }
+  .bene__subtitle { font-size: calc(var(--u) * .032); }
 
   /* Footer: três colunas não cabem — vira uma, na mesma ordem em que estão
      no DOM, que é a mesma ordem da animação. */
