@@ -186,14 +186,20 @@
 
             <!-- painel 1 -->
             <div class="hero__panel">
-              <img class="hero__panel-img" src="assets/images/background.webp" alt="" />
+              <picture>
+                <source media="(max-width: 900px)" srcset="assets/images/background_mobile.webp" />
+                <img class="hero__panel-img" src="assets/images/background.webp" alt="" />
+              </picture>
               <div class="hero__panel-grad"></div>
             </div>
 
             <!-- painel 2 -->
             <div class="hero__panel">
               <video class="hero__panel-img" data-video src="assets/video/video.mp4"
-                poster="assets/images/hero-court.webp" muted playsinline preload="auto"></video>
+                poster="assets/images/hero-court.webp"
+                data-poster-desktop="assets/images/hero-court.webp"
+                data-poster-mobile="assets/images/hero-court_mobile.webp"
+                muted playsinline preload="auto"></video>
               <div class="hero__panel-veil"></div>
             </div>
 
@@ -1025,7 +1031,7 @@
   <script src="assets/js/stats.min.js" defer></script>
   <script src="assets/js/main.min.js" defer></script>
   <script src="assets/js/anim/effects.min.js" defer></script>
-  <script src="assets/js/anim/hero.min.js" defer></script>
+  <script src="assets/js/anim/hero.js" defer></script>
   <script src="assets/js/anim/section-02.min.js" defer></script>
 
   <script src="assets/js/anim/duo.min.js" defer></script>

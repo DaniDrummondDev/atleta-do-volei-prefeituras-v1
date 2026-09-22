@@ -219,6 +219,10 @@ html {
   height: 100dvh;
   overflow: hidden;
 }
+.hero__panel > picture {
+  display: block;
+  height: 100%;
+}
 .hero__panel-img {
   display: block;
   width: 100%;

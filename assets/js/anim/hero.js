@@ -22,6 +22,21 @@
   var hero = document.querySelector('[data-anime="hero"]');
   if (!hero) return;
 
+  /* O atributo poster de <video> não aceita <source>. Mantemos as duas
+     versões como dados no HTML e trocamos o pôster no mesmo breakpoint do
+     restante do layout móvel. */
+  var videoDoHero = hero.querySelector("[data-video]");
+  if (videoDoHero) {
+    var midiaMobile = window.matchMedia("(max-width: 900px)");
+    var atualizarPoster = function () {
+      videoDoHero.poster = midiaMobile.matches
+        ? videoDoHero.dataset.posterMobile
+        : videoDoHero.dataset.posterDesktop;
+    };
+    atualizarPoster();
+    midiaMobile.addEventListener("change", atualizarPoster);
+  }
+
   var animate = lib.animate;
   var onScroll = lib.onScroll;
 
