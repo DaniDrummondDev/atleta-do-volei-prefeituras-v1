@@ -39,6 +39,8 @@
     icon.className = 'scroll-hint__icon';
     icon.src = ICON;
     icon.alt = '';
+    icon.width = 48;
+    icon.height = 48;
     icon.decoding = 'async';
 
     var label = document.createElement('span');
