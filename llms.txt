@@ -1,14 +1,24 @@
 # Atleta do Vôlei
 
-> Aplicativo e rede social para praticantes de vôlei encontrarem atletas, equipes, quadras, jogos e eventos.
+> Atleta do Vôlei é um aplicativo e rede social para praticantes de vôlei encontrarem atletas, equipes, quadras, jogos e eventos.
 
-## Páginas principais
+O Atleta do Vôlei conecta pessoas interessadas em praticar vôlei, facilitando a descoberta de jogadores, equipes, locais para jogar, partidas e eventos relacionados ao esporte.
 
-- https://atletadovolei.com.br/ — produto, recursos, download e perguntas frequentes
-- https://atletadovolei.com.br/termos.html — termos de uso
-- https://atletadovolei.com.br/privacidade.html — política de privacidade
+O aplicativo está disponível para Android e iPhone e pode ser baixado gratuitamente.
 
-## Informações verificadas na página
+## Principal
 
-- O aplicativo está disponível para Android e iPhone.
-- O download é gratuito. 
+- [Atleta do Vôlei](https://atletadovolei.com.br/): Página oficial do Atleta do Vôlei com informações sobre o aplicativo, seus recursos, formas de uso, download e perguntas frequentes.
+
+## Informações legais
+
+- [Termos de Uso](https://atletadovolei.com.br/termos.html): Termos e condições aplicáveis ao uso do aplicativo e dos serviços do Atleta do Vôlei.
+- [Política de Privacidade](https://atletadovolei.com.br/privacidade.html): Informações sobre privacidade, tratamento de dados pessoais e práticas relacionadas à proteção de dados dos usuários.
+
+## Sobre o aplicativo
+
+- [Recursos e download](https://atletadovolei.com.br/): Informações sobre os principais recursos do aplicativo e acesso às opções de download para Android e iPhone.
+
+## Optional
+
+- [Perguntas frequentes](https://atletadovolei.com.br/): Respostas para dúvidas comuns sobre o funcionamento e utilização do Atleta do Vôlei.
