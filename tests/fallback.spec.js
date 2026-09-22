@@ -4,16 +4,14 @@ const ROOT = path.resolve(__dirname, '..');
 const TYPES = { '.html':'text/html','.css':'text/css','.js':'text/javascript','.png':'image/png','.mp4':'video/mp4','.woff2':'font/woff2','.woff':'font/woff','.gif':'image/gif' };
 /* O servidor tem duas rotas:
      /            -> a pagina como ela e
-     /sri-quebrado -> a MESMA pagina com o hash de integridade corrompido.
-   A segunda e como simulamos "a biblioteca nao chegou": o navegador baixa o
-   arquivo, ve que o hash nao bate e RECUSA executa-lo. Isso e melhor do que
-   interceptar a rede no Playwright, porque exercita o caminho real do risco
-   documentado (SRI recusando) e nao depende de cache nem de interceptacao. */
+     /anime-ausente -> a mesma pagina, apontando Anime.js para um asset ausente.
+   A segunda simula a indisponibilidade do arquivo local sem depender de rede
+   ou de cache do navegador. */
 const server = http.createServer((req, res) => {
   const url = decodeURIComponent(req.url.split('?')[0]);
-  if (url === '/sri-quebrado') {
+  if (url === '/anime-ausente') {
     let html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
-    html = html.replace(/integrity="sha384-[^"]+"/, 'integrity="sha384-' + 'A'.repeat(64) + '"');
+    html = html.replace('assets/js/vendor/anime.umd.min.js', 'assets/js/vendor/anime.umd.min.missing.js');
     res.writeHead(200, { 'Content-Type': 'text/html' });
     return res.end(html);
   }
@@ -45,11 +43,11 @@ const ok = (c, m) => console.log((c ? '  PASS  ' : '  FALHA ') + m);
   ok(relevantes.length === 0, 'console limpo (sem aviso de ease removido)');
   await page.close();
 
-  /* ---- B. biblioteca recusada pelo SRI: a pagina ainda serve? ----
+  /* ---- B. biblioteca indisponivel: a pagina ainda serve? ----
 
      ATE A FASE 3 este bloco verificava outra coisa: que o motor antigo do
      main.js assumia a pagina inteira. A fase 4 removeu esse motor — a decisao
-     foi ficar so com o CDN —, entao o contrato mudou.
+     foi ficar so com o bundle local —, entao o contrato mudou.
 
      O contrato de hoje: sem a biblioteca a pagina NAO anima, mas tambem NAO
      quebra. Isso importa porque o CSS esconde de proposito tudo que vai ser
@@ -58,11 +56,11 @@ const ok = (c, m) => console.log((c ? '  PASS  ' : '  FALHA ') + m);
      animaçoes. Sem rede, o resultado nao seria "sem animaçao": seria pagina
      em branco com rolagem vazia. A rede e a classe .sem-anime, posta pelo
      main.js e atendida pela seçao 6c do style.css.                        */
-  console.log('\n=== B. Biblioteca recusada (SRI nao bate) — a pagina ainda serve? ===');
+  console.log('\n=== B. Biblioteca local indisponivel — a pagina ainda serve? ===');
   page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   const err2 = [];
   page.on('pageerror', e => err2.push(e.message));
-  await page.goto('http://localhost:8793/sri-quebrado', { waitUntil: 'networkidle' });
+  await page.goto('http://localhost:8793/anime-ausente', { waitUntil: 'networkidle' });
   await page.addStyleTag({ content: 'html { scroll-behavior: auto !important; }' });
 
   const semLib = await page.evaluate(() => ({
@@ -70,7 +68,7 @@ const ok = (c, m) => console.log((c ? '  PASS  ' : '  FALHA ') + m);
     semAnime: document.documentElement.classList.contains('sem-anime'),
     isAnime: !!document.querySelector('.is-anime')
   }));
-  ok(semLib.anime === 'undefined', 'window.anime indefinido (script recusado pelo SRI)');
+  ok(semLib.anime === 'undefined', 'window.anime indefinido (asset local indisponivel)');
   ok(semLib.semAnime, 'o <html> recebeu a classe .sem-anime');
   ok(semLib.isAnime === false, 'nenhuma secao marcada como .is-anime');
 

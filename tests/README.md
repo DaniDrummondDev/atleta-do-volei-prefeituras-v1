@@ -33,10 +33,8 @@ Total atual: **126 asserções, 0 falhas**.
   `.container` de 1160px: a composição mudava de proporção a cada largura de
   tela, o círculo saía pequeno e a régua ia parar no meio da seção.
 
-⚠️ **As suítes dependem do CDN.** Se o jsDelivr não responder, dezenas de
-asserções falham de uma vez com `window.anime carregou — undefined exports`.
-Isso é rede, não regressão: o sintoma é falhar **tudo ao mesmo tempo**, em
-todos os arquivos. Confira o CDN antes de investigar o código.
+As suítes carregam o bundle local `assets/js/vendor/anime.umd.min.js`; não há
+dependência de CDN durante os testes ou em produção.
 
 Se o Chromium já existir em outro lugar, aponte com a variável:
 
@@ -50,7 +48,7 @@ CHROME_PATH=/caminho/para/chrome node tests/section-04.spec.js
 
 | Bloco | Verifica |
 |---|---|
-| 1 | a biblioteca carrega do CDN e o SRI aceita o arquivo |
+| 1 | a biblioteca local carrega e expõe a API esperada |
 | 2 | o motor antigo do `main.js` **não** toca na seção migrada |
 | 3 | estado inicial: card em `opacity: 0`, deslocado 90px |
 | 4 | os 3 cards se movem e pousam em `x = 0`, opacos |
@@ -63,21 +61,17 @@ CHROME_PATH=/caminho/para/chrome node tests/section-04.spec.js
 **`fallback.spec.js`** — 12 verificações:
 
 - console limpo (sem aviso de API removida da biblioteca);
-- servindo a página com o **hash SRI corrompido**, a rede `.sem-anime` entra:
+- servindo a página com o **asset local ausente**, a rede `.sem-anime` entra:
   os 19 elementos animáveis ficam visíveis, `.gains__sticky` e
   `.showcase__stage` soltam o pin, `.gains` volta de 2.6 para 1.0 tela, os
   contadores mostram 340/10/17 em vez de zero, os filetes acendem e a linha do
   tempo aparece cheia — sem nenhum erro de runtime.
 
-Esse é o teste mais importante do conjunto depois da fase 4. A entrega é só
-por CDN e o motor antigo foi removido, então ele é o que separa "a página não
-anima" de "a página não aparece".
+Esse é o teste mais importante do conjunto depois da fase 4. O motor antigo
+foi removido, então ele separa "a página não anima" de "a página não aparece".
 
-Por que corromper o SRI em vez de bloquear a rede: bloquear via
-`page.route()` dá falso-positivo, porque o arquivo já em cache é servido sem
-gerar requisição — não há o que interceptar, e o teste passa sem ter testado
-nada. Corromper o hash exercita o caminho real (o navegador baixa e recusa) e
-não depende de cache.
+O caminho de asset ausente exercita a falha real de entrega do arquivo local e
+não depende de interceptação ou cache.
 
 **`threshold.spec.js`** — a prova de que o gatilho não mudou:
 

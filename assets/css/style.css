@@ -1139,6 +1139,24 @@ html {
     translateX(calc(var(--foto) / 2 * var(--r-spot)))
     rotate(calc(var(--ang) * -1));
 }
+
+/* Ângulos posicionais ficam em classes, não em atributos style inline, para
+   que a CSP possa bloquear estilos injetados por markup. */
+.trans__pill--36 { --ang: 36deg; }
+.trans__pill--18 { --ang: 18deg; }
+.trans__pill--0 { --ang: 0deg; }
+.trans__pill---18 { --ang: -18deg; }
+.trans__pill---36 { --ang: -36deg; }
+.trans__spot---60 { --ang: -60deg; }
+.trans__spot---46-67 { --ang: -46.67deg; }
+.trans__spot---33-33 { --ang: -33.33deg; }
+.trans__spot---20 { --ang: -20deg; }
+.trans__spot---6-67 { --ang: -6.67deg; }
+.trans__spot--6-67 { --ang: 6.67deg; }
+.trans__spot--20 { --ang: 20deg; }
+.trans__spot--33-33 { --ang: 33.33deg; }
+.trans__spot--46-67 { --ang: 46.67deg; }
+.trans__spot--60 { --ang: 60deg; }
 .trans__spot-c {
   position: absolute;
   left: 0;

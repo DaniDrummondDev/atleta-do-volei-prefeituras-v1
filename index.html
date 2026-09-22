@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Content-Security-Policy"
-    content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; img-src 'self' data:; font-src 'self'; style-src 'self' 'unsafe-inline'; style-src-elem 'self'; script-src 'self' https://cdn.jsdelivr.net 'sha256-XY6704M0q7pywO7q2nATytaaTnta6GQb5n6h3DcBUtE=' 'sha256-VxRKlwarzQz5/JZstLidZ4nOw5g4I5bHB7weyjElRb4='; connect-src 'self'; upgrade-insecure-requests" />
+    content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; frame-ancestors 'none'; img-src 'self'; font-src 'self'; media-src 'self'; style-src 'self'; style-src-elem 'self'; style-src-attr 'none'; script-src 'self'; connect-src 'self'; frame-src 'none'; worker-src 'none'; upgrade-insecure-requests" />
   <meta name="referrer" content="strict-origin-when-cross-origin" />
 
   <title>Atleta do Vôlei — A rede social feita para quem ama jogar vôlei</title>
@@ -462,34 +462,34 @@
                     aria-hidden="true" loading="lazy" />
 
                   <ul class="trans__pills">
-                    <li class="trans__pill" style="--ang:  36deg"><span><i>Whatsapp</i></span></li>
-                    <li class="trans__pill" style="--ang:  18deg"><span><i>Planilhas</i></span></li>
-                    <li class="trans__pill" style="--ang:   0deg"><span><i>Rede sociais</i></span></li>
-                    <li class="trans__pill" style="--ang: -18deg"><span><i>PDF</i></span></li>
-                    <li class="trans__pill" style="--ang: -36deg"><span><i>Grupos</i></span></li>
+                    <li class="trans__pill trans__pill--36"><span><i>Whatsapp</i></span></li>
+                    <li class="trans__pill trans__pill--18"><span><i>Planilhas</i></span></li>
+                    <li class="trans__pill trans__pill--0"><span><i>Rede sociais</i></span></li>
+                    <li class="trans__pill trans__pill---18"><span><i>PDF</i></span></li>
+                    <li class="trans__pill trans__pill---36"><span><i>Grupos</i></span></li>
                   </ul>
 
                   <!-- DEPOIS: o que passa a existir, à direita -->
                   <ul class="trans__spots">
-                    <li class="trans__spot" style="--ang: -60.00deg"><span
+                    <li class="trans__spot trans__spot---60"><span
                         class="trans__spot-c"><i></i><b>Atletas</b></span></li>
-                    <li class="trans__spot" style="--ang: -46.67deg"><span
+                    <li class="trans__spot trans__spot---46-67"><span
                         class="trans__spot-c"><i></i><b>Equipes</b></span></li>
-                    <li class="trans__spot" style="--ang: -33.33deg"><span
+                    <li class="trans__spot trans__spot---33-33"><span
                         class="trans__spot-c"><i></i><b>Eventos</b></span></li>
-                    <li class="trans__spot" style="--ang: -20.00deg"><span
+                    <li class="trans__spot trans__spot---20"><span
                         class="trans__spot-c"><i></i><b>Quadras</b></span></li>
-                    <li class="trans__spot" style="--ang: -6.67deg"><span
+                    <li class="trans__spot trans__spot---6-67"><span
                         class="trans__spot-c"><i></i><b>Gestão</b></span></li>
-                    <li class="trans__spot" style="--ang: 6.67deg"><span
+                    <li class="trans__spot trans__spot--6-67"><span
                         class="trans__spot-c"><i></i><b>Campeonatos</b></span></li>
-                    <li class="trans__spot" style="--ang: 20.00deg"><span
+                    <li class="trans__spot trans__spot--20"><span
                         class="trans__spot-c"><i></i><b>Comunidade</b></span></li>
-                    <li class="trans__spot" style="--ang: 33.33deg"><span
+                    <li class="trans__spot trans__spot--33-33"><span
                         class="trans__spot-c"><i></i><b>Escolas</b></span></li>
-                    <li class="trans__spot" style="--ang: 46.67deg"><span class="trans__spot-c"><i></i><b>Rede
+                    <li class="trans__spot trans__spot--46-67"><span class="trans__spot-c"><i></i><b>Rede
                           social</b></span></li>
-                    <li class="trans__spot" style="--ang: 60.00deg"><span
+                    <li class="trans__spot trans__spot--60"><span
                         class="trans__spot-c"><i></i><b>Anúncios</b></span></li>
                   </ul>
 
@@ -1024,15 +1024,13 @@
     </div>
   </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/animejs@4.5.0/dist/bundles/anime.umd.min.js"
-    integrity="sha384-InMmvD3VoYcY7hGjSC80aLb2bNNE4CzpX+Eq6FVDlmB0IKgDvmfPw4UY8L/M++iG" crossorigin="anonymous"
-    defer></script>
+  <script src="assets/js/vendor/anime.umd.min.js" defer></script>
 
   <script src="assets/js/stats.min.js" defer></script>
   <script src="assets/js/main.min.js" defer></script>
   <script src="assets/js/anim/effects.min.js" defer></script>
   <script src="assets/js/anim/hero.min.js" defer></script>
-  <script src="assets/js/anim/section-02.js" defer></script>
+  <script src="assets/js/anim/section-02.min.js" defer></script>
 
   <script src="assets/js/anim/duo.min.js" defer></script>
   <script src="assets/js/anim/section-04.min.js" defer></script>

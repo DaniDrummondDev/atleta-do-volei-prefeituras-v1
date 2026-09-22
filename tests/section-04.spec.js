@@ -41,7 +41,7 @@ const ok = (c, m) => console.log((c ? '  PASS  ' : '  FALHA ') + m);
     isAnime: !!document.querySelector('.gains.is-anime'),
     hasOnScroll: !!(window.anime && window.anime.onScroll)
   }));
-  ok(lib.loaded, 'window.anime carregou do CDN (SRI aceito) — ' + lib.version + ' exports');
+  ok(lib.loaded, 'window.anime carregou do asset local — ' + lib.version + ' exports');
   ok(lib.hasOnScroll, 'anime.onScroll disponivel');
   ok(lib.isAnime, 'secao 4 marcada com .is-anime (biblioteca assumiu)');
 

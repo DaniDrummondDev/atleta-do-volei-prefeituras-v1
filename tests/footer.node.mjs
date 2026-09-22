@@ -94,7 +94,7 @@ const escondidos = ['.foot__logo', '.foot__desc', '.foot__head', '.foot__list li
 const inicial = bloco('/* ----- estados iniciais da animação -----', '/* ---------- 6.');
 t('todo elemento animado nasce escondido',
   escondidos.every(sel => inicial.includes(sel)),
-  'senao ele pisca antes de o CDN chegar');
+  'senao ele pisca antes de o bundle local carregar');
 
 const semAnime = css.slice(css.indexOf('.sem-anime .foot__logo'));
 t('rede .sem-anime cobre os mesmos cinco',
