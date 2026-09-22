@@ -22,19 +22,28 @@
   var hero = document.querySelector('[data-anime="hero"]');
   if (!hero) return;
 
-  /* O atributo poster de <video> não aceita <source>. Mantemos as duas
-     versões como dados no HTML e trocamos o pôster no mesmo breakpoint do
-     restante do layout móvel. */
+  /* Mantemos as versões desktop e mobile como dados no HTML e trocamos tanto
+     o arquivo quanto o pôster no mesmo breakpoint do restante do layout. */
   var videoDoHero = hero.querySelector("[data-video]");
   if (videoDoHero) {
     var midiaMobile = window.matchMedia("(max-width: 900px)");
-    var atualizarPoster = function () {
+    var atualizarMidia = function () {
+      var src = midiaMobile.matches
+        ? videoDoHero.dataset.videoMobile
+        : videoDoHero.dataset.videoDesktop;
+
+      if (videoDoHero.getAttribute("src") !== src) {
+        videoDoHero.pause();
+        videoDoHero.src = src;
+        videoDoHero.load();
+      }
+
       videoDoHero.poster = midiaMobile.matches
         ? videoDoHero.dataset.posterMobile
         : videoDoHero.dataset.posterDesktop;
     };
-    atualizarPoster();
-    midiaMobile.addEventListener("change", atualizarPoster);
+    atualizarMidia();
+    midiaMobile.addEventListener("change", atualizarMidia);
   }
 
   var animate = lib.animate;
